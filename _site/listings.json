@@ -2,14 +2,14 @@
   {
     "listing": "/archive.html",
     "items": [
-      "/posts/post-with-code/index.html",
+      "/posts/internal-pkg-r-universe/index.html",
       "/posts/welcome/index.html"
     ]
   },
   {
     "listing": "/blog.html",
     "items": [
-      "/posts/post-with-code/index.html",
+      "/posts/internal-pkg-r-universe/index.html",
       "/posts/welcome/index.html"
     ]
   }

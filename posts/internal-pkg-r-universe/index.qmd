@@ -1,0 +1,31 @@
+---
+title: "Hosting internal R packages on r-universe"
+date: "2024-08-15"
+categories: [news, code, pkgs, ropensci]
+---
+
+![](https://upload.wikimedia.org/wikipedia/commons/2/27/Southern_Blue_Flag_Iris_%28iris_virginica%29_-_Flickr_-_Andrea_Westmoreland.jpg){.preview-image}
+
+This post attempts to replicate stock analysis with the `coreStatsNMR` package, available via the [NMR Group r-universe](nmrgroup.r-universe.dev/builds). Specifically, using the `statsTable` function outlined in this [post](https://nmrgroup.r-universe.dev/articles/coreStatsNMR/statsTable.html).
+
+First, downloading the library using the custom `repos` argument to point to the r-universe: `install.packages("coreStatsNMR", repos = c("https://nmrgroup.r-universe.dev", "https://cloud.r-project.org"))`
+
+```{r}
+library(coreStatsNMR)
+library(dplyr)
+
+statsTable(data = iris,
+           summVar = "Sepal.Length",
+           groupVar = "Species",
+           stats = c("n", "min", "max", "mean", "weighted.mean", "median", "sd", "iqr", "cv"),
+           accuracy = 0.01,
+           drop0trailing = TRUE) %>% 
+  knitr::kable()
+```
+### So what?
+
+Yay! We can run summary statistics on stock R data with our own package. Why do this? We already can write expressive pipelines with various packages: `dplyr`, `data.table`, `collapse`, or `polars`. The added value of a DIY function is not apparent, especially if it's using those packages underneath.
+
+However, for a consulting firm, such as my previous employer, there is value in creating wrapped versions of the stock `coreStats` functions which incorporate project/client constraints and documentation. That way, the core functions' focus can be on being very good in a narrow scope (for each function), but they can be combined and/or extended via wrappers for projects and/or specific, repetitive applications. This does assume time is invested in designing them to play nicely with one another, and maintaining these conditions as the codebase evolves. Having shareable "core" functions separate from "project code" allows the firm to tap into additional marketing value as well, i.e. more-visibly participating in open-source software (OSS) development. 
+
+Internal and/or public packages are also ways to embed invaluable organizational knowledge, e.g. in a package's testing suite, warnings, errors, and documentation. Of course, embedding this knowledge requires caution so that only the sources/methods/etc appropriate for public use are exposed in public repos like the r-universe. 

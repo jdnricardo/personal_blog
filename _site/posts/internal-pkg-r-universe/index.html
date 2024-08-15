@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="Harlow Malloc">
+<meta name="author" content="Julian Ricardo">
 <meta name="dcterms.date" content="2024-08-15">
 
 <title>Julian Ricardo - Hosting internal R packages on r-universe</title>
@@ -164,11 +164,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Post With Code</h1>
+      <h1 class="title">Hosting internal R packages on r-universe</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">news</div>
                 <div class="quarto-category">code</div>
-                <div class="quarto-category">analysis</div>
+                <div class="quarto-category">pkgs</div>
+                <div class="quarto-category">ropensci</div>
               </div>
                   </div>
   </div>
@@ -179,7 +180,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <div>
       <div class="quarto-title-meta-heading">Author</div>
       <div class="quarto-title-meta-contents">
-               <p>Harlow Malloc </p>
+               <p>Julian Ricardo </p>
             </div>
     </div>
       
@@ -198,7 +199,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <!-- sidebar -->
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#so-what" id="toc-so-what" class="nav-link active" data-scroll-target="#so-what">So what?</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content quarto-banner-title-block" id="quarto-document-content">
@@ -207,15 +214,132 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 
-<p>This is a post with executable code.</p>
+<p><img src="https://upload.wikimedia.org/wikipedia/commons/2/27/Southern_Blue_Flag_Iris_%28iris_virginica%29_-_Flickr_-_Andrea_Westmoreland.jpg" class="preview-image img-fluid"></p>
+<p>This post attempts to replicate stock analysis with the <code>coreStatsNMR</code> package, available via the <a href="nmrgroup.r-universe.dev/builds">NMR Group r-universe</a>. Specifically, using the <code>statsTable</code> function outlined in this <a href="https://nmrgroup.r-universe.dev/articles/coreStatsNMR/statsTable.html">post</a>.</p>
+<p>First, downloading the library using the custom <code>repos</code> argument to point to the r-universe: <code>install.packages("coreStatsNMR", repos = c("https://nmrgroup.r-universe.dev", "https://cloud.r-project.org"))</code></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span> <span class="sc">+</span> <span class="dv">1</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 2</code></pre>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(coreStatsNMR)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'coreStatsNMR'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following object is masked from 'package:base':
+
+    mode</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'dplyr'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:stats':
+
+    filter, lag</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:base':
+
+    intersect, setdiff, setequal, union</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">statsTable</span>(<span class="at">data =</span> iris,</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>           <span class="at">summVar =</span> <span class="st">"Sepal.Length"</span>,</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">groupVar =</span> <span class="st">"Species"</span>,</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">stats =</span> <span class="fu">c</span>(<span class="st">"n"</span>, <span class="st">"min"</span>, <span class="st">"max"</span>, <span class="st">"mean"</span>, <span class="st">"weighted.mean"</span>, <span class="st">"median"</span>, <span class="st">"sd"</span>, <span class="st">"iqr"</span>, <span class="st">"cv"</span>),</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>           <span class="at">accuracy =</span> <span class="fl">0.01</span>,</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>           <span class="at">drop0trailing =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in statsTable.data.frame(data = iris, summVar = "Sepal.Length", : Using placeholder weights of 1 for all data</code></pre>
+</div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;">stat</th>
+<th style="text-align: left;">setosa</th>
+<th style="text-align: left;">versicolor</th>
+<th style="text-align: left;">virginica</th>
+<th style="text-align: left;">Total</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">50</td>
+<td style="text-align: left;">50</td>
+<td style="text-align: left;">50</td>
+<td style="text-align: left;">150</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">min</td>
+<td style="text-align: left;">4.30</td>
+<td style="text-align: left;">4.90</td>
+<td style="text-align: left;">4.90</td>
+<td style="text-align: left;">4.30</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">max</td>
+<td style="text-align: left;">5.80</td>
+<td style="text-align: left;">7.00</td>
+<td style="text-align: left;">7.90</td>
+<td style="text-align: left;">7.90</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">mean</td>
+<td style="text-align: left;">5.01</td>
+<td style="text-align: left;">5.94</td>
+<td style="text-align: left;">6.59</td>
+<td style="text-align: left;">5.84</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">weighted.mean</td>
+<td style="text-align: left;">5.01</td>
+<td style="text-align: left;">5.94</td>
+<td style="text-align: left;">6.59</td>
+<td style="text-align: left;">5.84</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">median</td>
+<td style="text-align: left;">5.00</td>
+<td style="text-align: left;">5.90</td>
+<td style="text-align: left;">6.50</td>
+<td style="text-align: left;">5.80</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">sd</td>
+<td style="text-align: left;">0.35</td>
+<td style="text-align: left;">0.52</td>
+<td style="text-align: left;">0.64</td>
+<td style="text-align: left;">0.83</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">iqr</td>
+<td style="text-align: left;">0.40</td>
+<td style="text-align: left;">0.70</td>
+<td style="text-align: left;">0.67</td>
+<td style="text-align: left;">1.30</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">cv</td>
+<td style="text-align: left;">0.07</td>
+<td style="text-align: left;">0.09</td>
+<td style="text-align: left;">0.10</td>
+<td style="text-align: left;">0.14</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
+<section id="so-what" class="level3">
+<h3 class="anchored" data-anchor-id="so-what">So what?</h3>
+<p>Yay! We can run summary statistics on stock R data with our own package. Why do this? We already can write expressive pipelines with various packages: <code>dplyr</code>, <code>data.table</code>, <code>collapse</code>, or <code>polars</code>. The added value of a DIY function is not apparent, especially if it’s using those packages underneath.</p>
+<p>However, for a consulting firm, such as my previous employer, there is value in creating wrapped versions of the stock <code>coreStats</code> functions which incorporate project/client constraints and documentation. That way, the core functions’ focus can be on being very good in a narrow scope (for each function), but they can be combined and/or extended via wrappers for projects and/or specific, repetitive applications. This does assume time is invested in designing them to play nicely with one another, and maintaining these conditions as the codebase evolves. Having shareable “core” functions separate from “project code” allows the firm to tap into additional marketing value as well, i.e.&nbsp;more-visibly participating in open-source software (OSS) development.</p>
+<p>Internal and/or public packages are also ways to embed invaluable organizational knowledge, e.g.&nbsp;in a package’s testing suite, warnings, errors, and documentation. Of course, embedding this knowledge requires caution so that only the sources/methods/etc appropriate for public use are exposed in public repos like the r-universe.</p>
 
 
+</section>
 
 </main> <!-- /main -->
 <div>
