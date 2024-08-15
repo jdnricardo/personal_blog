@@ -1,5 +1,5 @@
 ---
-title: "So you're probably wondering why this post is here..."
+title: "So you're probably wondering how I got to this post..."
 date: "2024-08-15"
 categories: [news]
 ---
