@@ -2,30 +2,30 @@
   {
     "objectID": "posts/welcome/index.html",
     "href": "posts/welcome/index.html",
-    "title": "Welcome To My Blog",
+    "title": "So you’re probably wondering why this post is here…",
     "section": "",
-    "text": "This is the first post in a Quarto blog. Welcome!\n\nSince this post doesn’t specify an explicit image, the first image in the post will be used in the listing page of posts."
+    "text": "First of all, welcome! This is my big break into the blogosphere, so you’re getting in on the ground floor. How exciting!\nThis is my place to get thoughts on the page, primarily in the realms of energy systems and data science. It’s also a place to showcase the skills I’ve sharpened as a professional, and mess around with tools I’d like to add to my toolset.\nThis is also a place to start paying forward the knowledge sharing I benefited from at NMR Group, where I cut my teeth as an analyst, data scientist, and eventually as a mentor to folks starting their professional journeys in R and/or in data science."
   },
   {
     "objectID": "index.html",
     "href": "index.html",
-    "title": "About",
+    "title": "Who am I?",
     "section": "",
-    "text": "About this blog"
+    "text": "I’m many things: data scientist, environmental engineer, son, brother, Brooklynite, runner, and trivia enthusiast.\nProfessionally, I’m a multi-lingual analyst with domain expertise in energy efficiency, data science, and program evaluation. I have consulted for energy & utilities clients, written peer-reviewed papers, and helped to grow analysis teams using R & Python. My specialties are understanding complex systems, developing reproducible models, turning results into actionable findings, and mentoring data scientists.\nMy academic background is in physics, environmental engineering, and Spanish. Outside of coursework, I have also learned how to be a skilled educator."
   },
   {
     "objectID": "archive.html",
     "href": "archive.html",
     "title": "Archive",
     "section": "",
-    "text": "Post With Code\n\n\n\n\n\n\n\n\nAug 15, 2024\n\n\n\n\n\n\n\nWelcome To My Blog\n\n\n\n\n\n\n\n\nAug 12, 2024\n\n\n\n\n\n\nNo matching items"
+    "text": "Post With Code\n\n\n\n\n\n\n\n\nAug 15, 2024\n\n\n\n\n\n\n\nSo you’re probably wondering why this post is here…\n\n\n\n\n\n\n\n\nAug 15, 2024\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "blog.html",
     "href": "blog.html",
     "title": "Posts",
     "section": "",
-    "text": "Order By\n       Default\n         \n          Title\n        \n         \n          Date - Oldest\n        \n         \n          Date - Newest\n        \n     \n  \n    \n      \n      \n    \n\n\n\n\n\nPost With Code\n\n\n\n\n\n\nnews\n\n\ncode\n\n\nanalysis\n\n\n\n\n\n\n\n\n\nAug 15, 2024\n\n\n1 min\n\n\n\n\n\n\n\nWelcome To My Blog\n\n\n\n\n\n\nnews\n\n\n\n\n\n\n\n\n\nAug 12, 2024\n\n\n1 min\n\n\n\n\n\n\nNo matching items"
+    "text": "Order By\n       Default\n         \n          Title\n        \n         \n          Date - Oldest\n        \n         \n          Date - Newest\n        \n     \n  \n    \n      \n      \n    \n\n\n\n\n\nPost With Code\n\n\n\n\n\n\nnews\n\n\ncode\n\n\nanalysis\n\n\n\n\n\n\n\n\n\nAug 15, 2024\n\n\n1 min\n\n\n\n\n\n\n\nSo you’re probably wondering why this post is here…\n\n\n\n\n\n\nnews\n\n\n\n\n\n\n\n\n\nAug 15, 2024\n\n\n1 min\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "posts/post-with-code/index.html",

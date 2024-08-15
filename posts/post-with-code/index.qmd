@@ -3,8 +3,9 @@ title: "Post With Code"
 author: "Harlow Malloc"
 date: "2024-08-15"
 categories: [news, code, analysis]
-image: "image.jpg"
 ---
+
+![](image.jpg){.preview-image}
 
 This is a post with executable code.
 

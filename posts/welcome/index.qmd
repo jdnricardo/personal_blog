@@ -1,12 +1,15 @@
 ---
-title: "Welcome To My Blog"
-author: "Tristan O'Malley"
-date: "2024-08-12"
+title: "So you're probably wondering why this post is here..."
+date: "2024-08-15"
 categories: [news]
 ---
 
-This is the first post in a Quarto blog. Welcome!
+![](seal_hello.jpg){.preview-image}
 
-![](thumbnail.jpg)
+First of all, welcome! This is my big break into the blogosphere, so you're getting in on the ground floor. How exciting!
 
-Since this post doesn't specify an explicit `image`, the first image in the post will be used in the listing page of posts.
+This is my place to get thoughts on the page, primarily in the realms of energy systems and data science. It's also a place to showcase the skills I've sharpened as a professional, and mess around with tools I'd like to add to my toolset.
+
+This is also a place to start paying forward the knowledge sharing I benefited from at [NMR Group](https://nmrgroupinc.com), where I cut my teeth as an analyst, data scientist, and eventually as a mentor to folks starting their professional journeys in R and/or in data science.
+
+[![](goodbye_nmr.png)](https://www.linkedin.com/feed/update/urn:li:activity:7227386045900726272/){target="_blank"}

@@ -1,5 +1,5 @@
 ---
-title: "About"
+title: "Who am I?"
 image: profile.jpg
 about:
   template: jolla
@@ -13,4 +13,8 @@ about:
 
 ---
 
-About this blog
+I'm many things: data scientist, environmental engineer, son, brother, Brooklynite, runner, and trivia enthusiast. 
+
+Professionally, I'm a multi-lingual analyst with domain expertise in energy efficiency, data science, and program evaluation. I have consulted for energy & utilities clients, written peer-reviewed papers, and helped to grow analysis teams using R & Python. My specialties are understanding complex systems, developing reproducible models, turning results into actionable findings, and mentoring data scientists.
+
+My academic background is in physics, environmental engineering, and Spanish. Outside of coursework, I have also learned how to be a skilled educator.

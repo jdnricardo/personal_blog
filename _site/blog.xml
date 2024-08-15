@@ -43,11 +43,10 @@ font-style: inherit;">1</span></span></code></pre></div>
   <category>analysis</category>
   <guid>https://jdnricardo.com/posts/post-with-code/</guid>
   <pubDate>Thu, 15 Aug 2024 04:00:00 GMT</pubDate>
-  <media:content url="https://jdnricardo.com/posts/post-with-code/image.jpg" medium="image" type="image/jpeg"/>
 </item>
 <item>
-  <title>Welcome To My Blog</title>
-  <dc:creator>Tristan O&#39;Malley</dc:creator>
+  <title>So you’re probably wondering why this post is here…</title>
+  <dc:creator>Julian Ricardo</dc:creator>
   <link>https://jdnricardo.com/posts/welcome/</link>
   <description><![CDATA[ 
 
@@ -55,16 +54,18 @@ font-style: inherit;">1</span></span></code></pre></div>
 
 
 
-<p>This is the first post in a Quarto blog. Welcome!</p>
-<p><img src="https://jdnricardo.com/posts/welcome/thumbnail.jpg" class="img-fluid"></p>
-<p>Since this post doesn’t specify an explicit <code>image</code>, the first image in the post will be used in the listing page of posts.</p>
+<p><img src="https://jdnricardo.com/posts/welcome/seal_hello.jpg" class="preview-image img-fluid"></p>
+<p>First of all, welcome! This is my big break into the blogosphere, so you’re getting in on the ground floor. How exciting!</p>
+<p>This is my place to get thoughts on the page, primarily in the realms of energy systems and data science. It’s also a place to showcase the skills I’ve sharpened as a professional, and mess around with tools I’d like to add to my toolset.</p>
+<p>This is also a place to start paying forward the knowledge sharing I benefited from at <a href="https://nmrgroupinc.com">NMR Group</a>, where I cut my teeth as an analyst, data scientist, and eventually as a mentor to folks starting their professional journeys in R and/or in data science.</p>
+<p><a href="https://www.linkedin.com/feed/update/urn:li:activity:7227386045900726272/" target="_blank"><img src="https://jdnricardo.com/posts/welcome/goodbye_nmr.png" class="img-fluid"></a></p>
 
 
 
  ]]></description>
   <category>news</category>
   <guid>https://jdnricardo.com/posts/welcome/</guid>
-  <pubDate>Mon, 12 Aug 2024 04:00:00 GMT</pubDate>
+  <pubDate>Thu, 15 Aug 2024 04:00:00 GMT</pubDate>
 </item>
 </channel>
 </rss>
