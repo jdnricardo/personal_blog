@@ -1,0 +1,16 @@
+---
+title: "About"
+image: profile.jpg
+about:
+  template: jolla
+  links:
+    - icon: linkedin
+      text: LinkedIn
+      href: https://linkedin.com/in/julian-ricardo-388908a1
+    - icon: github
+      text: Github
+      href: https://github.com/jdnricardo
+
+---
+
+About this blog

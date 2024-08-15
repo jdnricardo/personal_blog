@@ -1,0 +1,30 @@
+project:
+  type: website
+
+website:
+  title: "Julian Ricardo"
+  site-url: https://jdnricardo.com
+  navbar:
+    left:
+      - text: Posts
+        href: blog.qmd
+      - text: CV
+        href: https://jdnricardo.github.io
+    right:
+      - icon: linkedin
+        href: https://linkedin.com/in/julian-ricardo-388908a1
+      - icon: github
+        href: https://github.com/jdnricardo
+      - icon: rss
+        href: blog.xml
+      - text: Archive
+        href: archive.qmd 
+cookie-consent: true        
+
+format:
+  html:
+    theme: journal
+    css: styles.css
+
+
+
