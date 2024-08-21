@@ -21,10 +21,13 @@ website:
         href: archive.qmd 
 cookie-consent: true        
 
+author:
+  - name: Julian Ricardo
+    orcid: 0000-0002-2760-6577
+
 format:
   html:
-    theme: journal
-    css: styles.css
+    theme: [journal, styles.scss]
 
 
 
