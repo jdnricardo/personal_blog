@@ -1,0 +1,91 @@
+---
+title: "Working with power outage data"
+date: "2024-08-21"
+categories: [code, energy, eaglei]
+execute: 
+  eval: false
+---
+
+![](Landing_eagle.png){.preview-image fig-align="center"}
+
+### Pilot episode
+
+This post is the first in a series where I will explore the DOE's [Eagle-I dataset](https://openenergyhub.ornl.gov/explore/dataset/eaglei_outages_2014/information/) on energy grid outages.
+
+It's a quick one, focusing on mise en place. I'll share some snippets of code for setting up a pipeline with the `targets` package to save compute time further downstream in the analysis, given the size of the data (available via [figshare](https://figshare.com/s/417a4f147cf1357a5391?file=42547708) below). On my local machine, I will *definitely* save time by not loading the same csv multiple times. And especially during more exploratory phases of analysis, I enjoy fewer breaks for computation because I'll stay in a flow-ier state.
+
+![](large_data.jpg)
+
+For setup preceding the steps I'll show, I recommend the `targets` [walkthrough](https://books.ropensci.org/targets/walkthrough.html) which runs through a minimally viable project.
+
+<iframe src="https://widgets.figshare.com/articles/24237376/embed?show_title=1" width="568" height="351" allowfullscreen frameborder="0">
+
+</iframe>
+
+Before showing snippets for tasks within the Eagle-I workflow, here's the `_targets.R` script that defines connects the tasks together. On good days, and ideally always, I'll sketch out this script before coming up with code for the component tasks. In short, I want to load **one year** of Eagle-I data, then create **monthly summaries of outage time & affected customers in every state and county**. I've chosen 2021 for reasons we'll get into on a future post.
+
+```{r}
+list(
+  tar_target(
+    name = load_one_year,
+    command = load_eaglei_year(2021)
+  ),
+  tar_target(
+    name = state_month_hour,
+    command = summarise_mo_hr(load_one_year,
+                              c("state", "month", "hr"))
+  ),
+  tar_target(
+    name = county_month_hour,
+    command = summarise_mo_hr(load_one_year,
+                              c("county", "state", "month", "hr"))
+  )#,
+  ## IGNORE below for now
+  # tar_target(
+  #   name = ny_ecdf,
+  #   command = state_county_ecdf(county_month_hour,
+  #                               c("New York"),
+  #                               c("Kings", "Erie"))
+  # ),
+  # tar_target(
+  #   name = eia_ecdf,
+  #   command = state_ecdf(state_month_hour,
+  #                        c("Maine",
+  #                          "Texas",
+  #                          "West Virginia",
+  #                          "Mississippi",
+  #                          "Louisiana",
+  #                          "Michigan",
+  #                          "Kentucky",
+  #                          "Oregon",
+  #                          # Least
+  #                          "District of Columbia",
+  #                          "Delaware",
+  #                          "Florida",
+  #                          "North Dakota",
+  #                          "Nevada"))
+  # )
+)
+```
+
+For the first few targets, I'll be using the `here` and `tidytable` packages to get my work done. The `load_eaglei_year` function will do little more than load the right subset of outage data, and the `summarise_mo_hr` function will do the heavy lifting for the two other targets we'll look at in the next installment.
+
+::: column-margin
+Shoutout to Mark Fairbanks and the `tidytable` [package](markfairbanks.github.io/tidytable)!
+:::
+
+### Next steps
+
+In future posts, I'll cover individual targets in use here, then compare Eagle-I data with what the Energy Information Administration (EIA) visualized in this [article](https://www.eia.gov/todayinenergy/detail.php?id=54639). For now I've copied the charts here for reference. The first shows how long the average customer deal with power interruptions from 2013 through 2021, split by whether a "major event" triggered the interruption.
+
+![](main.svg){fig-alt="Average duration of total annual eletric power interruptions"}
+
+The second disaggregates the data further into points for each state, plotted by total interruption time (horizontal axis) and number of discrete interruptions (vertical).
+
+![](chart2.svg){fig-alt="Average total annual electric power interruption duration and frequency per customer, by state, for 2021 only"}
+
+### There be dragons...
+
+With yet more installments, I'm debating whether to create a `golem`-based Shiny application or build a package for easier access to EAGLE-I data within the R universe.
+
+#### Stick around to find out 😸

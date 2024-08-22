@@ -1,7 +1,14 @@
 [
   {
+    "listing": "/eaglei.html",
+    "items": [
+      "/posts/eaglei/intro/index.html"
+    ]
+  },
+  {
     "listing": "/archive.html",
     "items": [
+      "/posts/eaglei/intro/index.html",
       "/posts/internal-pkg-r-universe/index.html",
       "/posts/welcome/index.html"
     ]
@@ -9,6 +16,7 @@
   {
     "listing": "/blog.html",
     "items": [
+      "/posts/eaglei/intro/index.html",
       "/posts/internal-pkg-r-universe/index.html",
       "/posts/welcome/index.html"
     ]

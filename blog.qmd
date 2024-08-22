@@ -13,4 +13,26 @@ page-layout: full
 title-block-banner: false
 ---
 
+::: {.grid}
 
+::: {.g-col-8 .g-col-md-4}
+
+## Series
+
+##### [EAGLE-I^TM^](eaglei.html)
+
+These posts run through ETL of Eagle-I^TM^ data from the Department of Energy and comparison with other data sources. 
+
+:::
+
+::: {.g-col-4 .g-col-md-8}
+## Featured publications (and contributions)
+
+##### [OrcID](orcid.org/0000-0002-2760-6577)
+##### [Energy Efficiency Program Impact Evaluation](https://www.ieso.ca/-/media/Files/IESO/Document-Library/conservation/EMV/2022/PY2022-21-24-CDM-EAP-Evaluation-Report.pdf)
+##### [Parametrized Residential Energy Usage Simulation](https://ma-eeac.org/wp-content/uploads/MA21R41_RNC-EO-Electrification-Phase-2-Report_Final_2024.05.17.pdf)
+##### [Forecasted Energy Savings from Building Codes](https://neea.org/img/documents/LLLC-Mkt-Assess-Lighting-Codes-Memo.pdf)
+
+:::
+
+:::

@@ -7,25 +7,46 @@
     "text": "First of all, welcome! This is my big break into the blogosphere, so you’re getting in on the ground floor. How exciting!\nThis is my place to get thoughts on the page, primarily in the realms of energy systems and data science. It’s also a place to showcase the skills I’ve sharpened as a professional, and mess around with tools I’d like to add to my toolset.\nThis is also a place to start paying forward the knowledge sharing I benefited from at NMR Group, where I cut my teeth as an analyst, data scientist, and eventually as a mentor to folks starting their professional journeys in R and/or in data science."
   },
   {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Who am I?",
+    "objectID": "posts/eaglei/intro/index.html",
+    "href": "posts/eaglei/intro/index.html",
+    "title": "Working with power outage data",
     "section": "",
-    "text": "I’m many things: data scientist, environmental engineer, son, brother, Brooklynite, runner, and trivia enthusiast. My specialties are understanding complex systems, especially involving energy & material flows, then developing reproducible models of them and turning results into actionable findings. I’m also motivated to mentor data scientists and grow organizations’ analytic abilities.\nProfessionally, I’m a multi-lingual analyst with domain expertise in energy efficiency, data science, and program evaluation. I have consulted for energy & utilities clients, written peer-reviewed papers, and helped to grow analysis teams using R & Python.\nMy academic background is in physics, environmental engineering, and Spanish. Outside of coursework, I have also learned how to be a skilled educator, mostly by listening and being attentive to how others learn."
+    "text": "Pilot episode\nThis post is the first in a series where I will explore the DOE’s Eagle-I dataset on energy grid outages.\nIt’s a quick one, focusing on mise en place. I’ll share some snippets of code for setting up a pipeline with the targets package to save compute time further downstream in the analysis, given the size of the data (available via figshare below). On my local machine, I will definitely save time by not loading the same csv multiple times. And especially during more exploratory phases of analysis, I enjoy fewer breaks for computation because I’ll stay in a flow-ier state.\n\nFor setup preceding the steps I’ll show, I recommend the targets walkthrough which runs through a minimally viable project.\n\n\nBefore showing snippets for tasks within the Eagle-I workflow, here’s the _targets.R script that defines connects the tasks together. On good days, and ideally always, I’ll sketch out this script before coming up with code for the component tasks. In short, I want to load one year of Eagle-I data, then create monthly summaries of outage time & affected customers in every state and county. I’ve chosen 2021 for reasons we’ll get into on a future post.\n\nlist(\n  tar_target(\n    name = load_one_year,\n    command = load_eaglei_year(2021)\n  ),\n  tar_target(\n    name = state_month_hour,\n    command = summarise_mo_hr(load_one_year,\n                              c(\"state\", \"month\", \"hr\"))\n  ),\n  tar_target(\n    name = county_month_hour,\n    command = summarise_mo_hr(load_one_year,\n                              c(\"county\", \"state\", \"month\", \"hr\"))\n  )#,\n  ## IGNORE below for now\n  # tar_target(\n  #   name = ny_ecdf,\n  #   command = state_county_ecdf(county_month_hour,\n  #                               c(\"New York\"),\n  #                               c(\"Kings\", \"Erie\"))\n  # ),\n  # tar_target(\n  #   name = eia_ecdf,\n  #   command = state_ecdf(state_month_hour,\n  #                        c(\"Maine\",\n  #                          \"Texas\",\n  #                          \"West Virginia\",\n  #                          \"Mississippi\",\n  #                          \"Louisiana\",\n  #                          \"Michigan\",\n  #                          \"Kentucky\",\n  #                          \"Oregon\",\n  #                          # Least\n  #                          \"District of Columbia\",\n  #                          \"Delaware\",\n  #                          \"Florida\",\n  #                          \"North Dakota\",\n  #                          \"Nevada\"))\n  # )\n)\n\nFor the first few targets, I’ll be using the here and tidytable packages to get my work done. The load_eaglei_year function will do little more than load the right subset of outage data, and the summarise_mo_hr function will do the heavy lifting for the two other targets we’ll look at in the next installment.\n\n\nShoutout to Mark Fairbanks and the tidytable package!\n\n\nNext steps\nIn future posts, I’ll cover individual targets in use here, then compare Eagle-I data with what the Energy Information Administration (EIA) visualized in this article. For now I’ve copied the charts here for reference. The first shows how long the average customer deal with power interruptions from 2013 through 2021, split by whether a “major event” triggered the interruption.\n\nThe second disaggregates the data further into points for each state, plotted by total interruption time (horizontal axis) and number of discrete interruptions (vertical).\n\n\n\nThere be dragons…\nWith yet more installments, I’m debating whether to create a golem-based Shiny application or build a package for easier access to EAGLE-I data within the R universe.\n\nStick around to find out 😸"
+  },
+  {
+    "objectID": "eaglei.html",
+    "href": "eaglei.html",
+    "title": "Series: Eagle-Itm",
+    "section": "",
+    "text": "Working with power outage data\n\n\n\n\n\n\n\n\n\n\n\nAug 21, 2024\n\n\n6 min\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "archive.html",
     "href": "archive.html",
     "title": "Archive",
     "section": "",
-    "text": "Hosting internal R packages on r-universe\n\n\n\n\n\n\n\n\nAug 15, 2024\n\n\n\n\n\n\n\nSo you’re probably wondering how I got to this post…\n\n\n\n\n\n\n\n\nAug 15, 2024\n\n\n\n\n\n\nNo matching items"
+    "text": "Working with power outage data\n\n\n\n\n\n\n\n\nAug 21, 2024\n\n\n\n\n\n\n\nHosting internal R packages on r-universe\n\n\n\n\n\n\n\n\nAug 15, 2024\n\n\n\n\n\n\n\nSo you’re probably wondering how I got to this post…\n\n\n\n\n\n\n\n\nAug 15, 2024\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "blog.html",
     "href": "blog.html",
     "title": "Posts",
     "section": "",
-    "text": "Order By\n       Default\n         \n          Title\n        \n         \n          Date - Oldest\n        \n         \n          Date - Newest\n        \n     \n  \n    \n      \n      \n    \n\n\n\n\n\nHosting internal R packages on r-universe\n\n\n\n\n\n\nnews\n\n\ncode\n\n\npkgs\n\n\nropensci\n\n\n\n\n\n\n\n\n\nAug 15, 2024\n\n\n2 min\n\n\n\n\n\n\n\nSo you’re probably wondering how I got to this post…\n\n\n\n\n\n\nnews\n\n\n\n\n\n\n\n\n\nAug 15, 2024\n\n\n1 min\n\n\n\n\n\n\nNo matching items"
+    "text": "These posts run through ETL of Eagle-ITM data from the Department of Energy and comparison with other data sources."
+  },
+  {
+    "objectID": "blog.html#series",
+    "href": "blog.html#series",
+    "title": "Posts",
+    "section": "",
+    "text": "These posts run through ETL of Eagle-ITM data from the Department of Energy and comparison with other data sources."
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Who am I?",
+    "section": "",
+    "text": "I’m many things: data scientist, environmental engineer, son, brother, Brooklynite, runner, and trivia enthusiast. My specialties are understanding complex systems, especially involving energy & material flows, then developing reproducible models of them and turning results into actionable findings. I’m also motivated to mentor data scientists and grow organizations’ analytic abilities.\nProfessionally, I’m a multi-lingual analyst with domain expertise in energy efficiency, data science, and program evaluation. I have consulted for energy & utilities clients, written peer-reviewed papers, and helped to grow analysis teams using R & Python.\nMy academic background is in physics, environmental engineering, and Spanish. Outside of coursework, I have also learned how to be a skilled educator, mostly by listening and being attentive to how others learn."
   },
   {
     "objectID": "posts/internal-pkg-r-universe/index.html",
