@@ -10,13 +10,13 @@ execute:
 
 ### Pilot episode
 
-This post is the first in a series where I will explore the DOE's [Eagle-I dataset](https://openenergyhub.ornl.gov/explore/dataset/eaglei_outages_2014/information/) on energy grid outages.
+This post is the first in a series where I will explore the DOE's [Eagle-I dataset](https://openenergyhub.ornl.gov/explore/dataset/eaglei_outages_2014/information/){target="_blank"} on energy grid outages.
 
 It's a quick one, focusing on mise en place. I'll share some snippets of code for setting up a pipeline with the `targets` package to save compute time further downstream in the analysis, given the size of the data (available via [figshare](https://figshare.com/s/417a4f147cf1357a5391?file=42547708){target="_blank"} below). On my local machine, I will *definitely* save meaningful time by not loading the same csv multiple times. And especially during more exploratory phases of analysis, I enjoy fewer breaks for computation because I'll stay in a flow-ier state.
 
 ![](large_data.jpg)
 
-For setup preceding the steps I'll show, I recommend the `targets` [walkthrough](https://books.ropensci.org/targets/walkthrough.html) which runs through a minimally viable project.
+For setup preceding the steps I'll show, I recommend the `targets` [walkthrough](https://books.ropensci.org/targets/walkthrough.html){target="_blank"} which runs through a minimally viable project.
 
 Before showing snippets for tasks within the Eagle-I workflow, here's the `_targets.R` script that defines connects the tasks together. On good days, and ideally always, I'll sketch out this script before coming up with code for the component tasks. In short, I want to load **one year** of Eagle-I data, then create **monthly summaries of outage time & affected customers in every state and county**. I've chosen 2021 for reasons we'll get into on a future post.
 
@@ -76,7 +76,7 @@ Shoutout to Mark Fairbanks and the `tidytable` [package](https://markfairbanks.g
 
 ### Next steps
 
-In future posts, I'll cover individual targets in use here, then compare Eagle-I data with what the Energy Information Administration (EIA) visualized in this [article](https://www.eia.gov/todayinenergy/detail.php?id=54639). For now I've copied the charts here for reference. The first shows how long the average customer deal with power interruptions from 2013 through 2021, split by whether a "major event" triggered the interruption.
+In future posts, I'll cover individual targets in use here, then compare Eagle-I data with what the Energy Information Administration (EIA) visualized in this [article](https://www.eia.gov/todayinenergy/detail.php?id=54639){target="_blank"}. For now I've copied the charts here for reference. The first shows how long the average customer deal with power interruptions from 2013 through 2021, split by whether a "major event" triggered the interruption.
 
 ![](main.svg){fig-alt="Average duration of total annual eletric power interruptions"}
 

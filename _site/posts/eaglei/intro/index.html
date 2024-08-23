@@ -221,10 +221,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <section id="pilot-episode" class="level3 page-columns page-full">
 <h3 class="anchored" data-anchor-id="pilot-episode">Pilot episode</h3>
-<p>This post is the first in a series where I will explore the DOE’s <a href="https://openenergyhub.ornl.gov/explore/dataset/eaglei_outages_2014/information/">Eagle-I dataset</a> on energy grid outages.</p>
+<p>This post is the first in a series where I will explore the DOE’s <a href="https://openenergyhub.ornl.gov/explore/dataset/eaglei_outages_2014/information/" target="_blank">Eagle-I dataset</a> on energy grid outages.</p>
 <p>It’s a quick one, focusing on mise en place. I’ll share some snippets of code for setting up a pipeline with the <code>targets</code> package to save compute time further downstream in the analysis, given the size of the data (available via <a href="https://figshare.com/s/417a4f147cf1357a5391?file=42547708" target="_blank">figshare</a> below). On my local machine, I will <em>definitely</em> save meaningful time by not loading the same csv multiple times. And especially during more exploratory phases of analysis, I enjoy fewer breaks for computation because I’ll stay in a flow-ier state.</p>
 <p><img src="large_data.jpg" class="img-fluid"></p>
-<p>For setup preceding the steps I’ll show, I recommend the <code>targets</code> <a href="https://books.ropensci.org/targets/walkthrough.html">walkthrough</a> which runs through a minimally viable project.</p>
+<p>For setup preceding the steps I’ll show, I recommend the <code>targets</code> <a href="https://books.ropensci.org/targets/walkthrough.html" target="_blank">walkthrough</a> which runs through a minimally viable project.</p>
 <p>Before showing snippets for tasks within the Eagle-I workflow, here’s the <code>_targets.R</code> script that defines connects the tasks together. On good days, and ideally always, I’ll sketch out this script before coming up with code for the component tasks. In short, I want to load <strong>one year</strong> of Eagle-I data, then create <strong>monthly summaries of outage time &amp; affected customers in every state and county</strong>. I’ve chosen 2021 for reasons we’ll get into on a future post.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">list</span>(</span>
@@ -278,7 +278,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="next-steps" class="level3">
 <h3 class="anchored" data-anchor-id="next-steps">Next steps</h3>
-<p>In future posts, I’ll cover individual targets in use here, then compare Eagle-I data with what the Energy Information Administration (EIA) visualized in this <a href="https://www.eia.gov/todayinenergy/detail.php?id=54639">article</a>. For now I’ve copied the charts here for reference. The first shows how long the average customer deal with power interruptions from 2013 through 2021, split by whether a “major event” triggered the interruption.</p>
+<p>In future posts, I’ll cover individual targets in use here, then compare Eagle-I data with what the Energy Information Administration (EIA) visualized in this <a href="https://www.eia.gov/todayinenergy/detail.php?id=54639" target="_blank">article</a>. For now I’ve copied the charts here for reference. The first shows how long the average customer deal with power interruptions from 2013 through 2021, split by whether a “major event” triggered the interruption.</p>
 <p><img src="main.svg" class="img-fluid" alt="Average duration of total annual eletric power interruptions"></p>
 <p>The second disaggregates the data further into points for each state, plotted by total interruption time (horizontal axis) and number of discrete interruptions (vertical).</p>
 <p><img src="chart2.svg" class="img-fluid" alt="Average total annual electric power interruption duration and frequency per customer, by state, for 2021 only"></p>
