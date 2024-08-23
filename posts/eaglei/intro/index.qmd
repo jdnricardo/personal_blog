@@ -12,15 +12,11 @@ execute:
 
 This post is the first in a series where I will explore the DOE's [Eagle-I dataset](https://openenergyhub.ornl.gov/explore/dataset/eaglei_outages_2014/information/) on energy grid outages.
 
-It's a quick one, focusing on mise en place. I'll share some snippets of code for setting up a pipeline with the `targets` package to save compute time further downstream in the analysis, given the size of the data (available via [figshare](https://figshare.com/s/417a4f147cf1357a5391?file=42547708) below). On my local machine, I will *definitely* save time by not loading the same csv multiple times. And especially during more exploratory phases of analysis, I enjoy fewer breaks for computation because I'll stay in a flow-ier state.
+It's a quick one, focusing on mise en place. I'll share some snippets of code for setting up a pipeline with the `targets` package to save compute time further downstream in the analysis, given the size of the data (available via [figshare](https://figshare.com/s/417a4f147cf1357a5391?file=42547708){target="_blank"} below). On my local machine, I will *definitely* save meaningful time by not loading the same csv multiple times. And especially during more exploratory phases of analysis, I enjoy fewer breaks for computation because I'll stay in a flow-ier state.
 
 ![](large_data.jpg)
 
 For setup preceding the steps I'll show, I recommend the `targets` [walkthrough](https://books.ropensci.org/targets/walkthrough.html) which runs through a minimally viable project.
-
-<iframe src="https://widgets.figshare.com/articles/24237376/embed?show_title=1" width="568" height="351" allowfullscreen frameborder="0">
-
-</iframe>
 
 Before showing snippets for tasks within the Eagle-I workflow, here's the `_targets.R` script that defines connects the tasks together. On good days, and ideally always, I'll sketch out this script before coming up with code for the component tasks. In short, I want to load **one year** of Eagle-I data, then create **monthly summaries of outage time & affected customers in every state and county**. I've chosen 2021 for reasons we'll get into on a future post.
 
@@ -71,8 +67,12 @@ list(
 For the first few targets, I'll be using the `here` and `tidytable` packages to get my work done. The `load_eaglei_year` function will do little more than load the right subset of outage data, and the `summarise_mo_hr` function will do the heavy lifting for the two other targets we'll look at in the next installment.
 
 ::: column-margin
-Shoutout to Mark Fairbanks and the `tidytable` [package](markfairbanks.github.io/tidytable)!
+Shoutout to Mark Fairbanks and the `tidytable` [package](https://markfairbanks.github.io/tidytable){target="_blank"}!
 :::
+
+<iframe src="https://widgets.figshare.com/articles/24237376/embed?show_title=1" width="568" height="351" allowfullscreen frameborder="0">
+
+</iframe>
 
 ### Next steps
 
