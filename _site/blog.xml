@@ -10,7 +10,43 @@
 <atom:link href="https://jdnricardo.com/blog.xml" rel="self" type="application/rss+xml"/>
 <description></description>
 <generator>quarto-1.4.555</generator>
-<lastBuildDate>Wed, 21 Aug 2024 04:00:00 GMT</lastBuildDate>
+<lastBuildDate>Thu, 29 Aug 2024 04:00:00 GMT</lastBuildDate>
+<item>
+  <title>Creating a personal avatar</title>
+  <dc:creator>Julian Ricardo</dc:creator>
+  <link>https://jdnricardo.com/posts/making-an-avatar/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<p><img src="https://jdnricardo.com/posts/making-an-avatar/boringavatars.png" class="preview-image img-fluid"></p>
+<p>A really quick post to shoutout the open-source libraries I used to create what I find to be gorgeous icons, e.g.&nbsp;the favicon I use for my website, reproduced above in a larger size.</p>
+<ul>
+<li><a href="https://boringavatars.com/" target="_blank">boringavatars</a></li>
+<li><a href="https://coolors.co/palette/fb6107-f3de2c-7cb518-5c8001-fbb02d" target="_blank">coolors</a></li>
+</ul>
+<p>Anybody who worked with me previously will now know my secret to creating cute, company-themed user icons 😋</p>
+<pre><code>import Avatar from 'boring-avatars';
+
+&lt;Avatar 
+        name='Julian do Nascimento Ricardo'
+        size='180'
+        variant='sunset'
+        colors={['#FB6107', '#F3DE2C', '#7CB518', '#5C8001', '#FBB02D']}
+/&gt;</code></pre>
+
+
+
+ ]]></description>
+  <category>code</category>
+  <category>javascript</category>
+  <category>open-source</category>
+  <category>viz</category>
+  <guid>https://jdnricardo.com/posts/making-an-avatar/</guid>
+  <pubDate>Thu, 29 Aug 2024 04:00:00 GMT</pubDate>
+</item>
 <item>
   <title>Working with power outage data</title>
   <dc:creator>Julian Ricardo</dc:creator>
@@ -26,13 +62,15 @@
 <p><img src="https://jdnricardo.com/posts/eaglei/intro/Landing_eagle.png" class="preview-image img-fluid quarto-figure quarto-figure-center figure-img"></p>
 </figure>
 </div>
-<section id="pilot-episode" class="level3 page-columns page-full">
-<h3 class="anchored" data-anchor-id="pilot-episode">Pilot episode</h3>
+<section id="pilot-episode-updated-829" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="pilot-episode-updated-829">Pilot episode (updated 8/29)</h2>
 <p>This post is the first in a series where I will explore the DOE’s <a href="https://openenergyhub.ornl.gov/explore/dataset/eaglei_outages_2014/information/" target="_blank">Eagle-I dataset</a> on energy grid outages.</p>
 <p>It’s a quick one, focusing on mise en place. I’ll share some snippets of code for setting up a pipeline with the <code>targets</code> package to save compute time further downstream in the analysis, given the size of the data (available via <a href="https://figshare.com/s/417a4f147cf1357a5391?file=42547708" target="_blank">figshare</a> below). On my local machine, I will <em>definitely</em> save meaningful time by not loading the same csv multiple times. And especially during more exploratory phases of analysis, I enjoy fewer breaks for computation because I’ll stay in a flow-ier state.</p>
 <p><img src="https://jdnricardo.com/posts/eaglei/intro/large_data.jpg" class="img-fluid"></p>
+
+<div class="no-row-height column-margin column-container"><div class="">
 <p>For setup preceding the steps I’ll show, I recommend the <code>targets</code> <a href="https://books.ropensci.org/targets/walkthrough.html" target="_blank">walkthrough</a> which runs through a minimally viable project.</p>
-<p>Before showing snippets for tasks within the Eagle-I workflow, here’s the <code>_targets.R</code> script that defines connects the tasks together. On good days, and ideally always, I’ll sketch out this script before coming up with code for the component tasks. In short, I want to load <strong>one year</strong> of Eagle-I data, then create <strong>monthly summaries of outage time &amp; affected customers in every state and county</strong>. I’ve chosen 2021 for reasons we’ll get into on a future post.</p>
+</div></div><p>Before showing snippets for tasks within the Eagle-I workflow, here’s the <code>_targets.R</code> script that connects the tasks together. On good days, and ideally always, I’ll sketch out this script before coming up with code for the component tasks. In short, I want to load <strong>one year</strong> of Eagle-I data, then create <strong>monthly summaries of outage time &amp; affected customers in every state and county</strong>. I’ve chosen 2021 for reasons we’ll get into on a future post.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><span class="fu" style="color: #4758AB;
 background-color: null;
@@ -181,15 +219,15 @@ font-style: inherit;"># )</span></span>
 </div></div><iframe src="https://widgets.figshare.com/articles/24237376/embed?show_title=1" width="568" height="351" allowfullscreen="" frameborder="0">
 </iframe>
 </section>
-<section id="next-steps" class="level3">
-<h3 class="anchored" data-anchor-id="next-steps">Next steps</h3>
+<section id="next-steps" class="level2">
+<h2 class="anchored" data-anchor-id="next-steps">Next steps</h2>
 <p>In future posts, I’ll cover individual targets in use here, then compare Eagle-I data with what the Energy Information Administration (EIA) visualized in this <a href="https://www.eia.gov/todayinenergy/detail.php?id=54639" target="_blank">article</a>. For now I’ve copied the charts here for reference. The first shows how long the average customer deal with power interruptions from 2013 through 2021, split by whether a “major event” triggered the interruption.</p>
 <p><img src="https://jdnricardo.com/posts/eaglei/intro/main.svg" class="img-fluid" alt="Average duration of total annual eletric power interruptions"></p>
 <p>The second disaggregates the data further into points for each state, plotted by total interruption time (horizontal axis) and number of discrete interruptions (vertical).</p>
 <p><img src="https://jdnricardo.com/posts/eaglei/intro/chart2.svg" class="img-fluid" alt="Average total annual electric power interruption duration and frequency per customer, by state, for 2021 only"></p>
 </section>
-<section id="there-be-dragons" class="level3">
-<h3 class="anchored" data-anchor-id="there-be-dragons">There be dragons…</h3>
+<section id="there-be-dragons" class="level2">
+<h2 class="anchored" data-anchor-id="there-be-dragons">There be dragons…</h2>
 <p>With yet more installments, I’m debating whether to create a <code>golem</code>-based Shiny application or build a package for easier access to EAGLE-I data within the R universe.</p>
 <section id="stick-around-to-find-out" class="level4">
 <h4 class="anchored" data-anchor-id="stick-around-to-find-out">Stick around to find out 😸</h4>

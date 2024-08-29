@@ -1,31 +1,38 @@
 [
   {
-    "objectID": "posts/welcome/index.html",
-    "href": "posts/welcome/index.html",
-    "title": "So you’re probably wondering how I got to this post…",
+    "objectID": "posts/making-an-avatar/index.html",
+    "href": "posts/making-an-avatar/index.html",
+    "title": "Creating a personal avatar",
     "section": "",
-    "text": "First of all, welcome! This is my big break into the blogosphere, so you’re getting in on the ground floor. How exciting!\nThis is my place to get thoughts on the page, primarily in the realms of energy systems and data science. It’s also a place to showcase the skills I’ve sharpened as a professional, and mess around with tools I’d like to add to my toolset.\nThis is also a place to start paying forward the knowledge sharing I benefited from at NMR Group, where I cut my teeth as an analyst, data scientist, and eventually as a mentor to folks starting their professional journeys in R and/or in data science."
+    "text": "A really quick post to shoutout the open-source libraries I used to create what I find to be gorgeous icons, e.g. the favicon I use for my website, reproduced above in a larger size.\n\nboringavatars\ncoolors\n\nAnybody who worked with me previously will now know my secret to creating cute, company-themed user icons 😋\nimport Avatar from 'boring-avatars';\n\n&lt;Avatar \n        name='Julian do Nascimento Ricardo'\n        size='180'\n        variant='sunset'\n        colors={['#FB6107', '#F3DE2C', '#7CB518', '#5C8001', '#FBB02D']}\n/&gt;"
   },
   {
-    "objectID": "posts/eaglei/intro/index.html",
-    "href": "posts/eaglei/intro/index.html",
+    "objectID": "posts/eaglei/intro/index.html#pilot-episode-updated-829",
+    "href": "posts/eaglei/intro/index.html#pilot-episode-updated-829",
     "title": "Working with power outage data",
-    "section": "",
-    "text": "Pilot episode\nThis post is the first in a series where I will explore the DOE’s Eagle-I dataset on energy grid outages.\nIt’s a quick one, focusing on mise en place. I’ll share some snippets of code for setting up a pipeline with the targets package to save compute time further downstream in the analysis, given the size of the data (available via figshare below). On my local machine, I will definitely save meaningful time by not loading the same csv multiple times. And especially during more exploratory phases of analysis, I enjoy fewer breaks for computation because I’ll stay in a flow-ier state.\n\nFor setup preceding the steps I’ll show, I recommend the targets walkthrough which runs through a minimally viable project.\nBefore showing snippets for tasks within the Eagle-I workflow, here’s the _targets.R script that defines connects the tasks together. On good days, and ideally always, I’ll sketch out this script before coming up with code for the component tasks. In short, I want to load one year of Eagle-I data, then create monthly summaries of outage time & affected customers in every state and county. I’ve chosen 2021 for reasons we’ll get into on a future post.\n\nlist(\n  tar_target(\n    name = load_one_year,\n    command = load_eaglei_year(2021)\n  ),\n  tar_target(\n    name = state_month_hour,\n    command = summarise_mo_hr(load_one_year,\n                              c(\"state\", \"month\", \"hr\"))\n  ),\n  tar_target(\n    name = county_month_hour,\n    command = summarise_mo_hr(load_one_year,\n                              c(\"county\", \"state\", \"month\", \"hr\"))\n  )#,\n  ## IGNORE below for now\n  # tar_target(\n  #   name = ny_ecdf,\n  #   command = state_county_ecdf(county_month_hour,\n  #                               c(\"New York\"),\n  #                               c(\"Kings\", \"Erie\"))\n  # ),\n  # tar_target(\n  #   name = eia_ecdf,\n  #   command = state_ecdf(state_month_hour,\n  #                        c(\"Maine\",\n  #                          \"Texas\",\n  #                          \"West Virginia\",\n  #                          \"Mississippi\",\n  #                          \"Louisiana\",\n  #                          \"Michigan\",\n  #                          \"Kentucky\",\n  #                          \"Oregon\",\n  #                          # Least\n  #                          \"District of Columbia\",\n  #                          \"Delaware\",\n  #                          \"Florida\",\n  #                          \"North Dakota\",\n  #                          \"Nevada\"))\n  # )\n)\n\nFor the first few targets, I’ll be using the here and tidytable packages to get my work done. The load_eaglei_year function will do little more than load the right subset of outage data, and the summarise_mo_hr function will do the heavy lifting for the two other targets we’ll look at in the next installment.\n\n\nShoutout to Mark Fairbanks and the tidytable package!\n\n\n\n\nNext steps\nIn future posts, I’ll cover individual targets in use here, then compare Eagle-I data with what the Energy Information Administration (EIA) visualized in this article. For now I’ve copied the charts here for reference. The first shows how long the average customer deal with power interruptions from 2013 through 2021, split by whether a “major event” triggered the interruption.\n\nThe second disaggregates the data further into points for each state, plotted by total interruption time (horizontal axis) and number of discrete interruptions (vertical).\n\n\n\nThere be dragons…\nWith yet more installments, I’m debating whether to create a golem-based Shiny application or build a package for easier access to EAGLE-I data within the R universe.\n\nStick around to find out 😸"
+    "section": "Pilot episode (updated 8/29)",
+    "text": "Pilot episode (updated 8/29)\nThis post is the first in a series where I will explore the DOE’s Eagle-I dataset on energy grid outages.\nIt’s a quick one, focusing on mise en place. I’ll share some snippets of code for setting up a pipeline with the targets package to save compute time further downstream in the analysis, given the size of the data (available via figshare below). On my local machine, I will definitely save meaningful time by not loading the same csv multiple times. And especially during more exploratory phases of analysis, I enjoy fewer breaks for computation because I’ll stay in a flow-ier state.\n\n\n\nFor setup preceding the steps I’ll show, I recommend the targets walkthrough which runs through a minimally viable project.\nBefore showing snippets for tasks within the Eagle-I workflow, here’s the _targets.R script that connects the tasks together. On good days, and ideally always, I’ll sketch out this script before coming up with code for the component tasks. In short, I want to load one year of Eagle-I data, then create monthly summaries of outage time & affected customers in every state and county. I’ve chosen 2021 for reasons we’ll get into on a future post.\n\nlist(\n  tar_target(\n    name = load_one_year,\n    command = load_eaglei_year(2021)\n  ),\n  tar_target(\n    name = state_month_hour,\n    command = summarise_mo_hr(load_one_year,\n                              c(\"state\", \"month\", \"hr\"))\n  ),\n  tar_target(\n    name = county_month_hour,\n    command = summarise_mo_hr(load_one_year,\n                              c(\"county\", \"state\", \"month\", \"hr\"))\n  )#,\n  ## IGNORE below for now\n  # tar_target(\n  #   name = ny_ecdf,\n  #   command = state_county_ecdf(county_month_hour,\n  #                               c(\"New York\"),\n  #                               c(\"Kings\", \"Erie\"))\n  # ),\n  # tar_target(\n  #   name = eia_ecdf,\n  #   command = state_ecdf(state_month_hour,\n  #                        c(\"Maine\",\n  #                          \"Texas\",\n  #                          \"West Virginia\",\n  #                          \"Mississippi\",\n  #                          \"Louisiana\",\n  #                          \"Michigan\",\n  #                          \"Kentucky\",\n  #                          \"Oregon\",\n  #                          # Least\n  #                          \"District of Columbia\",\n  #                          \"Delaware\",\n  #                          \"Florida\",\n  #                          \"North Dakota\",\n  #                          \"Nevada\"))\n  # )\n)\n\nFor the first few targets, I’ll be using the here and tidytable packages to get my work done. The load_eaglei_year function will do little more than load the right subset of outage data, and the summarise_mo_hr function will do the heavy lifting for the two other targets we’ll look at in the next installment.\n\n\nShoutout to Mark Fairbanks and the tidytable package!"
   },
   {
-    "objectID": "eaglei.html",
-    "href": "eaglei.html",
-    "title": "Series: Eagle-Itm",
-    "section": "",
-    "text": "Working with power outage data\n\n\n\n\n\n\n\n\n\n\n\nAug 21, 2024\n\n\n6 min\n\n\n\n\n\n\nNo matching items"
+    "objectID": "posts/eaglei/intro/index.html#next-steps",
+    "href": "posts/eaglei/intro/index.html#next-steps",
+    "title": "Working with power outage data",
+    "section": "Next steps",
+    "text": "Next steps\nIn future posts, I’ll cover individual targets in use here, then compare Eagle-I data with what the Energy Information Administration (EIA) visualized in this article. For now I’ve copied the charts here for reference. The first shows how long the average customer deal with power interruptions from 2013 through 2021, split by whether a “major event” triggered the interruption.\n\nThe second disaggregates the data further into points for each state, plotted by total interruption time (horizontal axis) and number of discrete interruptions (vertical)."
   },
   {
-    "objectID": "archive.html",
-    "href": "archive.html",
-    "title": "Archive",
+    "objectID": "posts/eaglei/intro/index.html#there-be-dragons",
+    "href": "posts/eaglei/intro/index.html#there-be-dragons",
+    "title": "Working with power outage data",
+    "section": "There be dragons…",
+    "text": "There be dragons…\nWith yet more installments, I’m debating whether to create a golem-based Shiny application or build a package for easier access to EAGLE-I data within the R universe.\n\nStick around to find out 😸"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Who am I?",
     "section": "",
-    "text": "Working with power outage data\n\n\n\n\n\n\n\n\nAug 21, 2024\n\n\n\n\n\n\n\nHosting internal R packages on r-universe\n\n\n\n\n\n\n\n\nAug 15, 2024\n\n\n\n\n\n\n\nSo you’re probably wondering how I got to this post…\n\n\n\n\n\n\n\n\nAug 15, 2024\n\n\n\n\n\n\nNo matching items"
+    "text": "I’m many things: data scientist, environmental engineer, son, brother, Brooklynite, runner, and trivia enthusiast. My specialties are understanding complex systems, especially involving energy & material flows, then developing reproducible models of them and turning results into actionable findings. I’m also motivated to mentor data scientists and grow organizations’ analytic abilities.\nProfessionally, I’m a multi-lingual analyst with domain expertise in energy efficiency, data science, and program evaluation. I have consulted for energy & utilities clients, written peer-reviewed papers, and helped to grow analysis teams using R & Python.\nMy academic background is in physics, environmental engineering, and Spanish. Outside of coursework, I have also learned how to be a skilled educator, mostly by listening and being attentive to how others learn."
   },
   {
     "objectID": "blog.html",
@@ -42,11 +49,18 @@
     "text": "These posts run through ETL of Eagle-ITM data from the Department of Energy and comparison with other data sources."
   },
   {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Who am I?",
+    "objectID": "archive.html",
+    "href": "archive.html",
+    "title": "Archive",
     "section": "",
-    "text": "I’m many things: data scientist, environmental engineer, son, brother, Brooklynite, runner, and trivia enthusiast. My specialties are understanding complex systems, especially involving energy & material flows, then developing reproducible models of them and turning results into actionable findings. I’m also motivated to mentor data scientists and grow organizations’ analytic abilities.\nProfessionally, I’m a multi-lingual analyst with domain expertise in energy efficiency, data science, and program evaluation. I have consulted for energy & utilities clients, written peer-reviewed papers, and helped to grow analysis teams using R & Python.\nMy academic background is in physics, environmental engineering, and Spanish. Outside of coursework, I have also learned how to be a skilled educator, mostly by listening and being attentive to how others learn."
+    "text": "Creating a personal avatar\n\n\n\n\n\n\n\n\nAug 29, 2024\n\n\n\n\n\n\n\nWorking with power outage data\n\n\n\n\n\n\n\n\nAug 21, 2024\n\n\n\n\n\n\n\nHosting internal R packages on r-universe\n\n\n\n\n\n\n\n\nAug 15, 2024\n\n\n\n\n\n\n\nSo you’re probably wondering how I got to this post…\n\n\n\n\n\n\n\n\nAug 15, 2024\n\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "eaglei.html",
+    "href": "eaglei.html",
+    "title": "Series: Eagle-Itm",
+    "section": "",
+    "text": "Working with power outage data\n\n\n\n\n\n\n\n\n\n\n\nAug 21, 2024\n\n\n6 min\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "posts/internal-pkg-r-universe/index.html",
@@ -54,5 +68,12 @@
     "title": "Hosting internal R packages on r-universe",
     "section": "",
     "text": "This post attempts to replicate stock analysis with the coreStatsNMR package, available via the NMR Group r-universe. Specifically, using the statsTable function outlined in this post.\nFirst, downloading the library using the custom repos argument to point to the r-universe: install.packages(\"coreStatsNMR\", repos = c(\"https://nmrgroup.r-universe.dev\", \"https://cloud.r-project.org\"))\n\nlibrary(coreStatsNMR)\n\n\nAttaching package: 'coreStatsNMR'\n\n\nThe following object is masked from 'package:base':\n\n    mode\n\nlibrary(dplyr)\n\n\nAttaching package: 'dplyr'\n\n\nThe following objects are masked from 'package:stats':\n\n    filter, lag\n\n\nThe following objects are masked from 'package:base':\n\n    intersect, setdiff, setequal, union\n\nstatsTable(data = iris,\n           summVar = \"Sepal.Length\",\n           groupVar = \"Species\",\n           stats = c(\"n\", \"min\", \"max\", \"mean\", \"weighted.mean\", \"median\", \"sd\", \"iqr\", \"cv\"),\n           accuracy = 0.01,\n           drop0trailing = TRUE) %&gt;% \n  knitr::kable()\n\nWarning in statsTable.data.frame(data = iris, summVar = \"Sepal.Length\", : Using placeholder weights of 1 for all data\n\n\n\n\n\nstat\nsetosa\nversicolor\nvirginica\nTotal\n\n\n\n\nn\n50\n50\n50\n150\n\n\nmin\n4.30\n4.90\n4.90\n4.30\n\n\nmax\n5.80\n7.00\n7.90\n7.90\n\n\nmean\n5.01\n5.94\n6.59\n5.84\n\n\nweighted.mean\n5.01\n5.94\n6.59\n5.84\n\n\nmedian\n5.00\n5.90\n6.50\n5.80\n\n\nsd\n0.35\n0.52\n0.64\n0.83\n\n\niqr\n0.40\n0.70\n0.67\n1.30\n\n\ncv\n0.07\n0.09\n0.10\n0.14\n\n\n\n\n\n\nSo what?\nYay! We can run summary statistics on stock R data with our own package. Why do this? We already can write expressive pipelines with various packages: dplyr, data.table, collapse, or polars. The added value of a DIY function is not apparent, especially if it’s using those packages underneath.\nHowever, for a consulting firm, such as my previous employer, there is value in creating wrapped versions of the stock coreStats functions which incorporate project/client constraints and documentation. That way, the core functions’ focus can be on being very good in a narrow scope (for each function), but they can be combined and/or extended via wrappers for projects and/or specific, repetitive applications. This does assume time is invested in designing them to play nicely with one another, and maintaining these conditions as the codebase evolves. Having shareable “core” functions separate from “project code” allows the firm to tap into additional marketing value as well, i.e. more-visibly participating in open-source software (OSS) development.\nInternal and/or public packages are also ways to embed invaluable organizational knowledge, e.g. in a package’s testing suite, warnings, errors, and documentation. Of course, embedding this knowledge requires caution so that only the sources/methods/etc appropriate for public use are exposed in public repos like the r-universe."
+  },
+  {
+    "objectID": "posts/welcome/index.html",
+    "href": "posts/welcome/index.html",
+    "title": "So you’re probably wondering how I got to this post…",
+    "section": "",
+    "text": "First of all, welcome! This is my big break into the blogosphere, so you’re getting in on the ground floor. How exciting!\nThis is my place to get thoughts on the page, primarily in the realms of energy systems and data science. It’s also a place to showcase the skills I’ve sharpened as a professional, and mess around with tools I’d like to add to my toolset.\nThis is also a place to start paying forward the knowledge sharing I benefited from at NMR Group, where I cut my teeth as an analyst, data scientist, and eventually as a mentor to folks starting their professional journeys in R and/or in data science."
   }
 ]

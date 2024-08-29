@@ -1,31 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://jdnricardo.com/posts/welcome/index.html</loc>
-    <lastmod>2024-08-15T18:57:44.506Z</lastmod>
+    <loc>https://jdnricardo.com/posts/making-an-avatar/index.html</loc>
+    <lastmod>2024-08-29T16:25:11.997Z</lastmod>
   </url>
   <url>
     <loc>https://jdnricardo.com/posts/eaglei/intro/index.html</loc>
-    <lastmod>2024-08-23T16:40:07.761Z</lastmod>
+    <lastmod>2024-08-29T16:23:02.490Z</lastmod>
   </url>
   <url>
-    <loc>https://jdnricardo.com/eaglei.html</loc>
-    <lastmod>2024-08-21T14:53:30.830Z</lastmod>
-  </url>
-  <url>
-    <loc>https://jdnricardo.com/archive.html</loc>
-    <lastmod>2024-08-15T15:13:58.911Z</lastmod>
+    <loc>https://jdnricardo.com/index.html</loc>
+    <lastmod>2024-08-29T16:09:23.363Z</lastmod>
   </url>
   <url>
     <loc>https://jdnricardo.com/blog.html</loc>
     <lastmod>2024-08-21T20:21:55.395Z</lastmod>
   </url>
   <url>
-    <loc>https://jdnricardo.com/index.html</loc>
-    <lastmod>2024-08-21T13:27:15.426Z</lastmod>
+    <loc>https://jdnricardo.com/archive.html</loc>
+    <lastmod>2024-08-15T15:13:58.911Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jdnricardo.com/eaglei.html</loc>
+    <lastmod>2024-08-21T14:53:30.830Z</lastmod>
   </url>
   <url>
     <loc>https://jdnricardo.com/posts/internal-pkg-r-universe/index.html</loc>
     <lastmod>2024-08-15T20:03:02.825Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jdnricardo.com/posts/welcome/index.html</loc>
+    <lastmod>2024-08-15T18:57:44.506Z</lastmod>
   </url>
 </urlset>

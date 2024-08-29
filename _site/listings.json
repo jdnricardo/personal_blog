@@ -1,24 +1,26 @@
 [
   {
-    "listing": "/eaglei.html",
+    "listing": "/blog.html",
     "items": [
-      "/posts/eaglei/intro/index.html"
+      "/posts/making-an-avatar/index.html",
+      "/posts/eaglei/intro/index.html",
+      "/posts/internal-pkg-r-universe/index.html",
+      "/posts/welcome/index.html"
     ]
   },
   {
     "listing": "/archive.html",
     "items": [
+      "/posts/making-an-avatar/index.html",
       "/posts/eaglei/intro/index.html",
       "/posts/internal-pkg-r-universe/index.html",
       "/posts/welcome/index.html"
     ]
   },
   {
-    "listing": "/blog.html",
+    "listing": "/eaglei.html",
     "items": [
-      "/posts/eaglei/intro/index.html",
-      "/posts/internal-pkg-r-universe/index.html",
-      "/posts/welcome/index.html"
+      "/posts/eaglei/intro/index.html"
     ]
   }
 ]

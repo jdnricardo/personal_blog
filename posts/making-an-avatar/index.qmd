@@ -1,0 +1,27 @@
+---
+title: "Creating a personal avatar"
+date: "today"
+categories: [code, javascript, open-source, viz]
+execute: 
+  eval: false
+---
+
+![](boringavatars.png){.preview-image}
+
+A really quick post to shoutout the open-source libraries I used to create what I find to be gorgeous icons, e.g. the favicon I use for my website, reproduced above in a larger size.
+
+-   [boringavatars](https://boringavatars.com/){target="_blank"}
+-   [coolors](https://coolors.co/palette/fb6107-f3de2c-7cb518-5c8001-fbb02d){target="_blank"}
+
+Anybody who worked with me previously will now know my secret to creating cute, company-themed user icons 😋
+
+```         
+import Avatar from 'boring-avatars';
+
+<Avatar 
+        name='Julian do Nascimento Ricardo'
+        size='180'
+        variant='sunset'
+        colors={['#FB6107', '#F3DE2C', '#7CB518', '#5C8001', '#FBB02D']}
+/>
+```

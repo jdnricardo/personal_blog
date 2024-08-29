@@ -8,7 +8,7 @@ execute:
 
 ![](Landing_eagle.png){.preview-image fig-align="center"}
 
-### Pilot episode
+## Pilot episode (updated 8/29)
 
 This post is the first in a series where I will explore the DOE's [Eagle-I dataset](https://openenergyhub.ornl.gov/explore/dataset/eaglei_outages_2014/information/){target="_blank"} on energy grid outages.
 
@@ -16,9 +16,11 @@ It's a quick one, focusing on mise en place. I'll share some snippets of code fo
 
 ![](large_data.jpg)
 
+::: column-margin
 For setup preceding the steps I'll show, I recommend the `targets` [walkthrough](https://books.ropensci.org/targets/walkthrough.html){target="_blank"} which runs through a minimally viable project.
+:::
 
-Before showing snippets for tasks within the Eagle-I workflow, here's the `_targets.R` script that defines connects the tasks together. On good days, and ideally always, I'll sketch out this script before coming up with code for the component tasks. In short, I want to load **one year** of Eagle-I data, then create **monthly summaries of outage time & affected customers in every state and county**. I've chosen 2021 for reasons we'll get into on a future post.
+Before showing snippets for tasks within the Eagle-I workflow, here's the `_targets.R` script that connects the tasks together. On good days, and ideally always, I'll sketch out this script before coming up with code for the component tasks. In short, I want to load **one year** of Eagle-I data, then create **monthly summaries of outage time & affected customers in every state and county**. I've chosen 2021 for reasons we'll get into on a future post.
 
 ```{r}
 list(
@@ -74,7 +76,7 @@ Shoutout to Mark Fairbanks and the `tidytable` [package](https://markfairbanks.g
 
 </iframe>
 
-### Next steps
+## Next steps
 
 In future posts, I'll cover individual targets in use here, then compare Eagle-I data with what the Energy Information Administration (EIA) visualized in this [article](https://www.eia.gov/todayinenergy/detail.php?id=54639){target="_blank"}. For now I've copied the charts here for reference. The first shows how long the average customer deal with power interruptions from 2013 through 2021, split by whether a "major event" triggered the interruption.
 
@@ -84,7 +86,7 @@ The second disaggregates the data further into points for each state, plotted by
 
 ![](chart2.svg){fig-alt="Average total annual electric power interruption duration and frequency per customer, by state, for 2021 only"}
 
-### There be dragons...
+## There be dragons...
 
 With yet more installments, I'm debating whether to create a `golem`-based Shiny application or build a package for easier access to EAGLE-I data within the R universe.
 

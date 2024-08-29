@@ -4,6 +4,7 @@ project:
 website:
   title: "Julian Ricardo"
   site-url: https://jdnricardo.com
+  favicon: favicon.svg
   navbar:
     left:
       - text: Posts
