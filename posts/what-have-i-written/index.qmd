@@ -1,0 +1,23 @@
+---
+title: "How to: sample my writing"
+date: "2024-08-15"
+categories: [pub, reflection]
+draft: true
+---
+
+![](seal_hello.jpg){.preview-image}
+
+Surprise! Not every post will involve diving into code, for various reasons:
+
+- I need to work on writing about other topics
+- Potential employers need to know I'm not replaceable even if AI takes over all coding responsibilities
+- I contain multitudes!
+
+I'm starting off with a compilation of articles, reports, etc. that I have contributed to academically or professionally. I suppose no matter what it's a selfish exercise to take on, but especially as a consultant, not everything I wrote, analyzed, etc. ended up with my name attached to it. This way I can at least assemble all (or most!) of the relevant links in one place.
+
+Starting things off strong, I wrote an [article](https://digitalshowcase.lynchburg.edu/jaupli-b/vol3/iss1/1/) about modeling volleyball spin and the Magnus effect while I was an undergraduate physics student.
+
+> Ricardo, Julian (2014) "Modeling the Motion of a Volleyball with Spin," The Journal of Advanced Undergraduate Physics Laboratory Investigations, JAUPLI-B: Vol. 3, Article 1.
+Available at: https://digitalshowcase.lynchburg.edu/jaupli-b/vol3/iss1/1
+
+

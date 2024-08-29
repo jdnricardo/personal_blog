@@ -1,0 +1,38 @@
+---
+title: "Aligning with EIA's metrics"
+date: "today"
+categories: [code, energy, eaglei]
+execute: 
+  eval: false
+draft: true
+---
+
+## Assembling the tools
+
+This post, once complete, will be the second in a series exploring the DOE's [Eagle-I dataset](https://openenergyhub.ornl.gov/explore/dataset/eaglei_outages_2014/information/){target="_blank"} on energy grid outages. See previous posts here: [first](../intro/index.html){target="_blank"}
+
+However, before going further, it's worth digressing to pause and discuss differences in the data available from Eagle-I and the data the Energy Information Administration (EIA) data uses to visualize Americans' experiences with power outages, in this [article](https://www.eia.gov/todayinenergy/detail.php?id=54639){target="_blank"}. 
+
+The main EIA metrics of interest are the System Average Interruption Duration Index (SAIDI) & System Average Interruption Frequency Index (SAIFI). In the article's second figure (copied below), SAIDI and SAIFI show up on the horizontal and vertical axes, respectively.
+
+::: column-margin
+For a quick-hit understanding, check the [EIA's video guide](https://youtu.be/oVH9L0fCMTU){target="_blank"}
+:::
+
+![](../intro/chart2.svg){fig-alt="Average total annual electric power interruption duration and frequency per customer, by state, for 2021 only"}
+
+All ths background to say that SAIDI divides the number of customers affected by an outage by the number of customers in the system. **We do not have the latter available to us in Eagle-I**, so for the sake of this exercise, I will pull in county-level population data from the `tidycensus` [package](https://walker-data.com/tidycensus/){target="_blank"}, and see how closely we can replicate the EIA's published values.
+
+::: column-margin
+As always, there are important assumptions embedded in our assumptions. Here, we're assuming everyone in every county in the US is connected to the grid, or "in the system", to use the EIA's language. Not sure I like the sound of "in the system", but alas, we're stuck with the term.
+:::
+
+## Quantifying who's "in the system"
+
+## Calculating SAIDI
+
+## Calculating SAIFI
+
+## Sensitivity to state vs. county level
+
+## Wrapping up
