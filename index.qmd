@@ -10,7 +10,9 @@ about:
     - icon: github
       text: Github
       href: https://github.com/jdnricardo
-
+format: 
+  html: 
+    include-in-header: ./header.html
 ---
 
 I'm many things: data scientist, environmental engineer, son, brother, Brooklynite, runner, and trivia enthusiast. My specialties are understanding complex systems, especially involving energy & material flows, then developing reproducible models of them and turning results into actionable findings. I'm also motivated to mentor data scientists and grow organizations' analytic abilities.
