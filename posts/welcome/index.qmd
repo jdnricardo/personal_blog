@@ -2,6 +2,9 @@
 title: "So you're probably wondering how I got to this post..."
 date: "2024-08-15"
 categories: [news]
+format: 
+  html: 
+    include-in-header: ./header.html
 ---
 
 ![](seal_hello.jpg){.preview-image}

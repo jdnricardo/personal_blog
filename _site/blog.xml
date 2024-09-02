@@ -10,7 +10,7 @@
 <atom:link href="https://jdnricardo.com/blog.xml" rel="self" type="application/rss+xml"/>
 <description></description>
 <generator>quarto-1.4.555</generator>
-<lastBuildDate>Thu, 29 Aug 2024 04:00:00 GMT</lastBuildDate>
+<lastBuildDate>Mon, 02 Sep 2024 04:00:00 GMT</lastBuildDate>
 <item>
   <title>Creating a personal avatar</title>
   <dc:creator>Julian Ricardo</dc:creator>
@@ -45,7 +45,7 @@
   <category>open-source</category>
   <category>viz</category>
   <guid>https://jdnricardo.com/posts/making-an-avatar/</guid>
-  <pubDate>Thu, 29 Aug 2024 04:00:00 GMT</pubDate>
+  <pubDate>Mon, 02 Sep 2024 04:00:00 GMT</pubDate>
 </item>
 <item>
   <title>Working with power outage data</title>
