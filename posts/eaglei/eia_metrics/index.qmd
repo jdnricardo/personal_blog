@@ -4,12 +4,11 @@ date: "today"
 categories: [code, energy, eaglei]
 execute: 
   eval: false
-draft: true
 ---
 
 ## Assembling the tools
 
-This post, once complete, will be the second in a series exploring the DOE's [Eagle-I dataset](https://openenergyhub.ornl.gov/explore/dataset/eaglei_outages_2014/information/){target="_blank"} on energy grid outages. See previous posts here: [first](../intro/index.html){target="_blank"}
+This post is the second in a series exploring the DOE's [Eagle-I dataset](https://openenergyhub.ornl.gov/explore/dataset/eaglei_outages_2014/information/){target="_blank"} on energy grid outages. See previous posts here: [first](../intro/index.html){target="_blank"}
 
 However, before going further, it's worth digressing to pause and discuss differences in the data available from Eagle-I and the data the Energy Information Administration (EIA) data uses to visualize Americans' experiences with power outages, in this [article](https://www.eia.gov/todayinenergy/detail.php?id=54639){target="_blank"}. 
 
@@ -27,12 +26,51 @@ All ths background to say that SAIDI divides the number of customers affected by
 As always, there are important assumptions embedded in our assumptions. Here, we're assuming everyone in every county in the US is connected to the grid, or "in the system", to use the EIA's language. Not sure I like the sound of "in the system", but alas, we're stuck with the term.
 :::
 
-## Quantifying who's "in the system"
-
 ## Calculating SAIDI
 
-## Calculating SAIFI
+Here's an example of a function that takes our 15min-interval Eagle-I data and calculates a SAIDI metric. It's a single `mutate` call but we can give it a meaningful name so it's easier to understand what the targets pipeline is doing.
 
-## Sensitivity to state vs. county level
+```{r, eval=FALSE}
+calc_saidi <- function(eaglei_df,
+                       # Time intervals are 15min per documentation, or 0.25h
+                       data_interval = as.numeric(15, units = "minutes")) {
+  eaglei_df %>%
+    # This step assumes that all county residents are on the grid. Neither the
+    # outage data nor the population data is split by utility territory
+    mutate(saidi = customers_out * data_interval / county_pop)
+}
+```
 
-## Wrapping up
+In `_targets.R`, we call the function in its own target, using the feature-enhanced Eagle-I dataset in the preceding target.
+
+```{r}
+list(
+  # Targets before...,
+  tar_target(
+    name = add_features,
+    command = add_outage_id(states_eaglei) %>% 
+      join_eaglei_census(states_census)
+  ),
+  tar_target(
+    name = saidi_calcs,
+    command = calc_saidi(add_features)
+  ),
+  tar_target(
+    name = county_outage_saidi,
+    command = saidi_calcs %>% 
+      ## Create a summary row for each outage in each state/county
+      summarise(saidi = sum(saidi),
+                outage_interval = {
+                  max(run_start_time) - min(run_start_time)
+                  } %>% 
+                  as.difftime() %>% 
+                  as.numeric(units = "hours"),
+                .by = c(state, county, outage_id))
+  )
+  # Targets after...
+)
+```
+
+The SAIFI of an event is the fraction of customers affected, i.e. taking the SAIDI and dividing out the duration term. This calculation would look similar to the SAIDI mutate call, but we'd calculate it on a per-event basis.
+
+I will continue to document my work via blog post, but you can follow in near real-time directly on [GitHub]().
