@@ -73,4 +73,4 @@ list(
 
 The SAIFI of an event is the fraction of customers affected, i.e. taking the SAIDI and dividing out the duration term. This calculation would look similar to the SAIDI mutate call, but we'd calculate it on a per-event basis.
 
-I will continue to document my work via blog post, but you can follow in near real-time directly on [GitHub]().
+I will continue to document my work via blog post, but you can follow commits to the underlying [repo](https://github.com/jdnricardo/eaglei_outages) as well!
