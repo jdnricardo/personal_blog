@@ -2,6 +2,7 @@
   {
     "listing": "/blog.html",
     "items": [
+      "/posts/eaglei/eia_metrics/index.html",
       "/posts/making-an-avatar/index.html",
       "/posts/eaglei/intro/index.html",
       "/posts/internal-pkg-r-universe/index.html",
@@ -11,6 +12,7 @@
   {
     "listing": "/archive.html",
     "items": [
+      "/posts/eaglei/eia_metrics/index.html",
       "/posts/making-an-avatar/index.html",
       "/posts/eaglei/intro/index.html",
       "/posts/internal-pkg-r-universe/index.html",
@@ -20,6 +22,7 @@
   {
     "listing": "/eaglei.html",
     "items": [
+      "/posts/eaglei/eia_metrics/index.html",
       "/posts/eaglei/intro/index.html"
     ]
   }

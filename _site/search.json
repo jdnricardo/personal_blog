@@ -53,14 +53,35 @@
     "href": "archive.html",
     "title": "Archive",
     "section": "",
-    "text": "Creating a personal avatar\n\n\n\n\n\n\n\n\nSep 2, 2024\n\n\n\n\n\n\n\nWorking with power outage data\n\n\n\n\n\n\n\n\nAug 21, 2024\n\n\n\n\n\n\n\nHosting internal R packages on r-universe\n\n\n\n\n\n\n\n\nAug 15, 2024\n\n\n\n\n\n\n\nSo you’re probably wondering how I got to this post…\n\n\n\n\n\n\n\n\nAug 15, 2024\n\n\n\n\n\n\nNo matching items"
+    "text": "Aligning with EIA’s metrics\n\n\n\n\n\n\n\n\nOct 10, 2024\n\n\n\n\n\n\n\nCreating a personal avatar\n\n\n\n\n\n\n\n\nOct 10, 2024\n\n\n\n\n\n\n\nWorking with power outage data\n\n\n\n\n\n\n\n\nAug 21, 2024\n\n\n\n\n\n\n\nHosting internal R packages on r-universe\n\n\n\n\n\n\n\n\nAug 15, 2024\n\n\n\n\n\n\n\nSo you’re probably wondering how I got to this post…\n\n\n\n\n\n\n\n\nAug 15, 2024\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "eaglei.html",
     "href": "eaglei.html",
     "title": "Series: Eagle-Itm",
     "section": "",
-    "text": "Working with power outage data\n\n\n\n\n\n\n\n\n\n\n\nAug 21, 2024\n\n\n6 min\n\n\n\n\n\n\nNo matching items"
+    "text": "Aligning with EIA’s metrics\n\n\n\n\n\n\n\n\n\n\n\nOct 10, 2024\n\n\n4 min\n\n\n\n\n\n\n\nWorking with power outage data\n\n\n\n\n\n\n\n\n\n\n\nAug 21, 2024\n\n\n6 min\n\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "posts/eaglei/eia_metrics/index.html",
+    "href": "posts/eaglei/eia_metrics/index.html",
+    "title": "Aligning with EIA’s metrics",
+    "section": "",
+    "text": "This post is the second in a series exploring the DOE’s Eagle-I dataset on energy grid outages. See previous posts here: first\nHowever, before going further, it’s worth digressing to pause and discuss differences in the data available from Eagle-I and that the Energy Information Administration (EIA) uses to visualize people’s experiences with power outages, in this article.\nThe main EIA metrics of interest are the System Average Interruption Duration Index (SAIDI) & System Average Interruption Frequency Index (SAIFI). In the article’s second figure (copied below), SAIDI and SAIFI show up on the horizontal and vertical axes, respectively.\n\n\nFor a quick-hit understanding, check the EIA’s video guide\n\nAll ths background to say that SAIDI divides the number of customers affected by an outage by the number of customers in the system. We do not have the latter available to us in Eagle-I, so for the sake of this exercise, I will pull in county-level population data from the tidycensus package, and see how closely we can replicate the EIA’s published values.\n\n\nAs always, there are important assumptions embedded in our assumptions. Here, we’re assuming everyone in every county in the US is connected to the grid, or “in the system”, to use the EIA’s language. Not sure I like the sound of “in the system”, but alas, we’re stuck with the term."
+  },
+  {
+    "objectID": "posts/eaglei/eia_metrics/index.html#assembling-the-tools",
+    "href": "posts/eaglei/eia_metrics/index.html#assembling-the-tools",
+    "title": "Aligning with EIA’s metrics",
+    "section": "",
+    "text": "This post is the second in a series exploring the DOE’s Eagle-I dataset on energy grid outages. See previous posts here: first\nHowever, before going further, it’s worth digressing to pause and discuss differences in the data available from Eagle-I and that the Energy Information Administration (EIA) uses to visualize people’s experiences with power outages, in this article.\nThe main EIA metrics of interest are the System Average Interruption Duration Index (SAIDI) & System Average Interruption Frequency Index (SAIFI). In the article’s second figure (copied below), SAIDI and SAIFI show up on the horizontal and vertical axes, respectively.\n\n\nFor a quick-hit understanding, check the EIA’s video guide\n\nAll ths background to say that SAIDI divides the number of customers affected by an outage by the number of customers in the system. We do not have the latter available to us in Eagle-I, so for the sake of this exercise, I will pull in county-level population data from the tidycensus package, and see how closely we can replicate the EIA’s published values.\n\n\nAs always, there are important assumptions embedded in our assumptions. Here, we’re assuming everyone in every county in the US is connected to the grid, or “in the system”, to use the EIA’s language. Not sure I like the sound of “in the system”, but alas, we’re stuck with the term."
+  },
+  {
+    "objectID": "posts/eaglei/eia_metrics/index.html#calculating-saidi",
+    "href": "posts/eaglei/eia_metrics/index.html#calculating-saidi",
+    "title": "Aligning with EIA’s metrics",
+    "section": "Calculating SAIDI",
+    "text": "Calculating SAIDI\nHere’s an example of a function that takes our 15min-interval Eagle-I data and calculates a SAIDI metric. It’s a single mutate call but we can give it a meaningful name so it’s easier to understand what the targets pipeline is doing.\n\ncalc_saidi &lt;- function(eaglei_df,\n                       # Time intervals are 15min per documentation, or 0.25h\n                       data_interval = as.numeric(15, units = \"minutes\")) {\n  eaglei_df %&gt;%\n    # This step assumes that all county residents are on the grid. Neither the\n    # outage data nor the population data is split by utility territory\n    mutate(saidi = customers_out * data_interval / county_pop)\n}\n\nSee the screengrab below for sample output from this function: .\nIn _targets.R, we call the function in its own target, using the feature-enhanced Eagle-I dataset in the preceding target.\n\nlist(\n  # Targets before...,\n  tar_target(\n    name = add_features,\n    command = add_outage_id(states_eaglei) %&gt;% \n      join_eaglei_census(states_census)\n  ),\n  tar_target(\n    name = saidi_calcs_by_min,\n    command = calc_saidi(add_features)\n  ),\n  tar_target(\n    name = county_outage_saidi,\n    command = saidi_calcs_by_min %&gt;% \n      ## Create a summary row for each outage in each state/county\n      summarise(saidi = sum(saidi),\n                outage_interval = {\n                  max(run_start_time) - min(run_start_time)\n                } %&gt;% \n                  as.difftime() %&gt;% \n                  as.numeric(units = \"hours\"),\n                .by = c(state, county, outage_id))\n  )\n  # Targets after...\n)\n\nThe SAIFI of an event is the fraction of customers affected, i.e. taking the SAIDI and dividing out the duration term. This calculation would look similar to the SAIDI mutate call, but we’d calculate it on a per-event basis.\nThis screengrab, showing output from the last target listed, confirms we should have all the building blocks necessary to calculate the SAIFI of each outage. \nI will continue to document my work via blog post, but you can follow commits to the underlying repo as well!"
   },
   {
     "objectID": "posts/internal-pkg-r-universe/index.html",

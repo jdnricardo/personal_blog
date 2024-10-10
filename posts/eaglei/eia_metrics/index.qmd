@@ -10,7 +10,7 @@ execute:
 
 This post is the second in a series exploring the DOE's [Eagle-I dataset](https://openenergyhub.ornl.gov/explore/dataset/eaglei_outages_2014/information/){target="_blank"} on energy grid outages. See previous posts here: [first](../intro/index.html){target="_blank"}
 
-However, before going further, it's worth digressing to pause and discuss differences in the data available from Eagle-I and the data the Energy Information Administration (EIA) data uses to visualize Americans' experiences with power outages, in this [article](https://www.eia.gov/todayinenergy/detail.php?id=54639){target="_blank"}. 
+However, before going further, it's worth digressing to pause and discuss differences in the data available from Eagle-I and that the Energy Information Administration (EIA) uses to visualize people's experiences with power outages, in this [article](https://www.eia.gov/todayinenergy/detail.php?id=54639){target="_blank"}. 
 
 The main EIA metrics of interest are the System Average Interruption Duration Index (SAIDI) & System Average Interruption Frequency Index (SAIFI). In the article's second figure (copied below), SAIDI and SAIFI show up on the horizontal and vertical axes, respectively.
 
@@ -41,6 +41,8 @@ calc_saidi <- function(eaglei_df,
 }
 ```
 
+See the screengrab below for sample output from this function: ![](./sample_saidi_min.png){fig-alt="Console output in R showing five rows with the calculated SAIDI metric"}.
+
 In `_targets.R`, we call the function in its own target, using the feature-enhanced Eagle-I dataset in the preceding target.
 
 ```{r}
@@ -52,17 +54,17 @@ list(
       join_eaglei_census(states_census)
   ),
   tar_target(
-    name = saidi_calcs,
+    name = saidi_calcs_by_min,
     command = calc_saidi(add_features)
   ),
   tar_target(
     name = county_outage_saidi,
-    command = saidi_calcs %>% 
+    command = saidi_calcs_by_min %>% 
       ## Create a summary row for each outage in each state/county
       summarise(saidi = sum(saidi),
                 outage_interval = {
                   max(run_start_time) - min(run_start_time)
-                  } %>% 
+                } %>% 
                   as.difftime() %>% 
                   as.numeric(units = "hours"),
                 .by = c(state, county, outage_id))
@@ -72,5 +74,7 @@ list(
 ```
 
 The SAIFI of an event is the fraction of customers affected, i.e. taking the SAIDI and dividing out the duration term. This calculation would look similar to the SAIDI mutate call, but we'd calculate it on a per-event basis.
+
+This screengrab, showing output from the last target listed, confirms we should have all the building blocks necessary to calculate the SAIFI of each outage. ![](sample_saidi.png){fig-alt="Console output in R showing five rows with one row per outage, showing the SAIDI and total outage duration (in hours) for each"}
 
 I will continue to document my work via blog post, but you can follow commits to the underlying [repo](https://github.com/jdnricardo/eaglei_outages) as well!
