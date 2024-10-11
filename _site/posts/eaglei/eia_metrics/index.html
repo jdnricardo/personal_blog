@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Julian Ricardo">
-<meta name="dcterms.date" content="2024-10-10">
+<meta name="dcterms.date" content="2024-10-11">
 
 <title>Aligning with EIA’s metrics – Julian Ricardo</title>
 <style>
@@ -186,7 +186,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">October 10, 2024</p>
+        <p class="date">October 11, 2024</p>
       </div>
     </div>
     
@@ -204,6 +204,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul>
   <li><a href="#assembling-the-tools" id="toc-assembling-the-tools" class="nav-link active" data-scroll-target="#assembling-the-tools">Assembling the tools</a></li>
   <li><a href="#calculating-saidi" id="toc-calculating-saidi" class="nav-link" data-scroll-target="#calculating-saidi">Calculating SAIDI</a></li>
+  <li><a href="#saifi-caidi" id="toc-saifi-caidi" class="nav-link" data-scroll-target="#saifi-caidi">SAIFI &amp; CAIDI</a></li>
   </ul>
 </nav>
     </div>
@@ -218,7 +219,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="assembling-the-tools">Assembling the tools</h2>
 <p>This post is the second in a series exploring the DOE’s <a href="https://openenergyhub.ornl.gov/explore/dataset/eaglei_outages_2014/information/" target="_blank">Eagle-I dataset</a> on energy grid outages. See previous posts here: <a href="../intro/index.html" target="_blank">first</a></p>
 <p>However, before going further, it’s worth digressing to pause and discuss differences in the data available from Eagle-I and that the Energy Information Administration (EIA) uses to visualize people’s experiences with power outages, in this <a href="https://www.eia.gov/todayinenergy/detail.php?id=54639" target="_blank">article</a>.</p>
-<p>The main EIA metrics of interest are the System Average Interruption Duration Index (SAIDI) &amp; System Average Interruption Frequency Index (SAIFI). In the article’s second figure (copied below), SAIDI and SAIFI show up on the horizontal and vertical axes, respectively.</p>
+<p>The main EIA metrics of interest include multiple “duration” indices, and one “frequency” index:</p>
+<ul>
+<li>System Average Interruption Duration Index (SAIDI),</li>
+<li>System Average Interruption Frequency Index (SAIFI), and</li>
+<li>Customer Average Interruption Duration Index (CAIDI).</li>
+</ul>
+<p>In the article’s second figure (copied below), SAIDI and SAIFI show up on the horizontal and vertical axes, respectively.</p>
 
 <div class="no-row-height column-margin column-container"><div class="">
 <p>For a quick-hit understanding, check the <a href="https://youtu.be/oVH9L0fCMTU" target="_blank">EIA’s video guide</a></p>
@@ -230,49 +237,66 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div></div></section>
 <section id="calculating-saidi" class="level2">
 <h2 class="anchored" data-anchor-id="calculating-saidi">Calculating SAIDI</h2>
-<p>Here’s an example of a function that takes our 15min-interval Eagle-I data and calculates a SAIDI metric. It’s a single <code>mutate</code> call but we can give it a meaningful name so it’s easier to understand what the targets pipeline is doing.</p>
+<p>Here’s an example of a function that takes our 15min-interval Eagle-I data and calculates a SAIDI metric. Along the way, it creates a variable for the numerator in the SAIDI formula (total number of customer hours without power), joins the necessary census data for the denominator, then converts time intervals into the proper units for SAIDI in the concluding <code>mutate</code> call. Giving the function a meaningful name will make it easier to understand what the targets pipeline is doing.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>calc_saidi <span class="ot">&lt;-</span> <span class="cf">function</span>(eaglei_df,</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>                       <span class="co"># Time intervals are 15min per documentation, or 0.25h</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>                       <span class="at">data_interval =</span> <span class="fu">as.numeric</span>(<span class="dv">15</span>, <span class="at">units =</span> <span class="st">"minutes"</span>)) {</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  eaglei_df <span class="sc">%&gt;%</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="co"># This step assumes that all county residents are on the grid. Neither the</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># outage data nor the population data is split by utility territory</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">saidi =</span> customers_out <span class="sc">*</span> data_interval <span class="sc">/</span> county_pop)</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>                       census_df,</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>                       <span class="co"># Time intervals are 15min per documentation, or 0.25h</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>                       <span class="at">data_interval =</span> <span class="fu">as.numeric</span>(<span class="fl">0.25</span>, <span class="at">units =</span> <span class="st">"hours"</span>),</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>                       summ_by) {</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  eaglei_df <span class="sc">%&gt;%</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Within each outage interval, how many customers were affected</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>      <span class="at">tot_cust_hrs =</span> <span class="fu">sum</span>(customers_out),</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>      <span class="co"># whether grouped by state, state+county, etc.</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>      <span class="at">.by =</span> <span class="fu">all_of</span>(summ_by)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span> </span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Join the relevant population data (may need to add year to possible vars)</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">join_eaglei_census</span>(census_df,</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>                       <span class="at">join_spec =</span> <span class="fu">intersect</span>(summ_by,</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>                                             <span class="fu">c</span>(<span class="st">"state"</span>, <span class="st">"county"</span>))) <span class="sc">%&gt;%</span> </span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Turn number of intervals into units of time (hours by default)</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>      <span class="fu">across</span>(<span class="fu">c</span>(tot_cust_hrs), \(x) { x <span class="sc">*</span> data_interval}),</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Then calculate SAIDI</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>      <span class="at">saidi =</span> tot_cust_hrs <span class="sc">/</span> pop</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>See the screengrab below for sample output from this function: <img src="./sample_saidi_min.png" class="img-fluid" alt="Console output in R showing five rows with the calculated SAIDI metric">.</p>
+<p>See the screengrab below for sample output from this function:</p>
+<p><img src="./sample_saidi_county.png" class="img-fluid" alt="Console output in R showing the calculated SAIDI metric for counties in Louisiana"></p>
 <p>In <code>_targets.R</code>, we call the function in its own target, using the feature-enhanced Eagle-I dataset in the preceding target.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">list</span>(</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Targets before...,</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tar_target</span>(</span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">name =</span> add_features,</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">command =</span> <span class="fu">add_outage_id</span>(states_eaglei) <span class="sc">%&gt;%</span> </span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>      <span class="fu">join_eaglei_census</span>(states_census)</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  ),</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tar_target</span>(</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">name =</span> saidi_calcs_by_min,</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">command =</span> <span class="fu">calc_saidi</span>(add_features)</span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  ),</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tar_target</span>(</span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">name =</span> county_outage_saidi,</span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">command =</span> saidi_calcs_by_min <span class="sc">%&gt;%</span> </span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>      <span class="do">## Create a summary row for each outage in each state/county</span></span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>      <span class="fu">summarise</span>(<span class="at">saidi =</span> <span class="fu">sum</span>(saidi),</span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>                <span class="at">outage_interval =</span> {</span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>                  <span class="fu">max</span>(run_start_time) <span class="sc">-</span> <span class="fu">min</span>(run_start_time)</span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>                } <span class="sc">%&gt;%</span> </span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>                  <span class="fu">as.difftime</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>                  <span class="fu">as.numeric</span>(<span class="at">units =</span> <span class="st">"hours"</span>),</span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>                <span class="at">.by =</span> <span class="fu">c</span>(state, county, outage_id))</span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Targets after...</span></span>
-<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">command =</span> <span class="fu">add_outage_id</span>(states_eaglei)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tar_target</span>(</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">name =</span> county_saidi,</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">command =</span> <span class="fu">calc_saidi</span>(add_features,</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>                         states_census,</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>                         <span class="at">summ_by =</span> <span class="fu">c</span>(<span class="st">"state"</span>, <span class="st">"county"</span>))</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tar_target</span>(</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">name =</span> state_saidi,</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">command =</span> <span class="fu">calc_saidi</span>(add_features,</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>                         states_census,</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>                         <span class="at">summ_by =</span> <span class="fu">c</span>(<span class="st">"state"</span>))</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Targets after...</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>The SAIFI of an event is the fraction of customers affected, i.e.&nbsp;taking the SAIDI and dividing out the duration term. This calculation would look similar to the SAIDI mutate call, but we’d calculate it on a per-event basis.</p>
-<p>This screengrab, showing output from the last target listed, confirms we should have all the building blocks necessary to calculate the SAIFI of each outage. <img src="sample_saidi.png" class="img-fluid" alt="Console output in R showing five rows with one row per outage, showing the SAIDI and total outage duration (in hours) for each"></p>
-<p>I will continue to document my work via blog post, but you can follow commits to the underlying <a href="https://github.com/jdnricardo/eaglei_outages">repo</a> as well!</p>
+<p>The state SAIDI target produces similar results, but fewer rows (one per state). They don’t exactly line up with the EIA chart, but states’ relative performances are close enough to justify further investigation.</p>
+<p><img src="./sample_saidi_state.png" class="img-fluid" alt="Console output in R showing the calculated SAIDI metric for an assortment of US states">.</p>
+</section>
+<section id="saifi-caidi" class="level2">
+<h2 class="anchored" data-anchor-id="saifi-caidi">SAIFI &amp; CAIDI</h2>
+<p>I discussed metrics which I have not yet quantified. To recap, SAIFI is the number of interruptions the average customer experienced, and CAIDI (Customer Average Interruption Duration Index), the average length of each interruption.</p>
+<p>At first I hoped to tackle multiple metrics with one function, but for now I’m opting to keep them separate. Calculating SAIFI (or CAIDI) may not end up looking too different from the SAIDI function, but I am leaving that (and potential consolidation of the functions) to future posts. Gotta stretch out the material ;)</p>
+<p>I will continue to document my work here, but superfans (lol) or future contributors can follow commits to the underlying <a href="https://github.com/jdnricardo/eaglei_outages">repo</a> as well!</p>
 
 
 </section>

@@ -10,7 +10,7 @@
 <atom:link href="https://jdnricardo.com/blog.xml" rel="self" type="application/rss+xml"/>
 <description></description>
 <generator>quarto-1.5.57</generator>
-<lastBuildDate>Thu, 10 Oct 2024 04:00:00 GMT</lastBuildDate>
+<lastBuildDate>Fri, 11 Oct 2024 04:00:00 GMT</lastBuildDate>
 <item>
   <title>Aligning with EIA’s metrics</title>
   <dc:creator>Julian Ricardo</dc:creator>
@@ -25,7 +25,13 @@
 <h2 class="anchored" data-anchor-id="assembling-the-tools">Assembling the tools</h2>
 <p>This post is the second in a series exploring the DOE’s <a href="https://openenergyhub.ornl.gov/explore/dataset/eaglei_outages_2014/information/" target="_blank">Eagle-I dataset</a> on energy grid outages. See previous posts here: <a href="../intro/index.html" target="_blank">first</a></p>
 <p>However, before going further, it’s worth digressing to pause and discuss differences in the data available from Eagle-I and that the Energy Information Administration (EIA) uses to visualize people’s experiences with power outages, in this <a href="https://www.eia.gov/todayinenergy/detail.php?id=54639" target="_blank">article</a>.</p>
-<p>The main EIA metrics of interest are the System Average Interruption Duration Index (SAIDI) &amp; System Average Interruption Frequency Index (SAIFI). In the article’s second figure (copied below), SAIDI and SAIFI show up on the horizontal and vertical axes, respectively.</p>
+<p>The main EIA metrics of interest include multiple “duration” indices, and one “frequency” index:</p>
+<ul>
+<li>System Average Interruption Duration Index (SAIDI),</li>
+<li>System Average Interruption Frequency Index (SAIFI), and</li>
+<li>Customer Average Interruption Duration Index (CAIDI).</li>
+</ul>
+<p>In the article’s second figure (copied below), SAIDI and SAIFI show up on the horizontal and vertical axes, respectively.</p>
 
 <div class="no-row-height column-margin column-container"><div class="">
 <p>For a quick-hit understanding, check the <a href="https://youtu.be/oVH9L0fCMTU" target="_blank">EIA’s video guide</a></p>
@@ -37,7 +43,7 @@
 </div></div></section>
 <section id="calculating-saidi" class="level2">
 <h2 class="anchored" data-anchor-id="calculating-saidi">Calculating SAIDI</h2>
-<p>Here’s an example of a function that takes our 15min-interval Eagle-I data and calculates a SAIDI metric. It’s a single <code>mutate</code> call but we can give it a meaningful name so it’s easier to understand what the targets pipeline is doing.</p>
+<p>Here’s an example of a function that takes our 15min-interval Eagle-I data and calculates a SAIDI metric. Along the way, it creates a variable for the numerator in the SAIDI formula (total number of customer hours without power), joins the necessary census data for the denominator, then converts time intervals into the proper units for SAIDI in the concluding <code>mutate</code> call. Giving the function a meaningful name will make it easier to understand what the targets pipeline is doing.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1">calc_saidi <span class="ot" style="color: #003B4F;
 background-color: null;
@@ -45,41 +51,94 @@ font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">function</span>(eaglei_df,</span>
-<span id="cb1-2">                       <span class="co" style="color: #5E5E5E;
+<span id="cb1-2">                       census_df,</span>
+<span id="cb1-3">                       <span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># Time intervals are 15min per documentation, or 0.25h</span></span>
-<span id="cb1-3">                       <span class="at" style="color: #657422;
+<span id="cb1-4">                       <span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;">data_interval =</span> <span class="fu" style="color: #4758AB;
 background-color: null;
-font-style: inherit;">as.numeric</span>(<span class="dv" style="color: #AD0000;
+font-style: inherit;">as.numeric</span>(<span class="fl" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">15</span>, <span class="at" style="color: #657422;
+font-style: inherit;">0.25</span>, <span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;">units =</span> <span class="st" style="color: #20794D;
 background-color: null;
-font-style: inherit;">"minutes"</span>)) {</span>
-<span id="cb1-4">  eaglei_df <span class="sc" style="color: #5E5E5E;
+font-style: inherit;">"hours"</span>),</span>
+<span id="cb1-5">                       summ_by) {</span>
+<span id="cb1-6">  </span>
+<span id="cb1-7">  eaglei_df <span class="sc" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">%&gt;%</span></span>
-<span id="cb1-5">    <span class="co" style="color: #5E5E5E;
+<span id="cb1-8">    <span class="fu" style="color: #4758AB;
 background-color: null;
-font-style: inherit;"># This step assumes that all county residents are on the grid. Neither the</span></span>
-<span id="cb1-6">    <span class="co" style="color: #5E5E5E;
+font-style: inherit;">summarise</span>(</span>
+<span id="cb1-9">      <span class="co" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;"># outage data nor the population data is split by utility territory</span></span>
-<span id="cb1-7">    <span class="fu" style="color: #4758AB;
+font-style: inherit;"># Within each outage interval, how many customers were affected</span></span>
+<span id="cb1-10">      <span class="at" style="color: #657422;
 background-color: null;
-font-style: inherit;">mutate</span>(<span class="at" style="color: #657422;
+font-style: inherit;">tot_cust_hrs =</span> <span class="fu" style="color: #4758AB;
 background-color: null;
-font-style: inherit;">saidi =</span> customers_out <span class="sc" style="color: #5E5E5E;
+font-style: inherit;">sum</span>(customers_out),</span>
+<span id="cb1-11">      <span class="co" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">*</span> data_interval <span class="sc" style="color: #5E5E5E;
+font-style: inherit;"># whether grouped by state, state+county, etc.</span></span>
+<span id="cb1-12">      <span class="at" style="color: #657422;
 background-color: null;
-font-style: inherit;">/</span> county_pop)</span>
-<span id="cb1-8">}</span></code></pre></div>
+font-style: inherit;">.by =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">all_of</span>(summ_by)</span>
+<span id="cb1-13">    ) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%&gt;%</span> </span>
+<span id="cb1-14">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Join the relevant population data (may need to add year to possible vars)</span></span>
+<span id="cb1-15">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">join_eaglei_census</span>(census_df,</span>
+<span id="cb1-16">                       <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">join_spec =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">intersect</span>(summ_by,</span>
+<span id="cb1-17">                                             <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"state"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"county"</span>))) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%&gt;%</span> </span>
+<span id="cb1-18">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Turn number of intervals into units of time (hours by default)</span></span>
+<span id="cb1-19">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mutate</span>(</span>
+<span id="cb1-20">      <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">across</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(tot_cust_hrs), \(x) { x <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> data_interval}),</span>
+<span id="cb1-21">      <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Then calculate SAIDI</span></span>
+<span id="cb1-22">      <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">saidi =</span> tot_cust_hrs <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> pop</span>
+<span id="cb1-23">    )</span>
+<span id="cb1-24">}</span></code></pre></div>
 </div>
-<p>See the screengrab below for sample output from this function: <img src="https://jdnricardo.com/posts/eaglei/eia_metrics/sample_saidi_min.png" class="img-fluid" alt="Console output in R showing five rows with the calculated SAIDI metric">.</p>
+<p>See the screengrab below for sample output from this function:</p>
+<p><img src="https://jdnricardo.com/posts/eaglei/eia_metrics/sample_saidi_county.png" class="img-fluid" alt="Console output in R showing the calculated SAIDI metric for counties in Louisiana"></p>
 <p>In <code>_targets.R</code>, we call the function in its own target, using the feature-enhanced Eagle-I dataset in the preceding target.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><span class="fu" style="color: #4758AB;
@@ -98,85 +157,63 @@ font-style: inherit;">name =</span> add_features,</span>
 background-color: null;
 font-style: inherit;">command =</span> <span class="fu" style="color: #4758AB;
 background-color: null;
-font-style: inherit;">add_outage_id</span>(states_eaglei) <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">%&gt;%</span> </span>
-<span id="cb2-6">      <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">join_eaglei_census</span>(states_census)</span>
-<span id="cb2-7">  ),</span>
-<span id="cb2-8">  <span class="fu" style="color: #4758AB;
+font-style: inherit;">add_outage_id</span>(states_eaglei)</span>
+<span id="cb2-6">  ),</span>
+<span id="cb2-7">  <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">tar_target</span>(</span>
-<span id="cb2-9">    <span class="at" style="color: #657422;
+<span id="cb2-8">    <span class="at" style="color: #657422;
 background-color: null;
-font-style: inherit;">name =</span> saidi_calcs_by_min,</span>
-<span id="cb2-10">    <span class="at" style="color: #657422;
+font-style: inherit;">name =</span> county_saidi,</span>
+<span id="cb2-9">    <span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;">command =</span> <span class="fu" style="color: #4758AB;
 background-color: null;
-font-style: inherit;">calc_saidi</span>(add_features)</span>
-<span id="cb2-11">  ),</span>
-<span id="cb2-12">  <span class="fu" style="color: #4758AB;
+font-style: inherit;">calc_saidi</span>(add_features,</span>
+<span id="cb2-10">                         states_census,</span>
+<span id="cb2-11">                         <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">summ_by =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"state"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"county"</span>))</span>
+<span id="cb2-12">  ),</span>
+<span id="cb2-13">  <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">tar_target</span>(</span>
-<span id="cb2-13">    <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">name =</span> county_outage_saidi,</span>
 <span id="cb2-14">    <span class="at" style="color: #657422;
 background-color: null;
-font-style: inherit;">command =</span> saidi_calcs_by_min <span class="sc" style="color: #5E5E5E;
+font-style: inherit;">name =</span> state_saidi,</span>
+<span id="cb2-15">    <span class="at" style="color: #657422;
 background-color: null;
-font-style: inherit;">%&gt;%</span> </span>
-<span id="cb2-15">      <span class="do" style="color: #5E5E5E;
+font-style: inherit;">command =</span> <span class="fu" style="color: #4758AB;
 background-color: null;
-font-style: italic;">## Create a summary row for each outage in each state/county</span></span>
-<span id="cb2-16">      <span class="fu" style="color: #4758AB;
+font-style: inherit;">calc_saidi</span>(add_features,</span>
+<span id="cb2-16">                         states_census,</span>
+<span id="cb2-17">                         <span class="at" style="color: #657422;
 background-color: null;
-font-style: inherit;">summarise</span>(<span class="at" style="color: #657422;
+font-style: inherit;">summ_by =</span> <span class="fu" style="color: #4758AB;
 background-color: null;
-font-style: inherit;">saidi =</span> <span class="fu" style="color: #4758AB;
+font-style: inherit;">c</span>(<span class="st" style="color: #20794D;
 background-color: null;
-font-style: inherit;">sum</span>(saidi),</span>
-<span id="cb2-17">                <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">outage_interval =</span> {</span>
-<span id="cb2-18">                  <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">max</span>(run_start_time) <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">-</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">min</span>(run_start_time)</span>
-<span id="cb2-19">                } <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">%&gt;%</span> </span>
-<span id="cb2-20">                  <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">as.difftime</span>() <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">%&gt;%</span> </span>
-<span id="cb2-21">                  <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">as.numeric</span>(<span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">units =</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"hours"</span>),</span>
-<span id="cb2-22">                <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">.by =</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">c</span>(state, county, outage_id))</span>
-<span id="cb2-23">  )</span>
-<span id="cb2-24">  <span class="co" style="color: #5E5E5E;
+font-style: inherit;">"state"</span>))</span>
+<span id="cb2-18">  )</span>
+<span id="cb2-19">  <span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># Targets after...</span></span>
-<span id="cb2-25">)</span></code></pre></div>
+<span id="cb2-20">)</span></code></pre></div>
 </div>
-<p>The SAIFI of an event is the fraction of customers affected, i.e.&nbsp;taking the SAIDI and dividing out the duration term. This calculation would look similar to the SAIDI mutate call, but we’d calculate it on a per-event basis.</p>
-<p>This screengrab, showing output from the last target listed, confirms we should have all the building blocks necessary to calculate the SAIFI of each outage. <img src="https://jdnricardo.com/posts/eaglei/eia_metrics/sample_saidi.png" class="img-fluid" alt="Console output in R showing five rows with one row per outage, showing the SAIDI and total outage duration (in hours) for each"></p>
-<p>I will continue to document my work via blog post, but you can follow commits to the underlying <a href="https://github.com/jdnricardo/eaglei_outages">repo</a> as well!</p>
+<p>The state SAIDI target produces similar results, but fewer rows (one per state). They don’t exactly line up with the EIA chart, but states’ relative performances are close enough to justify further investigation.</p>
+<p><img src="https://jdnricardo.com/posts/eaglei/eia_metrics/sample_saidi_state.png" class="img-fluid" alt="Console output in R showing the calculated SAIDI metric for an assortment of US states">.</p>
+</section>
+<section id="saifi-caidi" class="level2">
+<h2 class="anchored" data-anchor-id="saifi-caidi">SAIFI &amp; CAIDI</h2>
+<p>I discussed metrics which I have not yet quantified. To recap, SAIFI is the number of interruptions the average customer experienced, and CAIDI (Customer Average Interruption Duration Index), the average length of each interruption.</p>
+<p>At first I hoped to tackle multiple metrics with one function, but for now I’m opting to keep them separate. Calculating SAIFI (or CAIDI) may not end up looking too different from the SAIDI function, but I am leaving that (and potential consolidation of the functions) to future posts. Gotta stretch out the material ;)</p>
+<p>I will continue to document my work here, but superfans (lol) or future contributors can follow commits to the underlying <a href="https://github.com/jdnricardo/eaglei_outages">repo</a> as well!</p>
 
 
 </section>
@@ -186,7 +223,7 @@ font-style: inherit;"># Targets after...</span></span>
   <category>energy</category>
   <category>eaglei</category>
   <guid>https://jdnricardo.com/posts/eaglei/eia_metrics/</guid>
-  <pubDate>Thu, 10 Oct 2024 04:00:00 GMT</pubDate>
+  <pubDate>Fri, 11 Oct 2024 04:00:00 GMT</pubDate>
 </item>
 <item>
   <title>Creating a personal avatar</title>
@@ -222,7 +259,7 @@ font-style: inherit;"># Targets after...</span></span>
   <category>open-source</category>
   <category>viz</category>
   <guid>https://jdnricardo.com/posts/making-an-avatar/</guid>
-  <pubDate>Thu, 10 Oct 2024 04:00:00 GMT</pubDate>
+  <pubDate>Fri, 11 Oct 2024 04:00:00 GMT</pubDate>
 </item>
 <item>
   <title>Working with power outage data</title>
