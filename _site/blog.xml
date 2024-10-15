@@ -137,7 +137,7 @@ font-style: inherit;">/</span> pop</span>
 <span id="cb1-23">    )</span>
 <span id="cb1-24">}</span></code></pre></div>
 </div>
-<p>In <code>_targets.R</code>, we call <code>calc_saidi</code> whichever target(s) require it, using the feature-enhanced Eagle-I dataset in the preceding target, named <code>add_features</code>. See the screengrab below for example function output from the <code>county_saidi</code> target.</p>
+<p>In <code>_targets.R</code>, we call <code>calc_saidi</code> in whichever targets require it, using the feature-enhanced Eagle-I dataset in the preceding target, named <code>add_features</code>, and specifying different variables to summarize by. See the screengrab below for example function output from the <code>county_saidi</code> target.</p>
 <p><img src="https://jdnricardo.com/posts/eaglei/eia_metrics/sample_saidi_county.png" class="img-fluid" alt="Console output in R showing the calculated SAIDI metric for counties in Louisiana"></p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><span class="fu" style="color: #4758AB;
@@ -222,17 +222,6 @@ font-style: inherit;"># Targets after...</span></span>
   <category>energy</category>
   <category>eaglei</category>
   <guid>https://jdnricardo.com/posts/eaglei/eia_metrics/</guid>
-  <pubDate>Tue, 15 Oct 2024 04:00:00 GMT</pubDate>
-</item>
-<item>
-  <title></title>
-  <dc:creator>Julian Ricardo</dc:creator>
-  <link>https://jdnricardo.com/posts/eaglei/viz_sketches/</link>
-  <description><![CDATA[ undefined ]]></description>
-  <category>code</category>
-  <category>energy</category>
-  <category>eaglei</category>
-  <guid>https://jdnricardo.com/posts/eaglei/viz_sketches/</guid>
   <pubDate>Tue, 15 Oct 2024 04:00:00 GMT</pubDate>
 </item>
 <item>
@@ -685,16 +674,6 @@ font-style: inherit;">kable</span>()</span></code></pre></div>
  ]]></description>
   <category>news</category>
   <guid>https://jdnricardo.com/posts/welcome/</guid>
-  <pubDate>Thu, 15 Aug 2024 04:00:00 GMT</pubDate>
-</item>
-<item>
-  <title></title>
-  <dc:creator>Julian Ricardo</dc:creator>
-  <link>https://jdnricardo.com/posts/what-have-i-written/</link>
-  <description><![CDATA[ undefined ]]></description>
-  <category>pub</category>
-  <category>reflection</category>
-  <guid>https://jdnricardo.com/posts/what-have-i-written/</guid>
   <pubDate>Thu, 15 Aug 2024 04:00:00 GMT</pubDate>
 </item>
 </channel>

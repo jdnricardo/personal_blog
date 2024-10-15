@@ -63,7 +63,7 @@ calc_saidi <- function(eaglei_df,
 }
 ```
 
-In `_targets.R`, we call `calc_saidi` whichever target(s) require it, using the feature-enhanced Eagle-I dataset in the preceding target, named `add_features`. See the screengrab below for example function output from the `county_saidi` target.
+In `_targets.R`, we call `calc_saidi` in whichever targets require it, using the feature-enhanced Eagle-I dataset in the preceding target, named `add_features`, and specifying different variables to summarize by. See the screengrab below for example function output from the `county_saidi` target.
 
 ![](./sample_saidi_county.png){fig-alt="Console output in R showing the calculated SAIDI metric for counties in Louisiana"}
 
