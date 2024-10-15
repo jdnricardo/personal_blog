@@ -10,7 +10,7 @@ execute:
 
 This post is the second in a series exploring the DOE's [Eagle-I dataset](https://openenergyhub.ornl.gov/explore/dataset/eaglei_outages_2014/information/){target="_blank"} on energy grid outages. See previous posts here: [first](../intro/index.html){target="_blank"}
 
-However, before going further, it's worth digressing to pause and discuss differences in the data available from Eagle-I and that the Energy Information Administration (EIA) uses to visualize people's experiences with power outages, in this [article](https://www.eia.gov/todayinenergy/detail.php?id=54639){target="_blank"}. 
+First, I want to pause and discuss differences in the data available from Eagle-I and the Energy Information Administration (EIA), the latter appearing in this [article](https://www.eia.gov/todayinenergy/detail.php?id=54639){target="_blank"}. 
 
 The main EIA metrics of interest include multiple "duration" indices, and one "frequency" index:
 
@@ -26,7 +26,7 @@ For a quick-hit understanding, check the [EIA's video guide](https://youtu.be/oV
 
 ![](../intro/chart2.svg){fig-alt="Average total annual electric power interruption duration and frequency per customer, by state, for 2021 only"}
 
-All ths background to say that SAIDI divides the number of customers affected by an outage by the number of customers in the system. **We do not have the latter available to us in Eagle-I**, so for the sake of this exercise, I will pull in county-level population data from the `tidycensus` [package](https://walker-data.com/tidycensus/){target="_blank"}, and see how closely we can replicate the EIA's published values.
+All this background to say that SAIDI divides the number of customers affected by an outage by the number of customers in the system. **We do not have the latter available to us in Eagle-I**, so for the sake of this exercise, I will pull in county-level population data from the `tidycensus` [package](https://walker-data.com/tidycensus/){target="_blank"}, and see how closely we can replicate the EIA's published values.
 
 ::: column-margin
 As always, there are important assumptions embedded in our assumptions. Here, we're assuming everyone in every county in the US is connected to the grid, or "in the system", to use the EIA's language. Not sure I like the sound of "in the system", but alas, we're stuck with the term.
@@ -34,7 +34,7 @@ As always, there are important assumptions embedded in our assumptions. Here, we
 
 ## Calculating SAIDI
 
-Here's an example of a function that takes our 15min-interval Eagle-I data and calculates a SAIDI metric. Along the way, it creates a variable for the numerator in the SAIDI formula (total number of customer hours without power), joins the necessary census data for the denominator, then converts time intervals into the proper units for SAIDI in the concluding  `mutate` call. Giving the function a meaningful name will make it easier to understand what the targets pipeline is doing.
+Here's an example of a function (`calc_saidi`) that takes our 15min-interval Eagle-I data and calculates a SAIDI metric. Along the way, it creates a variable for the numerator in the SAIDI formula (total number of customer hours without power), joins the necessary census data for the denominator, then converts time intervals into the proper units for SAIDI in the concluding  `mutate` call. Giving the function a meaningful name will make it easier to understand what the targets pipeline is doing.
 
 ```{r, eval=FALSE}
 calc_saidi <- function(eaglei_df,
@@ -63,11 +63,9 @@ calc_saidi <- function(eaglei_df,
 }
 ```
 
-See the screengrab below for sample output from this function:
+In `_targets.R`, we call `calc_saidi` whichever target(s) require it, using the feature-enhanced Eagle-I dataset in the preceding target, named `add_features`. See the screengrab below for example function output from the `county_saidi` target.
 
 ![](./sample_saidi_county.png){fig-alt="Console output in R showing the calculated SAIDI metric for counties in Louisiana"}
-
-In `_targets.R`, we call the function in its own target, using the feature-enhanced Eagle-I dataset in the preceding target.
 
 ```{r}
 list(
@@ -92,7 +90,7 @@ list(
 )
 ```
 
-The state SAIDI target produces similar results, but fewer rows (one per state). They don't exactly line up with the EIA chart, but states' relative performances are close enough to justify further investigation.
+The state SAIDI target produces similar results, but fewer rows (one per state). They don't exactly line up with the EIA chart, but states' relative performances are close enough to justify further investigation (read: next post).
 
 ![](./sample_saidi_state.png){fig-alt="Console output in R showing the calculated SAIDI metric for an assortment of US states"}.
 

@@ -10,7 +10,7 @@
 <atom:link href="https://jdnricardo.com/blog.xml" rel="self" type="application/rss+xml"/>
 <description></description>
 <generator>quarto-1.5.57</generator>
-<lastBuildDate>Fri, 11 Oct 2024 04:00:00 GMT</lastBuildDate>
+<lastBuildDate>Tue, 15 Oct 2024 04:00:00 GMT</lastBuildDate>
 <item>
   <title>Aligning with EIA’s metrics</title>
   <dc:creator>Julian Ricardo</dc:creator>
@@ -24,7 +24,7 @@
 <section id="assembling-the-tools" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="assembling-the-tools">Assembling the tools</h2>
 <p>This post is the second in a series exploring the DOE’s <a href="https://openenergyhub.ornl.gov/explore/dataset/eaglei_outages_2014/information/" target="_blank">Eagle-I dataset</a> on energy grid outages. See previous posts here: <a href="../intro/index.html" target="_blank">first</a></p>
-<p>However, before going further, it’s worth digressing to pause and discuss differences in the data available from Eagle-I and that the Energy Information Administration (EIA) uses to visualize people’s experiences with power outages, in this <a href="https://www.eia.gov/todayinenergy/detail.php?id=54639" target="_blank">article</a>.</p>
+<p>First, I want to pause and discuss differences in the data available from Eagle-I and the Energy Information Administration (EIA), the latter appearing in this <a href="https://www.eia.gov/todayinenergy/detail.php?id=54639" target="_blank">article</a>.</p>
 <p>The main EIA metrics of interest include multiple “duration” indices, and one “frequency” index:</p>
 <ul>
 <li>System Average Interruption Duration Index (SAIDI),</li>
@@ -36,14 +36,14 @@
 <div class="no-row-height column-margin column-container"><div class="">
 <p>For a quick-hit understanding, check the <a href="https://youtu.be/oVH9L0fCMTU" target="_blank">EIA’s video guide</a></p>
 </div></div><p><img src="https://jdnricardo.com/posts/eaglei/intro/chart2.svg" class="img-fluid" alt="Average total annual electric power interruption duration and frequency per customer, by state, for 2021 only"></p>
-<p>All ths background to say that SAIDI divides the number of customers affected by an outage by the number of customers in the system. <strong>We do not have the latter available to us in Eagle-I</strong>, so for the sake of this exercise, I will pull in county-level population data from the <code>tidycensus</code> <a href="https://walker-data.com/tidycensus/" target="_blank">package</a>, and see how closely we can replicate the EIA’s published values.</p>
+<p>All this background to say that SAIDI divides the number of customers affected by an outage by the number of customers in the system. <strong>We do not have the latter available to us in Eagle-I</strong>, so for the sake of this exercise, I will pull in county-level population data from the <code>tidycensus</code> <a href="https://walker-data.com/tidycensus/" target="_blank">package</a>, and see how closely we can replicate the EIA’s published values.</p>
 
 <div class="no-row-height column-margin column-container"><div class="">
 <p>As always, there are important assumptions embedded in our assumptions. Here, we’re assuming everyone in every county in the US is connected to the grid, or “in the system”, to use the EIA’s language. Not sure I like the sound of “in the system”, but alas, we’re stuck with the term.</p>
 </div></div></section>
 <section id="calculating-saidi" class="level2">
 <h2 class="anchored" data-anchor-id="calculating-saidi">Calculating SAIDI</h2>
-<p>Here’s an example of a function that takes our 15min-interval Eagle-I data and calculates a SAIDI metric. Along the way, it creates a variable for the numerator in the SAIDI formula (total number of customer hours without power), joins the necessary census data for the denominator, then converts time intervals into the proper units for SAIDI in the concluding <code>mutate</code> call. Giving the function a meaningful name will make it easier to understand what the targets pipeline is doing.</p>
+<p>Here’s an example of a function (<code>calc_saidi</code>) that takes our 15min-interval Eagle-I data and calculates a SAIDI metric. Along the way, it creates a variable for the numerator in the SAIDI formula (total number of customer hours without power), joins the necessary census data for the denominator, then converts time intervals into the proper units for SAIDI in the concluding <code>mutate</code> call. Giving the function a meaningful name will make it easier to understand what the targets pipeline is doing.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1">calc_saidi <span class="ot" style="color: #003B4F;
 background-color: null;
@@ -137,9 +137,8 @@ font-style: inherit;">/</span> pop</span>
 <span id="cb1-23">    )</span>
 <span id="cb1-24">}</span></code></pre></div>
 </div>
-<p>See the screengrab below for sample output from this function:</p>
+<p>In <code>_targets.R</code>, we call <code>calc_saidi</code> whichever target(s) require it, using the feature-enhanced Eagle-I dataset in the preceding target, named <code>add_features</code>. See the screengrab below for example function output from the <code>county_saidi</code> target.</p>
 <p><img src="https://jdnricardo.com/posts/eaglei/eia_metrics/sample_saidi_county.png" class="img-fluid" alt="Console output in R showing the calculated SAIDI metric for counties in Louisiana"></p>
-<p>In <code>_targets.R</code>, we call the function in its own target, using the feature-enhanced Eagle-I dataset in the preceding target.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><span class="fu" style="color: #4758AB;
 background-color: null;
@@ -206,7 +205,7 @@ background-color: null;
 font-style: inherit;"># Targets after...</span></span>
 <span id="cb2-20">)</span></code></pre></div>
 </div>
-<p>The state SAIDI target produces similar results, but fewer rows (one per state). They don’t exactly line up with the EIA chart, but states’ relative performances are close enough to justify further investigation.</p>
+<p>The state SAIDI target produces similar results, but fewer rows (one per state). They don’t exactly line up with the EIA chart, but states’ relative performances are close enough to justify further investigation (read: next post).</p>
 <p><img src="https://jdnricardo.com/posts/eaglei/eia_metrics/sample_saidi_state.png" class="img-fluid" alt="Console output in R showing the calculated SAIDI metric for an assortment of US states">.</p>
 </section>
 <section id="saifi-caidi" class="level2">
@@ -223,7 +222,18 @@ font-style: inherit;"># Targets after...</span></span>
   <category>energy</category>
   <category>eaglei</category>
   <guid>https://jdnricardo.com/posts/eaglei/eia_metrics/</guid>
-  <pubDate>Fri, 11 Oct 2024 04:00:00 GMT</pubDate>
+  <pubDate>Tue, 15 Oct 2024 04:00:00 GMT</pubDate>
+</item>
+<item>
+  <title></title>
+  <dc:creator>Julian Ricardo</dc:creator>
+  <link>https://jdnricardo.com/posts/eaglei/viz_sketches/</link>
+  <description><![CDATA[ undefined ]]></description>
+  <category>code</category>
+  <category>energy</category>
+  <category>eaglei</category>
+  <guid>https://jdnricardo.com/posts/eaglei/viz_sketches/</guid>
+  <pubDate>Tue, 15 Oct 2024 04:00:00 GMT</pubDate>
 </item>
 <item>
   <title>Creating a personal avatar</title>
@@ -259,7 +269,7 @@ font-style: inherit;"># Targets after...</span></span>
   <category>open-source</category>
   <category>viz</category>
   <guid>https://jdnricardo.com/posts/making-an-avatar/</guid>
-  <pubDate>Fri, 11 Oct 2024 04:00:00 GMT</pubDate>
+  <pubDate>Tue, 15 Oct 2024 04:00:00 GMT</pubDate>
 </item>
 <item>
   <title>Working with power outage data</title>
@@ -675,6 +685,16 @@ font-style: inherit;">kable</span>()</span></code></pre></div>
  ]]></description>
   <category>news</category>
   <guid>https://jdnricardo.com/posts/welcome/</guid>
+  <pubDate>Thu, 15 Aug 2024 04:00:00 GMT</pubDate>
+</item>
+<item>
+  <title></title>
+  <dc:creator>Julian Ricardo</dc:creator>
+  <link>https://jdnricardo.com/posts/what-have-i-written/</link>
+  <description><![CDATA[ undefined ]]></description>
+  <category>pub</category>
+  <category>reflection</category>
+  <guid>https://jdnricardo.com/posts/what-have-i-written/</guid>
   <pubDate>Thu, 15 Aug 2024 04:00:00 GMT</pubDate>
 </item>
 </channel>

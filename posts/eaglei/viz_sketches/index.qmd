@@ -1,0 +1,40 @@
+---
+title: "Visualizing outage data"
+date: "today"
+categories: [code, energy, eaglei]
+execute: 
+  eval: false
+draft: true
+---
+
+## Assembling the tools
+
+This post is the third in a series exploring the DOE's [Eagle-I dataset](https://openenergyhub.ornl.gov/explore/dataset/eaglei_outages_2014/information/){target="_blank"} on energy grid outages. See previous posts here: [first](../intro/index.html){target="_blank"} and [second](../eia_metrics/index.html){target="_blank"}
+
+Recall the chart we started with, from this EIA [article](https://www.eia.gov/todayinenergy/detail.php?id=54639){target="_blank"}. The two metrics I'm interested in replicating from the chart are System Average Interruption Duration Index (SAIDI, horiz. axis) and System Average Interruption Frequency Index (SAIFI, vert. axis).
+
+![](../intro/chart2.svg){fig-alt="Average total annual electric power interruption duration and frequency per customer, by state, for 2021 only"}
+
+I gave away in my previous post that I had drafted SAIDI numbers for a few states. They did not match the EIA chart's, but gave me confidence that states' relative performances was not far off. Easy for me to say, but worth visualizing with tables and charts to test my ~~hubris~~ hypothesis.
+
+![](../eia_metrics/sample_saidi_state.png){fig-alt="Console output in R showing the calculated SAIDI metric for an assortment of US states"}.
+
+## Tabulating EIA values
+
+Show a new target in the Eagle-I repo that reads in the "Reliability.xlsx" file from EIA for 2021 and takes a weighted average SAIDI / SAIFI for each state, using the "Number of Customers" column as the weight.
+
+**Table comparing the above numbers with** `state_saidi`
+
+Show yet another target calculating the average SAIDI / SAIFI for the whole US, which appears in the EIA chart
+
+## Visual narrative
+
+To start with, what does my version of the EIA scatterplot look like. Show this and my tabulated set of EIA values in faceted scatterplots
+
+Next, a dumbbell plot where one axis contains states, and the other compares points indicating my SAIDI / SAIFI and the EIA ones.
+
+Finally, a lolli / bar plot where the values are discrepancies between my metrics and the EIA's, using the latter as ground truth.
+
+## Tee up interactive chart 
+
+Chloro of SAIDI paired with bars of SAIDI and SAIFI for each state
