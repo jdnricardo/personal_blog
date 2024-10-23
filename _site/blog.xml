@@ -10,7 +10,588 @@
 <atom:link href="https://jdnricardo.com/blog.xml" rel="self" type="application/rss+xml"/>
 <description></description>
 <generator>quarto-1.5.57</generator>
-<lastBuildDate>Tue, 15 Oct 2024 04:00:00 GMT</lastBuildDate>
+<lastBuildDate>Wed, 23 Oct 2024 04:00:00 GMT</lastBuildDate>
+<item>
+  <title>Visualizing outage data</title>
+  <dc:creator>Julian Ricardo</dc:creator>
+  <link>https://jdnricardo.com/posts/eaglei/viz_sketches/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<section id="assembling-the-tools" class="level2">
+<h2 class="anchored" data-anchor-id="assembling-the-tools">Assembling the tools</h2>
+<p>This post is the third in a series exploring the DOE’s <a href="https://openenergyhub.ornl.gov/explore/dataset/eaglei_outages_2014/information/" target="_blank">Eagle-I dataset</a> on US electrical grid outages. See previous posts here: <a href="../intro/index.html" target="_blank">I</a> and <a href="../eia_metrics/index.html" target="_blank">II</a></p>
+<p>I gave away in my previous post that I had drafted numbers to compare with the EIA for a few states.</p>
+<p><img src="https://jdnricardo.com/posts/eaglei/eia_metrics/sample_saidi_state.png" class="img-fluid" alt="Console output in R showing the calculated SAIDI metric for an assortment of US states">.</p>
+<p>They did not match the EIA chart (see below), but were reasonable enough for me to justify making more-polished visualizations. In more words, “reasonable” given just the uncertainties in data sourcing I already know about, let alone the Rumsfeldian unknowns lurking about. Before testing my <del>hubris</del> hypothesis that I’ve replicated anything worth posting about…</p>
+<p>A few caveats:</p>
+<ul>
+<li>I am comparing numbers with the set from the EIA that <em>includes major events</em>, to avoid coming up with independent estimates of when these events occurred in the Eagle-I data, merging that data in somehow, etc.</li>
+<li>I am comparing numbers with numbers I am reading off of the EIA chart, rather than coming up with my own aggregated state numbers from their underlying utility-level spreadsheet. That is an exercise for another day</li>
+<li>I did not run the Eagle-I analysis on all 50 states, <del>because I’m impatient</del> to save computation time. I ran only the 8 states labeled in the EIA chart: Kentucky, Louisiana, Maine, Michigan, Mississippi, Oregon, Texas, West Virginia.</li>
+</ul>
+<p>Last bit before jumping into the charts… my setup chunk, where I load packages, set my <code>ggplot2</code> theme, and assemble the necessary targets (i.e.&nbsp;datasets I produced in my pipeline). For colors, I’m using reds from <a href="https://www.reasonable.work/colors/red/">Reasonable Colors</a> today.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(targets)</span>
+<span id="cb1-2"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(tidytable)</span>
+<span id="cb1-3"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(forcats)</span>
+<span id="cb1-4"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(ggplot2)</span>
+<span id="cb1-5"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(ggtext)</span>
+<span id="cb1-6"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(ggrepel)</span>
+<span id="cb1-7"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(scales)</span>
+<span id="cb1-8"></span>
+<span id="cb1-9"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">theme_set</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">theme_minimal</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">base_size =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">18</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb1-10">            <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">theme</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">panel.grid =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">element_blank</span>()))</span>
+<span id="cb1-11"></span>
+<span id="cb1-12"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">tar_load</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">matches</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"sai[df]i"</span>), <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">store =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"../_targets"</span>)</span>
+<span id="cb1-13"></span>
+<span id="cb1-14">median_tag <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"&lt;span style = 'color:#530003;'&gt;&lt;strong&gt;US median*&lt;/strong&gt;&lt;/span&gt;"</span></span>
+<span id="cb1-15">median_red <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"#530003"</span></span>
+<span id="cb1-16">base_red <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"#FF4647"</span></span></code></pre></div>
+</details>
+</div>
+</section>
+<section id="spoiler-alert" class="level2">
+<h2 class="anchored" data-anchor-id="spoiler-alert">Spoiler alert</h2>
+<p>I managed to create a chart that looks like what I was after! Recall the chart we started with, from this EIA <a href="https://www.eia.gov/todayinenergy/detail.php?id=54639" target="_blank">article</a>. The two metrics I’m interested in replicating from the chart are System Average Interruption Duration Index (SAIDI, horiz. axis) and System Average Interruption Frequency Index (SAIFI, vert. axis).</p>
+<p><img src="https://jdnricardo.com/posts/eaglei/intro/chart2.svg" class="img-fluid" alt="Average total annual electric power interruption duration and frequency per customer, by state, for 2021 only"></p>
+<p>What’s below is only a draft, for reasons I’ll get into with the remainder of this post.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">inner_join</span>(</span>
+<span id="cb2-2">  state_saidi,</span>
+<span id="cb2-3">  state_saifi,</span>
+<span id="cb2-4">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">by =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"state"</span></span>
+<span id="cb2-5">) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%&gt;%</span> </span>
+<span id="cb2-6">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">bind_rows</span>(</span>
+<span id="cb2-7">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">data.frame</span>(</span>
+<span id="cb2-8">      <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">state =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"US median*"</span>,</span>
+<span id="cb2-9">      <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Technically, they say "just over seven hours" so I added 5% to SAIDI.</span></span>
+<span id="cb2-10">      <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># SAIFI is interpreted from graph</span></span>
+<span id="cb2-11">      <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">saidi =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">7</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1.05</span>,</span>
+<span id="cb2-12">      <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">saifi =</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1.4</span></span>
+<span id="cb2-13">    )</span>
+<span id="cb2-14">  ) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%&gt;%</span> </span>
+<span id="cb2-15">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mutate</span>(</span>
+<span id="cb2-16">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">state =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">fct_reorder</span>(state, saidi)</span>
+<span id="cb2-17">  ) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%&gt;%</span> </span>
+<span id="cb2-18">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">ggplot</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">aes</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x =</span> saidi,</span>
+<span id="cb2-19">             <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">y =</span> saifi)) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb2-20">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">geom_point</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">aes</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">color =</span> state <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"US median*"</span>),</span>
+<span id="cb2-21">             <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">size =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">rel</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">4</span>),</span>
+<span id="cb2-22">             <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">alpha =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1.5</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb2-23">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">geom_text_repel</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">aes</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">color =</span> state <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"US median*"</span>,</span>
+<span id="cb2-24">                      <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">label =</span> state)) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb2-25">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">scale_color_manual</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">values =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(base_red,</span>
+<span id="cb2-26">                                median_red)) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb2-27">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">expand_limits</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,</span>
+<span id="cb2-28">                <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">y =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb2-29">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">labs</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">title =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">paste</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"States' SAIDIs &amp; SAIFIs compared to the"</span>, median_tag), </span>
+<span id="cb2-30">       <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">caption =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"*including major events"</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb2-31">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">guides</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">color =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"none"</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb2-32">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">theme</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">panel.grid.major =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">element_line</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"grey90"</span>),</span>
+<span id="cb2-33">        <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">axis.title =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">element_blank</span>(),</span>
+<span id="cb2-34">        <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">title =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">element_markdown</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">size =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">rel</span>(<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.8</span>)))</span></code></pre></div>
+</details>
+</div>
+<p><img src="https://jdnricardo.com/posts/eaglei/viz_sketches/images/scatter-1.png" class="img-fluid" alt="Scatterplot comparing my estimates of SAIDI and SAIFI for each of 8 states, alongside EIA median values."></p>
+</section>
+<section id="total-annual-outages" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="total-annual-outages">Total annual outages</h2>
+<p>I will start off comparing my SAIDI with the EIA’s median value of “just over seven hours”, translated by yours truly to 7.35 (or 5% higher). Louisiana catches the eye, being so far out at 50+ hours. But that’s not as far adrift as it is in the EIA data, at 80+ hours. Maine has the lowest SAIDI in my analysis and the EIA’s (you go Maine!). Most states in my analysis are above the EIA median, as I expected. But on closer inspection, it’s by smaller margins than I want to see before closing out this analysis. Kentucky is above-median according to the EIA and below-median if you look at my analysis.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1">state_saidi <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%&gt;%</span> </span>
+<span id="cb3-2">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">bind_rows</span>(</span>
+<span id="cb3-3">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">data.frame</span>(</span>
+<span id="cb3-4">      <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">state =</span> median_tag,</span>
+<span id="cb3-5">      <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Technically, they say "just over seven hours"</span></span>
+<span id="cb3-6">      <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># so I added 5%</span></span>
+<span id="cb3-7">      <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">saidi =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">7</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1.05</span></span>
+<span id="cb3-8">    )</span>
+<span id="cb3-9">  ) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%&gt;%</span> </span>
+<span id="cb3-10">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mutate</span>(</span>
+<span id="cb3-11">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">state =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">fct_reorder</span>(state, saidi)</span>
+<span id="cb3-12">  ) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%&gt;%</span> </span>
+<span id="cb3-13">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">ggplot</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">aes</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x =</span> saidi,</span>
+<span id="cb3-14">             <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">y =</span> state)) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb3-15">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">geom_col</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">aes</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">fill =</span> state <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span> median_tag)) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb3-16">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">scale_fill_manual</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">values =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(base_red,</span>
+<span id="cb3-17">                               median_red)) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb3-18">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">labs</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">caption =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"*including major events"</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb3-19">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">guides</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">fill =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"none"</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb3-20">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">theme</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">panel.grid.major.x =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">element_line</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"grey90"</span>),</span>
+<span id="cb3-21">        <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">axis.text.y =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">element_markdown</span>(),</span>
+<span id="cb3-22">        <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">axis.title =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">element_blank</span>())</span></code></pre></div>
+</details>
+</div>
+<p><img src="https://jdnricardo.com/posts/eaglei/viz_sketches/images/state_saidi-1.png" class="img-fluid" alt="Bar chart showing state SAIDI values as calculated from Eagle-I data, compared to the EIA median value."></p>
+<p>I will need to take another look at my approach to calculating SAIDI, and have a sneaking suspicion I need to handle missing chunks of the time-series better.</p>
+<p>I should also check how the distribution of SAIDIs in individual counties held up, to better understand how I’m calculating right-tail outcomes especially. Right on time, a wild violin chart appears! The lines in each violin indicate the median SAIDI among a state’s counties, as well as the 5th / 95th SAIDI percentiles.</p>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p>Shoutout to the <code>ggtext</code> package for making it easy to experiment with color-tagging my title!</p>
+</div></div><div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1">county_saidi <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%&gt;%</span> </span>
+<span id="cb4-2">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mutate</span>(</span>
+<span id="cb4-3">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">state =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">fct_reorder</span>(state, saidi)</span>
+<span id="cb4-4">  ) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%&gt;%</span> </span>
+<span id="cb4-5">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">ggplot</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">aes</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x =</span> saidi,</span>
+<span id="cb4-6">             <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">y =</span> state)) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb4-7">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">geom_violin</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">draw_quantiles =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.05</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.95</span>),</span>
+<span id="cb4-8">              <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">fill =</span> base_red) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb4-9">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">geom_vline</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">xintercept =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">7</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1.05</span>,</span>
+<span id="cb4-10">             <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">color =</span> median_red,</span>
+<span id="cb4-11">             <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">linewidth =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">rel</span>(<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1.1</span>)) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb4-12">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">scale_x_sqrt</span>() <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb4-13">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">labs</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">title =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">paste</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"States' county SAIDIs compared to the"</span>, median_tag), </span>
+<span id="cb4-14">       <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">caption =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"*including major events"</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb4-15">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">guides</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">fill =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"none"</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb4-16">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">theme</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">panel.grid.major.x =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">element_line</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"grey90"</span>),</span>
+<span id="cb4-17">        <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">axis.title =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">element_blank</span>(),</span>
+<span id="cb4-18">        <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">title =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">element_markdown</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">size =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">rel</span>(<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.8</span>)))</span></code></pre></div>
+</details>
+</div>
+<p><img src="https://jdnricardo.com/posts/eaglei/viz_sketches/images/county_saidi-1.png" class="img-fluid" alt="Bar chart showing county SAIDI values as calculated from Eagle-I data, compared to the EIA median value."> This helps my self-esteem a little bit. Maybe I have moderately, but not egregiously, underestimated the largest and/or longest outages? Still, look out for revisions to the SAIDI calculations in a future post!</p>
+</section>
+<section id="number-of-outages" class="level2">
+<h2 class="anchored" data-anchor-id="number-of-outages">Number of outages</h2>
+<p>Showing the same charts, but now with SAIFI rather than SAIDI. Other than Louisiana coming in <strong>above</strong> the EIA estimate, I can summarize everything else as worse than my SAIDI analysis in replicating the EIA estimates. The SAIFI values I came up with are lower than the EIA’s state-level estimates. Most notable are the many state SAIFI estimates that come in lower than the EIA median… a clearer sign that more work is needed here.</p>
+<p><img src="https://jdnricardo.com/posts/eaglei/viz_sketches/images/state_saifi-1.png" class="img-fluid" alt="Bar chart showing state SAIFI values as calculated from Eagle-I data, compared to the EIA median value."></p>
+<p><img src="https://jdnricardo.com/posts/eaglei/viz_sketches/images/county_saifi-1.png" class="img-fluid" alt="Bar chart showing county SAIFI values as calculated from Eagle-I data, compared to the EIA median value."></p>
+</section>
+<section id="next-steps" class="level2">
+<h2 class="anchored" data-anchor-id="next-steps">Next steps</h2>
+<p>Setting aside whether or how much I can mitigate uncertainty due to using census population figures (and not utility customer figures), I feel confident there is room to tighten up my SAIDI and SAIFI calculations with a closer review of them. Along the way, I plan to develop additional charts to quantify the discrepancies I find.</p>
+<p>Ideally, I would also show the above charts alongside the <em>actual</em> EIA values for each state / county, and not just the overall median value as derived from visually interpreting their published chart. It’s not exactly a sturdy foundation for comparative analysis…</p>
+<p>Firming this up will require reading in &amp; manipulating data the EIA publishes on utility reliability (in spreadsheets named “Reliability.xlsx” for each calendar year). From a quick glance, the reliability files allow for taking a weighted average SAIDI / SAIFI for each state, using the “Number of Customers” column as the weight. Stay tuned for this update as well!</p>
+<p>To cap things off, I would like to conjure up interactive visualizations of my Eagle-I analysis (and comparisons to the EIA figures), maybe with the <code>ggiraph</code> package.</p>
+<!-- ## Visual narrative for EIA comp-->
+<!-- To start with, what does my version of the EIA scatterplot look like. Show this and my tabulated set of EIA values in faceted scatterplots -->
+<!-- Next, a dumbbell plot where one axis contains states, and the other compares points indicating my SAIDI / SAIFI and the EIA ones. -->
+<!-- Finally, a lolli / bar plot where the values are discrepancies between my metrics and the EIA's, using the latter as ground truth. -->
+
+
+</section>
+
+ ]]></description>
+  <category>code</category>
+  <category>energy</category>
+  <category>eaglei</category>
+  <guid>https://jdnricardo.com/posts/eaglei/viz_sketches/</guid>
+  <pubDate>Wed, 23 Oct 2024 04:00:00 GMT</pubDate>
+</item>
 <item>
   <title>Aligning with EIA’s metrics</title>
   <dc:creator>Julian Ricardo</dc:creator>
@@ -222,7 +803,7 @@ font-style: inherit;"># Targets after...</span></span>
   <category>energy</category>
   <category>eaglei</category>
   <guid>https://jdnricardo.com/posts/eaglei/eia_metrics/</guid>
-  <pubDate>Tue, 15 Oct 2024 04:00:00 GMT</pubDate>
+  <pubDate>Thu, 10 Oct 2024 04:00:00 GMT</pubDate>
 </item>
 <item>
   <title>Creating a personal avatar</title>
@@ -258,7 +839,7 @@ font-style: inherit;"># Targets after...</span></span>
   <category>open-source</category>
   <category>viz</category>
   <guid>https://jdnricardo.com/posts/making-an-avatar/</guid>
-  <pubDate>Tue, 15 Oct 2024 04:00:00 GMT</pubDate>
+  <pubDate>Mon, 02 Sep 2024 04:00:00 GMT</pubDate>
 </item>
 <item>
   <title>Working with power outage data</title>
@@ -674,6 +1255,16 @@ font-style: inherit;">kable</span>()</span></code></pre></div>
  ]]></description>
   <category>news</category>
   <guid>https://jdnricardo.com/posts/welcome/</guid>
+  <pubDate>Thu, 15 Aug 2024 04:00:00 GMT</pubDate>
+</item>
+<item>
+  <title></title>
+  <dc:creator>Julian Ricardo</dc:creator>
+  <link>https://jdnricardo.com/posts/what-have-i-written/</link>
+  <description><![CDATA[ undefined ]]></description>
+  <category>pub</category>
+  <category>reflection</category>
+  <guid>https://jdnricardo.com/posts/what-have-i-written/</guid>
   <pubDate>Thu, 15 Aug 2024 04:00:00 GMT</pubDate>
 </item>
 </channel>

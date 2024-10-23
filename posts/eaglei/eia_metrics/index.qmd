@@ -1,6 +1,6 @@
 ---
 title: "Aligning with EIA's metrics"
-date: "today"
+date: "2024-10-10"
 categories: [code, energy, eaglei]
 execute: 
   eval: false
