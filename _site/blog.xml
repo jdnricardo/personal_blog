@@ -76,9 +76,18 @@ font-style: inherit;">theme</span>(<span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;">panel.grid =</span> <span class="fu" style="color: #4758AB;
 background-color: null;
-font-style: inherit;">element_blank</span>()))</span>
-<span id="cb1-11"></span>
-<span id="cb1-12"><span class="fu" style="color: #4758AB;
+font-style: inherit;">element_blank</span>(),</span>
+<span id="cb1-11">                  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">plot.background =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">element_rect</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">fill =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"#fcfcfc"</span>)))</span>
+<span id="cb1-12"></span>
+<span id="cb1-13"><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">tar_load</span>(<span class="fu" style="color: #4758AB;
 background-color: null;
@@ -89,18 +98,18 @@ background-color: null;
 font-style: inherit;">store =</span> <span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"../_targets"</span>)</span>
-<span id="cb1-13"></span>
-<span id="cb1-14">median_tag <span class="ot" style="color: #003B4F;
+<span id="cb1-14"></span>
+<span id="cb1-15">median_tag <span class="ot" style="color: #003B4F;
 background-color: null;
 font-style: inherit;">&lt;-</span> <span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"&lt;span style = 'color:#530003;'&gt;&lt;strong&gt;US median*&lt;/strong&gt;&lt;/span&gt;"</span></span>
-<span id="cb1-15">median_red <span class="ot" style="color: #003B4F;
+<span id="cb1-16">median_red <span class="ot" style="color: #003B4F;
 background-color: null;
 font-style: inherit;">&lt;-</span> <span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"#530003"</span></span>
-<span id="cb1-16">base_red <span class="ot" style="color: #003B4F;
+<span id="cb1-17">base_red <span class="ot" style="color: #003B4F;
 background-color: null;
 font-style: inherit;">&lt;-</span> <span class="st" style="color: #20794D;
 background-color: null;
