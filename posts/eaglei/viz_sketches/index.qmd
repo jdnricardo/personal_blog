@@ -53,7 +53,7 @@ I managed to create a chart that looks like what I was after! Recall the chart w
 
 ![](../intro/chart2.svg){fig-alt="Average total annual electric power interruption duration and frequency per customer, by state, for 2021 only"}
 
-What's below is only a draft, for reasons I'll get into with the remainder of this post.
+What's below is only a draft, for reasons I'll get into with the remainder of this post. A quick visual comparison of the states I analyzed, relative to the median (which is the **EIA median**), shows that the values I came up with are low. I would need to analyze all 50 states to check whether they are equally off relative to the new median too.
 
 ```{r}
 inner_join(

@@ -1,10 +1,10 @@
 [
   {
-    "objectID": "posts/making-an-avatar/index.html",
-    "href": "posts/making-an-avatar/index.html",
-    "title": "Creating a personal avatar",
+    "objectID": "posts/internal-pkg-r-universe/index.html",
+    "href": "posts/internal-pkg-r-universe/index.html",
+    "title": "Hosting internal R packages on r-universe",
     "section": "",
-    "text": "A really quick post to shoutout the open-source libraries I used to create what I find to be gorgeous icons, e.g. the favicon I use for my website, reproduced above in a larger size.\n\nboringavatars\ncoolors\n\nAnybody who worked with me previously will now know my secret to creating cute, company-themed user icons 😋\nimport Avatar from 'boring-avatars';\n\n&lt;Avatar \n        name='Julian do Nascimento Ricardo'\n        size='180'\n        variant='sunset'\n        colors={['#FB6107', '#F3DE2C', '#7CB518', '#5C8001', '#FBB02D']}\n/&gt;"
+    "text": "This post attempts to replicate stock analysis with the coreStatsNMR package, available via the NMR Group r-universe. Specifically, using the statsTable function outlined in this post.\nFirst, downloading the library using the custom repos argument to point to the r-universe: install.packages(\"coreStatsNMR\", repos = c(\"https://nmrgroup.r-universe.dev\", \"https://cloud.r-project.org\"))\n\nlibrary(coreStatsNMR)\n\n\nAttaching package: 'coreStatsNMR'\n\n\nThe following object is masked from 'package:base':\n\n    mode\n\nlibrary(dplyr)\n\n\nAttaching package: 'dplyr'\n\n\nThe following objects are masked from 'package:stats':\n\n    filter, lag\n\n\nThe following objects are masked from 'package:base':\n\n    intersect, setdiff, setequal, union\n\nstatsTable(data = iris,\n           summVar = \"Sepal.Length\",\n           groupVar = \"Species\",\n           stats = c(\"n\", \"min\", \"max\", \"mean\", \"weighted.mean\", \"median\", \"sd\", \"iqr\", \"cv\"),\n           accuracy = 0.01,\n           drop0trailing = TRUE) %&gt;% \n  knitr::kable()\n\nWarning in statsTable.data.frame(data = iris, summVar = \"Sepal.Length\", : Using placeholder weights of 1 for all data\n\n\n\n\n\nstat\nsetosa\nversicolor\nvirginica\nTotal\n\n\n\n\nn\n50\n50\n50\n150\n\n\nmin\n4.30\n4.90\n4.90\n4.30\n\n\nmax\n5.80\n7.00\n7.90\n7.90\n\n\nmean\n5.01\n5.94\n6.59\n5.84\n\n\nweighted.mean\n5.01\n5.94\n6.59\n5.84\n\n\nmedian\n5.00\n5.90\n6.50\n5.80\n\n\nsd\n0.35\n0.52\n0.64\n0.83\n\n\niqr\n0.40\n0.70\n0.67\n1.30\n\n\ncv\n0.07\n0.09\n0.10\n0.14\n\n\n\n\n\n\nSo what?\nYay! We can run summary statistics on stock R data with our own package. Why do this? We already can write expressive pipelines with various packages: dplyr, data.table, collapse, or polars. The added value of a DIY function is not apparent, especially if it’s using those packages underneath.\nHowever, for a consulting firm, such as my previous employer, there is value in creating wrapped versions of the stock coreStats functions which incorporate project/client constraints and documentation. That way, the core functions’ focus can be on being very good in a narrow scope (for each function), but they can be combined and/or extended via wrappers for projects and/or specific, repetitive applications. This does assume time is invested in designing them to play nicely with one another, and maintaining these conditions as the codebase evolves. Having shareable “core” functions separate from “project code” allows the firm to tap into additional marketing value as well, i.e. more-visibly participating in open-source software (OSS) development.\nInternal and/or public packages are also ways to embed invaluable organizational knowledge, e.g. in a package’s testing suite, warnings, errors, and documentation. Of course, embedding this knowledge requires caution so that only the sources/methods/etc appropriate for public use are exposed in public repos like the r-universe."
   },
   {
     "objectID": "posts/eaglei/viz_sketches/index.html",
@@ -25,7 +25,7 @@
     "href": "posts/eaglei/viz_sketches/index.html#spoiler-alert",
     "title": "Visualizing outage data",
     "section": "Spoiler alert",
-    "text": "Spoiler alert\nI managed to create a chart that looks like what I was after! Recall the chart we started with, from this EIA article. The two metrics I’m interested in replicating from the chart are System Average Interruption Duration Index (SAIDI, horiz. axis) and System Average Interruption Frequency Index (SAIFI, vert. axis).\n\nWhat’s below is only a draft, for reasons I’ll get into with the remainder of this post.\n\n\nCode\ninner_join(\n  state_saidi,\n  state_saifi,\n  by = \"state\"\n) %&gt;% \n  bind_rows(\n    data.frame(\n      state = \"US median*\",\n      # Technically, they say \"just over seven hours\" so I added 5% to SAIDI.\n      # SAIFI is interpreted from graph\n      saidi = 7*1.05,\n      saifi = 1.4\n    )\n  ) %&gt;% \n  mutate(\n    state = fct_reorder(state, saidi)\n  ) %&gt;% \n  ggplot(aes(x = saidi,\n             y = saifi)) +\n  geom_point(aes(color = state == \"US median*\"),\n             size = rel(4),\n             alpha = 1/1.5) +\n  geom_text_repel(aes(color = state == \"US median*\",\n                      label = state)) +\n  scale_color_manual(values = c(base_red,\n                                median_red)) +\n  expand_limits(x = 0,\n                y = 0) +\n  labs(title = paste(\"States' SAIDIs & SAIFIs compared to the\", median_tag), \n       caption = \"*including major events\") +\n  guides(color = \"none\") +\n  theme(panel.grid.major = element_line(\"grey90\"),\n        axis.title = element_blank(),\n        title = element_markdown(size = rel(0.8)))"
+    "text": "Spoiler alert\nI managed to create a chart that looks like what I was after! Recall the chart we started with, from this EIA article. The two metrics I’m interested in replicating from the chart are System Average Interruption Duration Index (SAIDI, horiz. axis) and System Average Interruption Frequency Index (SAIFI, vert. axis).\n\nWhat’s below is only a draft, for reasons I’ll get into with the remainder of this post. A quick visual comparison of the states I analyzed, relative to the median (which is the EIA median), shows that the values I came up with are low. I would need to analyze all 50 states to check whether they are equally off relative to the new median too.\n\n\nCode\ninner_join(\n  state_saidi,\n  state_saifi,\n  by = \"state\"\n) %&gt;% \n  bind_rows(\n    data.frame(\n      state = \"US median*\",\n      # Technically, they say \"just over seven hours\" so I added 5% to SAIDI.\n      # SAIFI is interpreted from graph\n      saidi = 7*1.05,\n      saifi = 1.4\n    )\n  ) %&gt;% \n  mutate(\n    state = fct_reorder(state, saidi)\n  ) %&gt;% \n  ggplot(aes(x = saidi,\n             y = saifi)) +\n  geom_point(aes(color = state == \"US median*\"),\n             size = rel(4),\n             alpha = 1/1.5) +\n  geom_text_repel(aes(color = state == \"US median*\",\n                      label = state)) +\n  scale_color_manual(values = c(base_red,\n                                median_red)) +\n  expand_limits(x = 0,\n                y = 0) +\n  labs(title = paste(\"States' SAIDIs & SAIFIs compared to the\", median_tag), \n       caption = \"*including major events\") +\n  guides(color = \"none\") +\n  theme(panel.grid.major = element_line(\"grey90\"),\n        axis.title = element_blank(),\n        title = element_markdown(size = rel(0.8)))"
   },
   {
     "objectID": "posts/eaglei/viz_sketches/index.html#total-annual-outages",
@@ -77,18 +77,11 @@
     "text": "SAIFI & CAIDI\nI discussed metrics which I have not yet quantified. To recap, SAIFI is the number of interruptions the average customer experienced, and CAIDI (Customer Average Interruption Duration Index), the average length of each interruption.\nAt first I hoped to tackle multiple metrics with one function, but for now I’m opting to keep them separate. Calculating SAIFI (or CAIDI) may not end up looking too different from the SAIDI function, but I am leaving that (and potential consolidation of the functions) to future posts. Gotta stretch out the material ;)\nI will continue to document my work here, but superfans (lol) or future contributors can follow commits to the underlying repo as well!"
   },
   {
-    "objectID": "eaglei.html",
-    "href": "eaglei.html",
-    "title": "Series: Eagle-Itm",
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Who am I?",
     "section": "",
-    "text": "Visualizing outage data\n\n\n\n\n\n\n\n\n\n\n\nOct 23, 2024\n\n\n9 min\n\n\n\n\n\n\n\nAligning with EIA’s metrics\n\n\n\n\n\n\n\n\n\n\n\nOct 10, 2024\n\n\n6 min\n\n\n\n\n\n\n\nWorking with power outage data\n\n\n\n\n\n\n\n\n\n\n\nAug 21, 2024\n\n\n6 min\n\n\n\n\n\n\nNo matching items"
-  },
-  {
-    "objectID": "archive.html",
-    "href": "archive.html",
-    "title": "Archive",
-    "section": "",
-    "text": "Visualizing outage data\n\n\n\n\n\n\n\n\nOct 23, 2024\n\n\n\n\n\n\n\nAligning with EIA’s metrics\n\n\n\n\n\n\n\n\nOct 10, 2024\n\n\n\n\n\n\n\nCreating a personal avatar\n\n\n\n\n\n\n\n\nSep 2, 2024\n\n\n\n\n\n\n\nWorking with power outage data\n\n\n\n\n\n\n\n\nAug 21, 2024\n\n\n\n\n\n\n\nHosting internal R packages on r-universe\n\n\n\n\n\n\n\n\nAug 15, 2024\n\n\n\n\n\n\n\nSo you’re probably wondering how I got to this post…\n\n\n\n\n\n\n\n\nAug 15, 2024\n\n\n\n\n\n\nNo matching items"
+    "text": "I’m many things: data scientist, environmental engineer, son, brother, Brooklynite, runner, and trivia enthusiast. My specialties are understanding complex systems, especially involving energy & material flows, then developing reproducible models of them and turning results into actionable findings. I’m also motivated to mentor data scientists and grow organizations’ analytic abilities.\nProfessionally, I’m a multi-lingual analyst with domain expertise in energy efficiency, data science, and program evaluation. I have consulted for energy & utilities clients, written peer-reviewed papers, and helped to grow analysis teams using R & Python.\nMy academic background is in physics, environmental engineering, and Spanish. Outside of coursework, I have also learned how to be a skilled educator, mostly by listening and being attentive to how others learn."
   },
   {
     "objectID": "blog.html",
@@ -105,11 +98,39 @@
     "text": "These posts run through ETL of Eagle-ITM data from the Department of Energy and comparison with other data sources."
   },
   {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Who am I?",
+    "objectID": "archive.html",
+    "href": "archive.html",
+    "title": "Archive",
     "section": "",
-    "text": "I’m many things: data scientist, environmental engineer, son, brother, Brooklynite, runner, and trivia enthusiast. My specialties are understanding complex systems, especially involving energy & material flows, then developing reproducible models of them and turning results into actionable findings. I’m also motivated to mentor data scientists and grow organizations’ analytic abilities.\nProfessionally, I’m a multi-lingual analyst with domain expertise in energy efficiency, data science, and program evaluation. I have consulted for energy & utilities clients, written peer-reviewed papers, and helped to grow analysis teams using R & Python.\nMy academic background is in physics, environmental engineering, and Spanish. Outside of coursework, I have also learned how to be a skilled educator, mostly by listening and being attentive to how others learn."
+    "text": "Advent of Code: Day 1\n\n\n\n\n\n\n\n\nDec 2, 2024\n\n\n\n\n\n\n\nVisualizing outage data\n\n\n\n\n\n\n\n\nOct 23, 2024\n\n\n\n\n\n\n\nAligning with EIA’s metrics\n\n\n\n\n\n\n\n\nOct 10, 2024\n\n\n\n\n\n\n\nCreating a personal avatar\n\n\n\n\n\n\n\n\nSep 2, 2024\n\n\n\n\n\n\n\nWorking with power outage data\n\n\n\n\n\n\n\n\nAug 21, 2024\n\n\n\n\n\n\n\nHosting internal R packages on r-universe\n\n\n\n\n\n\n\n\nAug 15, 2024\n\n\n\n\n\n\n\nSo you’re probably wondering how I got to this post…\n\n\n\n\n\n\n\n\nAug 15, 2024\n\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "eaglei.html",
+    "href": "eaglei.html",
+    "title": "Series: Eagle-Itm",
+    "section": "",
+    "text": "Visualizing outage data\n\n\n\n\n\n\n\n\n\n\n\nOct 23, 2024\n\n\n9 min\n\n\n\n\n\n\n\nAligning with EIA’s metrics\n\n\n\n\n\n\n\n\n\n\n\nOct 10, 2024\n\n\n6 min\n\n\n\n\n\n\n\nWorking with power outage data\n\n\n\n\n\n\n\n\n\n\n\nAug 21, 2024\n\n\n6 min\n\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "posts/advent-of-code-2024/day1/index.html",
+    "href": "posts/advent-of-code-2024/day1/index.html",
+    "title": "Advent of Code: Day 1",
+    "section": "",
+    "text": "This is my first year participating in the #AdventofCode! Already off to a promising start, having to catch up on the first day’s challenge, but I was too busy driving back from time with family yesterday.\nI worked up solutions using the tidytable and collapse packages for parts 1 and 2 below. They are my go-to packages for developing tidyverse-style with higher upside on computational performance. Everything is in functional form to make benchmarking performance easier later on.\nFirst things first, a function to load input data.\nget_day1_input &lt;- function() {\n  here(\"data\", \"input-day01.txt\") %&gt;%\n# Read in as single column\n  read.table(header = FALSE,\n             col.names = c(\"list_1\",\n                           \"list_2\"))\n}"
+  },
+  {
+    "objectID": "posts/advent-of-code-2024/day1/index.html#part-1",
+    "href": "posts/advent-of-code-2024/day1/index.html#part-1",
+    "title": "Advent of Code: Day 1",
+    "section": "Part 1",
+    "text": "Part 1\nThe first part requires solving for the total distance between two lists, taken as the difference between corresponding elements (in ascending order).\n\ntidytable_day1 &lt;- function() { \n  get_day1_input() %&gt;%\n  map(sort) %&gt;% \n  bind_cols() %&gt;% \n  summarise(\n    distance = sum(abs(list_1 - list_2))\n  ) %&gt;%\n  as.integer()\n}\n\ncollapse_day1 &lt;- function() {\n  get_day1_input() %&gt;%\n  fmutate(\n    list_1 = sort(list_1),\n    list_2 = sort(list_2)\n  ) %&gt;%\n  fmutate(\n    distance = abs(list_1 - list_2), .keep = \"none\"\n  ) %&gt;%\n  fsum() %&gt;%\n  as.integer()\n}\n\nAnd comparing performance…"
+  },
+  {
+    "objectID": "posts/advent-of-code-2024/day1/index.html#part-2",
+    "href": "posts/advent-of-code-2024/day1/index.html#part-2",
+    "title": "Advent of Code: Day 1",
+    "section": "Part 2",
+    "text": "Part 2\nThe second part requires calculating a total similarity score between the lists, where the only elements that score points are present in both lists. The score is taken as the product of each said number and the number of appearances in the second list\n\ntidytable_day1_p2 &lt;- function() {\n  get_day1_input() %&gt;%\n  filter(list_2 %in% list_1) %&gt;%\n  count(list_2) %&gt;%\n  summarise(\n    sim_score = sum(n*list_2),\n  ) %&gt;%\n  as.integer()\n}\n\ncollapse_day1_p2 &lt;- function() {\n  get_day1_input() %&gt;%\n  fsubset(list_2 %in% list_1) %&gt;%\n  fcount(list_2) %&gt;%\n  fmutate(\n    sim_score = N*list_2, .keep = \"none\"\n  ) %&gt;%\n  fsum() %&gt;%\n  as.integer()\n}\n\nAgain, comparing performance\n\nStick around for day 2!! Which will technically happen on day 3. My money is on me catching up by the weekend :)"
   },
   {
     "objectID": "posts/eaglei/intro/index.html#pilot-episode-updated-829",
@@ -133,11 +154,11 @@
     "text": "There be dragons…\nWith yet more installments, I’m debating whether to create a golem-based Shiny application or build a package for easier access to EAGLE-I data within the R universe.\n\nStick around to find out 😸"
   },
   {
-    "objectID": "posts/internal-pkg-r-universe/index.html",
-    "href": "posts/internal-pkg-r-universe/index.html",
-    "title": "Hosting internal R packages on r-universe",
+    "objectID": "posts/making-an-avatar/index.html",
+    "href": "posts/making-an-avatar/index.html",
+    "title": "Creating a personal avatar",
     "section": "",
-    "text": "This post attempts to replicate stock analysis with the coreStatsNMR package, available via the NMR Group r-universe. Specifically, using the statsTable function outlined in this post.\nFirst, downloading the library using the custom repos argument to point to the r-universe: install.packages(\"coreStatsNMR\", repos = c(\"https://nmrgroup.r-universe.dev\", \"https://cloud.r-project.org\"))\n\nlibrary(coreStatsNMR)\n\n\nAttaching package: 'coreStatsNMR'\n\n\nThe following object is masked from 'package:base':\n\n    mode\n\nlibrary(dplyr)\n\n\nAttaching package: 'dplyr'\n\n\nThe following objects are masked from 'package:stats':\n\n    filter, lag\n\n\nThe following objects are masked from 'package:base':\n\n    intersect, setdiff, setequal, union\n\nstatsTable(data = iris,\n           summVar = \"Sepal.Length\",\n           groupVar = \"Species\",\n           stats = c(\"n\", \"min\", \"max\", \"mean\", \"weighted.mean\", \"median\", \"sd\", \"iqr\", \"cv\"),\n           accuracy = 0.01,\n           drop0trailing = TRUE) %&gt;% \n  knitr::kable()\n\nWarning in statsTable.data.frame(data = iris, summVar = \"Sepal.Length\", : Using placeholder weights of 1 for all data\n\n\n\n\n\nstat\nsetosa\nversicolor\nvirginica\nTotal\n\n\n\n\nn\n50\n50\n50\n150\n\n\nmin\n4.30\n4.90\n4.90\n4.30\n\n\nmax\n5.80\n7.00\n7.90\n7.90\n\n\nmean\n5.01\n5.94\n6.59\n5.84\n\n\nweighted.mean\n5.01\n5.94\n6.59\n5.84\n\n\nmedian\n5.00\n5.90\n6.50\n5.80\n\n\nsd\n0.35\n0.52\n0.64\n0.83\n\n\niqr\n0.40\n0.70\n0.67\n1.30\n\n\ncv\n0.07\n0.09\n0.10\n0.14\n\n\n\n\n\n\nSo what?\nYay! We can run summary statistics on stock R data with our own package. Why do this? We already can write expressive pipelines with various packages: dplyr, data.table, collapse, or polars. The added value of a DIY function is not apparent, especially if it’s using those packages underneath.\nHowever, for a consulting firm, such as my previous employer, there is value in creating wrapped versions of the stock coreStats functions which incorporate project/client constraints and documentation. That way, the core functions’ focus can be on being very good in a narrow scope (for each function), but they can be combined and/or extended via wrappers for projects and/or specific, repetitive applications. This does assume time is invested in designing them to play nicely with one another, and maintaining these conditions as the codebase evolves. Having shareable “core” functions separate from “project code” allows the firm to tap into additional marketing value as well, i.e. more-visibly participating in open-source software (OSS) development.\nInternal and/or public packages are also ways to embed invaluable organizational knowledge, e.g. in a package’s testing suite, warnings, errors, and documentation. Of course, embedding this knowledge requires caution so that only the sources/methods/etc appropriate for public use are exposed in public repos like the r-universe."
+    "text": "A really quick post to shoutout the open-source libraries I used to create what I find to be gorgeous icons, e.g. the favicon I use for my website, reproduced above in a larger size.\n\nboringavatars\ncoolors\n\nAnybody who worked with me previously will now know my secret to creating cute, company-themed user icons 😋\nimport Avatar from 'boring-avatars';\n\n&lt;Avatar \n        name='Julian do Nascimento Ricardo'\n        size='180'\n        variant='sunset'\n        colors={['#FB6107', '#F3DE2C', '#7CB518', '#5C8001', '#FBB02D']}\n/&gt;"
   },
   {
     "objectID": "posts/welcome/index.html",

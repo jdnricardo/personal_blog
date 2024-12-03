@@ -1,0 +1,90 @@
+---
+title: "Advent of Code: Day 1"
+date: "2024-12-02"
+categories: [code, advent, benchmark]
+format:
+  html:
+    code-fold: false
+---
+
+This is my first year participating in the [#AdventofCode](https://bsky.app/hashtag/AdventOfCode){target="_blank"}! Already off to a promising start, having to catch up on the first day's challenge, but I was too busy driving back from time with family yesterday.
+
+I worked up solutions using the `tidytable` and `collapse` packages for parts 1 and 2 below. They are my go-to packages for developing tidyverse-style with higher upside on computational performance. Everything is in functional form to make benchmarking performance easier later on.
+
+First things first, a function to load input data. 
+
+```{r eval=FALSE}
+get_day1_input <- function() {
+  here("data", "input-day01.txt") %>%
+# Read in as single column
+  read.table(header = FALSE,
+             col.names = c("list_1",
+                           "list_2"))
+}
+```
+
+## Part 1
+
+The first part requires solving for the total distance between two lists, taken as the difference between corresponding elements (in ascending order).
+
+```{r eval=FALSE}
+tidytable_day1 <- function() { 
+  get_day1_input() %>%
+  map(sort) %>% 
+  bind_cols() %>% 
+  summarise(
+    distance = sum(abs(list_1 - list_2))
+  ) %>%
+  as.integer()
+}
+
+collapse_day1 <- function() {
+  get_day1_input() %>%
+  fmutate(
+    list_1 = sort(list_1),
+    list_2 = sort(list_2)
+  ) %>%
+  fmutate(
+    distance = abs(list_1 - list_2), .keep = "none"
+  ) %>%
+  fsum() %>%
+  as.integer()
+}
+```
+
+And comparing performance...
+
+![](day1_p1_bench.png)
+
+## Part 2
+
+The second part requires calculating a total similarity score between the lists, where the only elements that score points are present in both lists. The score is taken as the product of each said number and the number of appearances in the *second list*
+
+```{r eval=FALSE}
+tidytable_day1_p2 <- function() {
+  get_day1_input() %>%
+  filter(list_2 %in% list_1) %>%
+  count(list_2) %>%
+  summarise(
+    sim_score = sum(n*list_2),
+  ) %>%
+  as.integer()
+}
+
+collapse_day1_p2 <- function() {
+  get_day1_input() %>%
+  fsubset(list_2 %in% list_1) %>%
+  fcount(list_2) %>%
+  fmutate(
+    sim_score = N*list_2, .keep = "none"
+  ) %>%
+  fsum() %>%
+  as.integer()
+}
+```
+
+Again, comparing performance
+
+![](day1_p2_bench.png)
+
+Stick around for day 2!! Which will technically happen on day 3. My money is on me catching up by the weekend :)

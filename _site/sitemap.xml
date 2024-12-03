@@ -1,40 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://jdnricardo.com/posts/making-an-avatar/index.html</loc>
-    <lastmod>2024-10-23T17:04:26.806Z</lastmod>
+    <loc>https://jdnricardo.com/posts/internal-pkg-r-universe/index.html</loc>
+    <lastmod>2024-08-15T20:03:02.825Z</lastmod>
   </url>
   <url>
     <loc>https://jdnricardo.com/posts/eaglei/viz_sketches/index.html</loc>
-    <lastmod>2024-10-23T20:37:53.512Z</lastmod>
+    <lastmod>2024-10-28T22:00:46.291Z</lastmod>
   </url>
   <url>
     <loc>https://jdnricardo.com/posts/eaglei/eia_metrics/index.html</loc>
     <lastmod>2024-10-23T17:19:49.263Z</lastmod>
   </url>
   <url>
-    <loc>https://jdnricardo.com/eaglei.html</loc>
-    <lastmod>2024-08-21T14:53:30.830Z</lastmod>
-  </url>
-  <url>
-    <loc>https://jdnricardo.com/archive.html</loc>
-    <lastmod>2024-08-15T15:13:58.911Z</lastmod>
+    <loc>https://jdnricardo.com/index.html</loc>
+    <lastmod>2024-09-02T20:20:12.753Z</lastmod>
   </url>
   <url>
     <loc>https://jdnricardo.com/blog.html</loc>
     <lastmod>2024-10-11T18:47:19.567Z</lastmod>
   </url>
   <url>
-    <loc>https://jdnricardo.com/index.html</loc>
-    <lastmod>2024-09-02T20:20:12.753Z</lastmod>
+    <loc>https://jdnricardo.com/archive.html</loc>
+    <lastmod>2024-08-15T15:13:58.911Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jdnricardo.com/eaglei.html</loc>
+    <lastmod>2024-08-21T14:53:30.830Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jdnricardo.com/posts/advent-of-code-2024/day1/index.html</loc>
+    <lastmod>2024-12-03T03:26:40.392Z</lastmod>
   </url>
   <url>
     <loc>https://jdnricardo.com/posts/eaglei/intro/index.html</loc>
     <lastmod>2024-08-29T16:23:02.490Z</lastmod>
   </url>
   <url>
-    <loc>https://jdnricardo.com/posts/internal-pkg-r-universe/index.html</loc>
-    <lastmod>2024-08-15T20:03:02.825Z</lastmod>
+    <loc>https://jdnricardo.com/posts/making-an-avatar/index.html</loc>
+    <lastmod>2024-10-23T17:04:26.806Z</lastmod>
   </url>
   <url>
     <loc>https://jdnricardo.com/posts/welcome/index.html</loc>

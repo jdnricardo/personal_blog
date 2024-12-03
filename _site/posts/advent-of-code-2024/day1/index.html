@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Julian Ricardo">
-<meta name="dcterms.date" content="2024-10-23">
+<meta name="dcterms.date" content="2024-12-02">
 
-<title>Visualizing outage data – Julian Ricardo</title>
+<title>Advent of Code: Day 1 – Julian Ricardo</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -164,11 +164,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Visualizing outage data</h1>
+      <h1 class="title">Advent of Code: Day 1</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">code</div>
-                <div class="quarto-category">energy</div>
-                <div class="quarto-category">eaglei</div>
+                <div class="quarto-category">advent</div>
+                <div class="quarto-category">benchmark</div>
               </div>
                   </div>
   </div>
@@ -186,7 +186,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">October 23, 2024</p>
+        <p class="date">December 2, 2024</p>
       </div>
     </div>
     
@@ -202,180 +202,88 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#assembling-the-tools" id="toc-assembling-the-tools" class="nav-link active" data-scroll-target="#assembling-the-tools">Assembling the tools</a></li>
-  <li><a href="#spoiler-alert" id="toc-spoiler-alert" class="nav-link" data-scroll-target="#spoiler-alert">Spoiler alert</a></li>
-  <li><a href="#total-annual-outages" id="toc-total-annual-outages" class="nav-link" data-scroll-target="#total-annual-outages">Total annual outages</a></li>
-  <li><a href="#number-of-outages" id="toc-number-of-outages" class="nav-link" data-scroll-target="#number-of-outages">Number of outages</a></li>
-  <li><a href="#next-steps" id="toc-next-steps" class="nav-link" data-scroll-target="#next-steps">Next steps</a></li>
+  <li><a href="#part-1" id="toc-part-1" class="nav-link active" data-scroll-target="#part-1">Part 1</a></li>
+  <li><a href="#part-2" id="toc-part-2" class="nav-link" data-scroll-target="#part-2">Part 2</a></li>
   </ul>
 </nav>
     </div>
 <!-- main -->
-<main class="content quarto-banner-title-block page-columns page-full" id="quarto-document-content">
+<main class="content quarto-banner-title-block" id="quarto-document-content">
 
 
 
 
 
-<section id="assembling-the-tools" class="level2">
-<h2 class="anchored" data-anchor-id="assembling-the-tools">Assembling the tools</h2>
-<p>This post is the third in a series exploring the DOE’s <a href="https://openenergyhub.ornl.gov/explore/dataset/eaglei_outages_2014/information/" target="_blank">Eagle-I dataset</a> on US electrical grid outages. See previous posts here: <a href="../intro/index.html" target="_blank">I</a> and <a href="../eia_metrics/index.html" target="_blank">II</a></p>
-<p>I gave away in my previous post that I had drafted numbers to compare with the EIA for a few states.</p>
-<p><img src="../eia_metrics/sample_saidi_state.png" class="img-fluid" alt="Console output in R showing the calculated SAIDI metric for an assortment of US states">.</p>
-<p>They did not match the EIA chart (see below), but were reasonable enough for me to justify making more-polished visualizations. In more words, “reasonable” given just the uncertainties in data sourcing I already know about, let alone the Rumsfeldian unknowns lurking about. Before testing my <del>hubris</del> hypothesis that I’ve replicated anything worth posting about…</p>
-<p>A few caveats:</p>
-<ul>
-<li>I am comparing numbers with the set from the EIA that <em>includes major events</em>, to avoid coming up with independent estimates of when these events occurred in the Eagle-I data, merging that data in somehow, etc.</li>
-<li>I am comparing numbers with numbers I am reading off of the EIA chart, rather than coming up with my own aggregated state numbers from their underlying utility-level spreadsheet. That is an exercise for another day</li>
-<li>I did not run the Eagle-I analysis on all 50 states, <del>because I’m impatient</del> to save computation time. I ran only the 8 states labeled in the EIA chart: Kentucky, Louisiana, Maine, Michigan, Mississippi, Oregon, Texas, West Virginia.</li>
-</ul>
-<p>Last bit before jumping into the charts… my setup chunk, where I load packages, set my <code>ggplot2</code> theme, and assemble the necessary targets (i.e.&nbsp;datasets I produced in my pipeline). For colors, I’m using reds from <a href="https://www.reasonable.work/colors/red/">Reasonable Colors</a> today.</p>
+<p>This is my first year participating in the <a href="https://bsky.app/hashtag/AdventOfCode" target="_blank">#AdventofCode</a>! Already off to a promising start, having to catch up on the first day’s challenge, but I was too busy driving back from time with family yesterday.</p>
+<p>I worked up solutions using the <code>tidytable</code> and <code>collapse</code> packages for parts 1 and 2 below. They are my go-to packages for developing tidyverse-style with higher upside on computational performance. Everything is in functional form to make benchmarking performance easier later on.</p>
+<p>First things first, a function to load input data.</p>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(targets)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidytable)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(forcats)</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggtext)</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggrepel)</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(scales)</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(<span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">18</span>) <span class="sc">+</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>            <span class="fu">theme</span>(<span class="at">panel.grid =</span> <span class="fu">element_blank</span>(),</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>                  <span class="at">plot.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"#fcfcfc"</span>)))</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="fu">tar_load</span>(<span class="fu">matches</span>(<span class="st">"sai[df]i"</span>), <span class="at">store =</span> <span class="st">"../_targets"</span>)</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>median_tag <span class="ot">&lt;-</span> <span class="st">"&lt;span style = 'color:#530003;'&gt;&lt;strong&gt;US median*&lt;/strong&gt;&lt;/span&gt;"</span></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>median_red <span class="ot">&lt;-</span> <span class="st">"#530003"</span></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>base_red <span class="ot">&lt;-</span> <span class="st">"#FF4647"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>get_day1_input <span class="ot">&lt;-</span> <span class="cf">function</span>() {</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"input-day01.txt"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Read in as single column</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">read.table</span>(<span class="at">header =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>             <span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">"list_1"</span>,</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>                           <span class="st">"list_2"</span>))</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-</section>
-<section id="spoiler-alert" class="level2">
-<h2 class="anchored" data-anchor-id="spoiler-alert">Spoiler alert</h2>
-<p>I managed to create a chart that looks like what I was after! Recall the chart we started with, from this EIA <a href="https://www.eia.gov/todayinenergy/detail.php?id=54639" target="_blank">article</a>. The two metrics I’m interested in replicating from the chart are System Average Interruption Duration Index (SAIDI, horiz. axis) and System Average Interruption Frequency Index (SAIFI, vert. axis).</p>
-<p><img src="../intro/chart2.svg" class="img-fluid" alt="Average total annual electric power interruption duration and frequency per customer, by state, for 2021 only"></p>
-<p>What’s below is only a draft, for reasons I’ll get into with the remainder of this post. A quick visual comparison of the states I analyzed, relative to the median (which is the <strong>EIA median</strong>), shows that the values I came up with are low. I would need to analyze all 50 states to check whether they are equally off relative to the new median too.</p>
+<section id="part-1" class="level2">
+<h2 class="anchored" data-anchor-id="part-1">Part 1</h2>
+<p>The first part requires solving for the total distance between two lists, taken as the difference between corresponding elements (in ascending order).</p>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">inner_join</span>(</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  state_saidi,</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  state_saifi,</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">by =</span> <span class="st">"state"</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span> </span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">data.frame</span>(</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">state =</span> <span class="st">"US median*"</span>,</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Technically, they say "just over seven hours" so I added 5% to SAIDI.</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>      <span class="co"># SAIFI is interpreted from graph</span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>      <span class="at">saidi =</span> <span class="dv">7</span><span class="sc">*</span><span class="fl">1.05</span>,</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>      <span class="at">saifi =</span> <span class="fl">1.4</span></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">state =</span> <span class="fu">fct_reorder</span>(state, saidi)</span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> saidi,</span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>             <span class="at">y =</span> saifi)) <span class="sc">+</span></span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">color =</span> state <span class="sc">==</span> <span class="st">"US median*"</span>),</span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>             <span class="at">size =</span> <span class="fu">rel</span>(<span class="dv">4</span>),</span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>             <span class="at">alpha =</span> <span class="dv">1</span><span class="sc">/</span><span class="fl">1.5</span>) <span class="sc">+</span></span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text_repel</span>(<span class="fu">aes</span>(<span class="at">color =</span> state <span class="sc">==</span> <span class="st">"US median*"</span>,</span>
-<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>                      <span class="at">label =</span> state)) <span class="sc">+</span></span>
-<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(base_red,</span>
-<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>                                median_red)) <span class="sc">+</span></span>
-<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">expand_limits</span>(<span class="at">x =</span> <span class="dv">0</span>,</span>
-<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>                <span class="at">y =</span> <span class="dv">0</span>) <span class="sc">+</span></span>
-<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="fu">paste</span>(<span class="st">"States' SAIDIs &amp; SAIFIs compared to the"</span>, median_tag), </span>
-<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>       <span class="at">caption =</span> <span class="st">"*including major events"</span>) <span class="sc">+</span></span>
-<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">guides</span>(<span class="at">color =</span> <span class="st">"none"</span>) <span class="sc">+</span></span>
-<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">panel.grid.major =</span> <span class="fu">element_line</span>(<span class="st">"grey90"</span>),</span>
-<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.title =</span> <span class="fu">element_blank</span>(),</span>
-<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>        <span class="at">title =</span> <span class="fu">element_markdown</span>(<span class="at">size =</span> <span class="fu">rel</span>(<span class="fl">0.8</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>tidytable_day1 <span class="ot">&lt;-</span> <span class="cf">function</span>() { </span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">get_day1_input</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map</span>(sort) <span class="sc">%&gt;%</span> </span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_cols</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">distance =</span> <span class="fu">sum</span>(<span class="fu">abs</span>(list_1 <span class="sc">-</span> list_2))</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.integer</span>()</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>collapse_day1 <span class="ot">&lt;-</span> <span class="cf">function</span>() {</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">get_day1_input</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fmutate</span>(</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">list_1 =</span> <span class="fu">sort</span>(list_1),</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">list_2 =</span> <span class="fu">sort</span>(list_2)</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fmutate</span>(</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">distance =</span> <span class="fu">abs</span>(list_1 <span class="sc">-</span> list_2), <span class="at">.keep =</span> <span class="st">"none"</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fsum</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.integer</span>()</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p><img src="./images/scatter-1.png" class="img-fluid" alt="Scatterplot comparing my estimates of SAIDI and SAIFI for each of 8 states, alongside EIA median values."></p>
+<p>And comparing performance…</p>
+<p><img src="day1_p1_bench.png" class="img-fluid"></p>
 </section>
-<section id="total-annual-outages" class="level2 page-columns page-full">
-<h2 class="anchored" data-anchor-id="total-annual-outages">Total annual outages</h2>
-<p>I will start off comparing my SAIDI with the EIA’s median value of “just over seven hours”, translated by yours truly to 7.35 (or 5% higher). Louisiana catches the eye, being so far out at 50+ hours. But that’s not as far adrift as it is in the EIA data, at 80+ hours. Maine has the lowest SAIDI in my analysis and the EIA’s (you go Maine!). Most states in my analysis are above the EIA median, as I expected. But on closer inspection, it’s by smaller margins than I want to see before closing out this analysis. Kentucky is above-median according to the EIA and below-median if you look at my analysis.</p>
+<section id="part-2" class="level2">
+<h2 class="anchored" data-anchor-id="part-2">Part 2</h2>
+<p>The second part requires calculating a total similarity score between the lists, where the only elements that score points are present in both lists. The score is taken as the product of each said number and the number of appearances in the <em>second list</em></p>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>state_saidi <span class="sc">%&gt;%</span> </span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">data.frame</span>(</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>      <span class="at">state =</span> median_tag,</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Technically, they say "just over seven hours"</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>      <span class="co"># so I added 5%</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>      <span class="at">saidi =</span> <span class="dv">7</span><span class="sc">*</span><span class="fl">1.05</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">state =</span> <span class="fu">fct_reorder</span>(state, saidi)</span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> saidi,</span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>             <span class="at">y =</span> state)) <span class="sc">+</span></span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="fu">aes</span>(<span class="at">fill =</span> state <span class="sc">==</span> median_tag)) <span class="sc">+</span></span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(base_red,</span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>                               median_red)) <span class="sc">+</span></span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">caption =</span> <span class="st">"*including major events"</span>) <span class="sc">+</span></span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">guides</span>(<span class="at">fill =</span> <span class="st">"none"</span>) <span class="sc">+</span></span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">panel.grid.major.x =</span> <span class="fu">element_line</span>(<span class="st">"grey90"</span>),</span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.text.y =</span> <span class="fu">element_markdown</span>(),</span>
-<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.title =</span> <span class="fu">element_blank</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>tidytable_day1_p2 <span class="ot">&lt;-</span> <span class="cf">function</span>() {</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">get_day1_input</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(list_2 <span class="sc">%in%</span> list_1) <span class="sc">%&gt;%</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(list_2) <span class="sc">%&gt;%</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">sim_score =</span> <span class="fu">sum</span>(n<span class="sc">*</span>list_2),</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.integer</span>()</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>collapse_day1_p2 <span class="ot">&lt;-</span> <span class="cf">function</span>() {</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">get_day1_input</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fsubset</span>(list_2 <span class="sc">%in%</span> list_1) <span class="sc">%&gt;%</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fcount</span>(list_2) <span class="sc">%&gt;%</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fmutate</span>(</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">sim_score =</span> N<span class="sc">*</span>list_2, <span class="at">.keep =</span> <span class="st">"none"</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fsum</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.integer</span>()</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p><img src="./images/state_saidi-1.png" class="img-fluid" alt="Bar chart showing state SAIDI values as calculated from Eagle-I data, compared to the EIA median value."></p>
-<p>I will need to take another look at my approach to calculating SAIDI, and have a sneaking suspicion I need to handle missing chunks of the time-series better.</p>
-<p>I should also check how the distribution of SAIDIs in individual counties held up, to better understand how I’m calculating right-tail outcomes especially. Right on time, a wild violin chart appears! The lines in each violin indicate the median SAIDI among a state’s counties, as well as the 5th / 95th SAIDI percentiles.</p>
-
-<div class="no-row-height column-margin column-container"><div class="">
-<p>Shoutout to the <code>ggtext</code> package for making it easy to experiment with color-tagging my title!</p>
-</div></div><div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>county_saidi <span class="sc">%&gt;%</span> </span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">state =</span> <span class="fu">fct_reorder</span>(state, saidi)</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> saidi,</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>             <span class="at">y =</span> state)) <span class="sc">+</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_violin</span>(<span class="at">draw_quantiles =</span> <span class="fu">c</span>(<span class="fl">0.05</span>, <span class="fl">0.5</span>, <span class="fl">0.95</span>),</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>              <span class="at">fill =</span> base_red) <span class="sc">+</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">7</span><span class="sc">*</span><span class="fl">1.05</span>,</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>             <span class="at">color =</span> median_red,</span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>             <span class="at">linewidth =</span> <span class="fu">rel</span>(<span class="fl">1.1</span>)) <span class="sc">+</span></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_sqrt</span>() <span class="sc">+</span></span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="fu">paste</span>(<span class="st">"States' county SAIDIs compared to the"</span>, median_tag), </span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>       <span class="at">caption =</span> <span class="st">"*including major events"</span>) <span class="sc">+</span></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">guides</span>(<span class="at">fill =</span> <span class="st">"none"</span>) <span class="sc">+</span></span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">panel.grid.major.x =</span> <span class="fu">element_line</span>(<span class="st">"grey90"</span>),</span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.title =</span> <span class="fu">element_blank</span>(),</span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>        <span class="at">title =</span> <span class="fu">element_markdown</span>(<span class="at">size =</span> <span class="fu">rel</span>(<span class="fl">0.8</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-</div>
-<p><img src="./images/county_saidi-1.png" class="img-fluid" alt="Bar chart showing county SAIDI values as calculated from Eagle-I data, compared to the EIA median value."> This helps my self-esteem a little bit. Maybe I have moderately, but not egregiously, underestimated the largest and/or longest outages? Still, look out for revisions to the SAIDI calculations in a future post!</p>
-</section>
-<section id="number-of-outages" class="level2">
-<h2 class="anchored" data-anchor-id="number-of-outages">Number of outages</h2>
-<p>Showing the same charts, but now with SAIFI rather than SAIDI. Other than Louisiana coming in <strong>above</strong> the EIA estimate, I can summarize everything else as worse than my SAIDI analysis in replicating the EIA estimates. The SAIFI values I came up with are lower than the EIA’s state-level estimates. Most notable are the many state SAIFI estimates that come in lower than the EIA median… a clearer sign that more work is needed here.</p>
-<p><img src="./images/state_saifi-1.png" class="img-fluid" alt="Bar chart showing state SAIFI values as calculated from Eagle-I data, compared to the EIA median value."></p>
-<p><img src="./images/county_saifi-1.png" class="img-fluid" alt="Bar chart showing county SAIFI values as calculated from Eagle-I data, compared to the EIA median value."></p>
-</section>
-<section id="next-steps" class="level2">
-<h2 class="anchored" data-anchor-id="next-steps">Next steps</h2>
-<p>Setting aside whether or how much I can mitigate uncertainty due to using census population figures (and not utility customer figures), I feel confident there is room to tighten up my SAIDI and SAIFI calculations with a closer review of them. Along the way, I plan to develop additional charts to quantify the discrepancies I find.</p>
-<p>Ideally, I would also show the above charts alongside the <em>actual</em> EIA values for each state / county, and not just the overall median value as derived from visually interpreting their published chart. It’s not exactly a sturdy foundation for comparative analysis…</p>
-<p>Firming this up will require reading in &amp; manipulating data the EIA publishes on utility reliability (in spreadsheets named “Reliability.xlsx” for each calendar year). From a quick glance, the reliability files allow for taking a weighted average SAIDI / SAIFI for each state, using the “Number of Customers” column as the weight. Stay tuned for this update as well!</p>
-<p>To cap things off, I would like to conjure up interactive visualizations of my Eagle-I analysis (and comparisons to the EIA figures), maybe with the <code>ggiraph</code> package.</p>
-<!-- ## Visual narrative for EIA comp-->
-<!-- To start with, what does my version of the EIA scatterplot look like. Show this and my tabulated set of EIA values in faceted scatterplots -->
-<!-- Next, a dumbbell plot where one axis contains states, and the other compares points indicating my SAIDI / SAIFI and the EIA ones. -->
-<!-- Finally, a lolli / bar plot where the values are discrepancies between my metrics and the EIA's, using the latter as ground truth. -->
+<p>Again, comparing performance</p>
+<p><img src="day1_p2_bench.png" class="img-fluid"></p>
+<p>Stick around for day 2!! Which will technically happen on day 3. My money is on me catching up by the weekend :)</p>
 
 
 </section>

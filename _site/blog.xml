@@ -10,7 +10,278 @@
 <atom:link href="https://jdnricardo.com/blog.xml" rel="self" type="application/rss+xml"/>
 <description></description>
 <generator>quarto-1.5.57</generator>
-<lastBuildDate>Wed, 23 Oct 2024 04:00:00 GMT</lastBuildDate>
+<lastBuildDate>Mon, 02 Dec 2024 05:00:00 GMT</lastBuildDate>
+<item>
+  <title>Advent of Code: Day 1</title>
+  <dc:creator>Julian Ricardo</dc:creator>
+  <link>https://jdnricardo.com/posts/advent-of-code-2024/day1/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<p>This is my first year participating in the <a href="https://bsky.app/hashtag/AdventOfCode" target="_blank">#AdventofCode</a>! Already off to a promising start, having to catch up on the first day’s challenge, but I was too busy driving back from time with family yesterday.</p>
+<p>I worked up solutions using the <code>tidytable</code> and <code>collapse</code> packages for parts 1 and 2 below. They are my go-to packages for developing tidyverse-style with higher upside on computational performance. Everything is in functional form to make benchmarking performance easier later on.</p>
+<p>First things first, a function to load input data.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1">get_day1_input <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">function</span>() {</span>
+<span id="cb1-2">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">here</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"data"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"input-day01.txt"</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%&gt;%</span></span>
+<span id="cb1-3"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Read in as single column</span></span>
+<span id="cb1-4">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">read.table</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">header =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">FALSE</span>,</span>
+<span id="cb1-5">             <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">col.names =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"list_1"</span>,</span>
+<span id="cb1-6">                           <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"list_2"</span>))</span>
+<span id="cb1-7">}</span></code></pre></div>
+</div>
+<section id="part-1" class="level2">
+<h2 class="anchored" data-anchor-id="part-1">Part 1</h2>
+<p>The first part requires solving for the total distance between two lists, taken as the difference between corresponding elements (in ascending order).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1">tidytable_day1 <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">function</span>() { </span>
+<span id="cb2-2">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">get_day1_input</span>() <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%&gt;%</span></span>
+<span id="cb2-3">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">map</span>(sort) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%&gt;%</span> </span>
+<span id="cb2-4">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">bind_cols</span>() <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%&gt;%</span> </span>
+<span id="cb2-5">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">summarise</span>(</span>
+<span id="cb2-6">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">distance =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">sum</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">abs</span>(list_1 <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> list_2))</span>
+<span id="cb2-7">  ) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%&gt;%</span></span>
+<span id="cb2-8">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">as.integer</span>()</span>
+<span id="cb2-9">}</span>
+<span id="cb2-10"></span>
+<span id="cb2-11">collapse_day1 <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">function</span>() {</span>
+<span id="cb2-12">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">get_day1_input</span>() <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%&gt;%</span></span>
+<span id="cb2-13">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">fmutate</span>(</span>
+<span id="cb2-14">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">list_1 =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">sort</span>(list_1),</span>
+<span id="cb2-15">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">list_2 =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">sort</span>(list_2)</span>
+<span id="cb2-16">  ) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%&gt;%</span></span>
+<span id="cb2-17">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">fmutate</span>(</span>
+<span id="cb2-18">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">distance =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">abs</span>(list_1 <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> list_2), <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">.keep =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"none"</span></span>
+<span id="cb2-19">  ) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%&gt;%</span></span>
+<span id="cb2-20">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">fsum</span>() <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%&gt;%</span></span>
+<span id="cb2-21">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">as.integer</span>()</span>
+<span id="cb2-22">}</span></code></pre></div>
+</div>
+<p>And comparing performance…</p>
+<p><img src="https://jdnricardo.com/posts/advent-of-code-2024/day1/day1_p1_bench.png" class="img-fluid"></p>
+</section>
+<section id="part-2" class="level2">
+<h2 class="anchored" data-anchor-id="part-2">Part 2</h2>
+<p>The second part requires calculating a total similarity score between the lists, where the only elements that score points are present in both lists. The score is taken as the product of each said number and the number of appearances in the <em>second list</em></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1">tidytable_day1_p2 <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">function</span>() {</span>
+<span id="cb3-2">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">get_day1_input</span>() <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%&gt;%</span></span>
+<span id="cb3-3">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">filter</span>(list_2 <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%in%</span> list_1) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%&gt;%</span></span>
+<span id="cb3-4">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">count</span>(list_2) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%&gt;%</span></span>
+<span id="cb3-5">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">summarise</span>(</span>
+<span id="cb3-6">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">sim_score =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">sum</span>(n<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>list_2),</span>
+<span id="cb3-7">  ) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%&gt;%</span></span>
+<span id="cb3-8">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">as.integer</span>()</span>
+<span id="cb3-9">}</span>
+<span id="cb3-10"></span>
+<span id="cb3-11">collapse_day1_p2 <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">function</span>() {</span>
+<span id="cb3-12">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">get_day1_input</span>() <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%&gt;%</span></span>
+<span id="cb3-13">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">fsubset</span>(list_2 <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%in%</span> list_1) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%&gt;%</span></span>
+<span id="cb3-14">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">fcount</span>(list_2) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%&gt;%</span></span>
+<span id="cb3-15">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">fmutate</span>(</span>
+<span id="cb3-16">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">sim_score =</span> N<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>list_2, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">.keep =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"none"</span></span>
+<span id="cb3-17">  ) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%&gt;%</span></span>
+<span id="cb3-18">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">fsum</span>() <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%&gt;%</span></span>
+<span id="cb3-19">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">as.integer</span>()</span>
+<span id="cb3-20">}</span></code></pre></div>
+</div>
+<p>Again, comparing performance</p>
+<p><img src="https://jdnricardo.com/posts/advent-of-code-2024/day1/day1_p2_bench.png" class="img-fluid"></p>
+<p>Stick around for day 2!! Which will technically happen on day 3. My money is on me catching up by the weekend :)</p>
+
+
+</section>
+
+ ]]></description>
+  <category>code</category>
+  <category>advent</category>
+  <category>benchmark</category>
+  <guid>https://jdnricardo.com/posts/advent-of-code-2024/day1/</guid>
+  <pubDate>Mon, 02 Dec 2024 05:00:00 GMT</pubDate>
+</item>
+<item>
+  <title></title>
+  <dc:creator>Julian Ricardo</dc:creator>
+  <link>https://jdnricardo.com/posts/forest_cover/</link>
+  <description><![CDATA[ undefined ]]></description>
+  <category>code</category>
+  <category>gis</category>
+  <category>rayshader</category>
+  <guid>https://jdnricardo.com/posts/forest_cover/</guid>
+  <pubDate>Mon, 18 Nov 2024 05:00:00 GMT</pubDate>
+</item>
 <item>
   <title>Visualizing outage data</title>
   <dc:creator>Julian Ricardo</dc:creator>
@@ -121,7 +392,7 @@ font-style: inherit;">"#FF4647"</span></span></code></pre></div>
 <h2 class="anchored" data-anchor-id="spoiler-alert">Spoiler alert</h2>
 <p>I managed to create a chart that looks like what I was after! Recall the chart we started with, from this EIA <a href="https://www.eia.gov/todayinenergy/detail.php?id=54639" target="_blank">article</a>. The two metrics I’m interested in replicating from the chart are System Average Interruption Duration Index (SAIDI, horiz. axis) and System Average Interruption Frequency Index (SAIFI, vert. axis).</p>
 <p><img src="https://jdnricardo.com/posts/eaglei/intro/chart2.svg" class="img-fluid" alt="Average total annual electric power interruption duration and frequency per customer, by state, for 2021 only"></p>
-<p>What’s below is only a draft, for reasons I’ll get into with the remainder of this post.</p>
+<p>What’s below is only a draft, for reasons I’ll get into with the remainder of this post. A quick visual comparison of the states I analyzed, relative to the median (which is the <strong>EIA median</strong>), shows that the values I came up with are low. I would need to analyze all 50 states to check whether they are equally off relative to the new median too.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
@@ -599,6 +870,16 @@ font-style: inherit;">0.8</span>)))</span></code></pre></div>
   <category>energy</category>
   <category>eaglei</category>
   <guid>https://jdnricardo.com/posts/eaglei/viz_sketches/</guid>
+  <pubDate>Wed, 23 Oct 2024 04:00:00 GMT</pubDate>
+</item>
+<item>
+  <title></title>
+  <dc:creator>Julian Ricardo</dc:creator>
+  <link>https://jdnricardo.com/posts/surviving/</link>
+  <description><![CDATA[ undefined ]]></description>
+  <category>code</category>
+  <category>survival</category>
+  <guid>https://jdnricardo.com/posts/surviving/</guid>
   <pubDate>Wed, 23 Oct 2024 04:00:00 GMT</pubDate>
 </item>
 <item>
