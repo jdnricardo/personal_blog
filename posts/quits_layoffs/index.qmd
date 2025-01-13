@@ -1,0 +1,10 @@
+---
+title: "Exploring US quits and layoffs"
+date: "2024-10-10"
+categories: [code, jobs, labor]
+draft: true
+---
+
+## Motivation
+
+I saw this data on the great [Data is Plural](https://www.data-is-plural.com/){target="_blank"}
