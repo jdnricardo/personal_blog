@@ -1,0 +1,156 @@
+---
+title: "Consulting"
+format:
+  html:
+    theme:
+      - default
+      - styles/styles.scss
+---
+
+<p style="display: inline-block;"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style="margin-right: 4px; vertical-align: middle;"><rect x="2" y="4" width="20" height="16" rx="2" fill="#eb6864"/><path d="M22 4l-10 8L2 4" stroke="white" stroke-width="2" fill="none"/></svg>consult_julian@f-m.fm</p>
+
+I provide specialized consulting services in data science, visualization, web development, and technical education. Whether you're looking to transform your data into actionable insights, create compelling visualizations, build a modern web presence, or enhance your technical skills, I'm here to help.
+
+Jump to what you need:
+
+* [Data Analytics Services](#data-analytics-services)
+* [Data Visualization Services](#data-visualization-services)
+* [Quarto Website Development](#quarto-website-development)
+* [Front-end Development](#front-end-development)
+* [Technical Tutoring](#technical-tutoring)
+
+## Getting Started
+
+To begin working together:
+
+1. Send me an email describing your project or learning goals
+2. Schedule a free 30-minute consultation
+3. Receive a detailed proposal with timeline and pricing
+4. Begin your project with clear deliverables and milestones
+
+I look forward to helping you achieve your goals! To that end, I offer a free 30-minute consultation to discuss your needs and determine the best approach for your project. Contact me to set up a time!
+
+## Data Analytics Services
+
+I help organizations and individuals leverage their data for better decision-making through:
+
+* Python & R Programming
+* Data Pipeline Development
+* ETL Process Optimization
+* Predictive Analytics & A/B Testing
+* Database Design & Optimization
+* Sample Development
+* Survey Design & Analysis
+
+| Client Type | Rate    |
+|-------------|---------|
+| Startup/SME | $150/hr |
+| Academic    | $120/hr |
+| Student     | $90/hr  |
+
+## Data Visualization Services
+
+I create clear, compelling, and interactive data visualizations that help communicate your insights effectively:
+
+* Publication-ready Figures
+* R/ggplot2 & Python/seaborn Solutions
+* Interactive Dashboards
+* Statistical Graphics
+* Infographics
+
+| Client Type | Rate         |
+|-------------|--------------|
+| Startup/SME | $130/visual  |
+| Academic    | $100/visual  |
+| Student     | $80/visual   |
+
+## Quarto Website Development
+
+I specialize in creating modern, responsive academic and professional websites using Quarto:
+
+### Base Packages
+
+| Features                                           | Rate   |
+|---------------------------------------------------|--------|
+| Portfolio+ (*Portfolio pkg* + Favicon/Logo)      | $1,200 |
+| Portfolio (*Blog pkg* + Publications)      | $1,000 |
+| Blog (*CV pkg* + Blog)                     | $700   |
+| CV (*Home + CV*)                                  | $550   |
+
+All packages include:
+
+* Custom styling
+* Mobile responsiveness
+* Basic content migration
+
+## Front-end Development
+
+I offer custom front-end development services focusing on modern web technologies:
+
+* Interactive Data Projects
+* Responsive Design
+* UI/UX Implementation
+* CSS/SCSS Styling
+
+| Client Type | Rate    |
+|-------------|---------|
+| Startup/SME | $140/hr |
+| Academic    | $110/hr |
+| Student     | $85/hr  |
+
+## Technical Tutoring
+
+I provide personalized technical tutoring in:
+
+* Data Collection
+* Data Manipulation
+* Data Science & Analytics
+* Python Programming
+* R Programming
+* Web Development
+* SQL & Database Design
+* Mathematics
+* Writing Skills
+
+| Session Type        | Rate      |
+|--------------------|-----------|
+| One-on-One (1hr)   | $80      |
+| Group (2-4, 1hr)   | $120     |
+| Workshop (2hrs)    | $200     |
+| Course (10hrs)     | $700     |
+
+## Data Collection Services
+
+I offer services to collect and manage data from various sources:
+
+* Web Scraping
+* API Integration
+* Data Entry & Validation
+
+| Service Type | Rate    |
+|--------------|---------|
+| Web Scraping | $100/hr |
+| API Integration | $120/hr |
+| Data Entry & Validation | $40/hr |
+
+## Project-Based Pricing
+
+For larger projects (20+ hours), I offer custom project-based pricing. This includes:
+
+* Detailed project scope
+* Milestone-based deliverables
+* Regular progress updates
+* Code documentation
+* Knowledge transfer sessions
+
+--------------------------------
+
+Still here? Well, thank you for deeply considering my consulting services.
+
+Let's chat! <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style="margin-right: 4px; vertical-align: middle;"><rect x="2" y="4" width="20" height="16" rx="2" fill="#eb6864"/><path d="M22 4l-10 8L2 4" stroke="white" stroke-width="2" fill="none"/></svg>consult_julian@f-m.fm
+
+<a href="#" class="back-to-top" id="back-to-top" aria-label="Back to top">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M18 15l-6-6-6 6"/>
+  </svg>
+</a>

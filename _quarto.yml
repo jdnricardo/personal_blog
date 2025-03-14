@@ -9,6 +9,8 @@ website:
     left:
       - text: Posts
         href: blog.qmd
+      - text: Consulting
+        href: consulting.qmd
       - text: CV
         href: https://jdnricardo.github.io
     right:
@@ -24,7 +26,9 @@ cookie-consent: true
 
 format:
   html:
-    theme: [journal, styles.scss]
+    theme: [journal, styles/styles.scss]
+    scripts: 
+      - scripts/back-to-top.js
 
 
 

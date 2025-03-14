@@ -272,17 +272,6 @@ font-style: inherit;">as.integer</span>()</span>
   <pubDate>Mon, 02 Dec 2024 05:00:00 GMT</pubDate>
 </item>
 <item>
-  <title></title>
-  <dc:creator>Julian Ricardo</dc:creator>
-  <link>https://jdnricardo.com/posts/forest_cover/</link>
-  <description><![CDATA[ undefined ]]></description>
-  <category>code</category>
-  <category>gis</category>
-  <category>rayshader</category>
-  <guid>https://jdnricardo.com/posts/forest_cover/</guid>
-  <pubDate>Mon, 18 Nov 2024 05:00:00 GMT</pubDate>
-</item>
-<item>
   <title>Visualizing outage data</title>
   <dc:creator>Julian Ricardo</dc:creator>
   <link>https://jdnricardo.com/posts/eaglei/viz_sketches/</link>
@@ -870,16 +859,6 @@ font-style: inherit;">0.8</span>)))</span></code></pre></div>
   <category>energy</category>
   <category>eaglei</category>
   <guid>https://jdnricardo.com/posts/eaglei/viz_sketches/</guid>
-  <pubDate>Wed, 23 Oct 2024 04:00:00 GMT</pubDate>
-</item>
-<item>
-  <title></title>
-  <dc:creator>Julian Ricardo</dc:creator>
-  <link>https://jdnricardo.com/posts/surviving/</link>
-  <description><![CDATA[ undefined ]]></description>
-  <category>code</category>
-  <category>survival</category>
-  <guid>https://jdnricardo.com/posts/surviving/</guid>
   <pubDate>Wed, 23 Oct 2024 04:00:00 GMT</pubDate>
 </item>
 <item>
@@ -1545,16 +1524,6 @@ font-style: inherit;">kable</span>()</span></code></pre></div>
  ]]></description>
   <category>news</category>
   <guid>https://jdnricardo.com/posts/welcome/</guid>
-  <pubDate>Thu, 15 Aug 2024 04:00:00 GMT</pubDate>
-</item>
-<item>
-  <title></title>
-  <dc:creator>Julian Ricardo</dc:creator>
-  <link>https://jdnricardo.com/posts/what-have-i-written/</link>
-  <description><![CDATA[ undefined ]]></description>
-  <category>pub</category>
-  <category>reflection</category>
-  <guid>https://jdnricardo.com/posts/what-have-i-written/</guid>
   <pubDate>Thu, 15 Aug 2024 04:00:00 GMT</pubDate>
 </item>
 </channel>

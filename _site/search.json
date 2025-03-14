@@ -166,5 +166,68 @@
     "title": "So you’re probably wondering how I got to this post…",
     "section": "",
     "text": "First of all, welcome! This is my big break into the blogosphere, so you’re getting in on the ground floor. How exciting!\nThis is my place to get thoughts on the page, primarily in the realms of energy systems and data science. It’s also a place to showcase the skills I’ve sharpened as a professional, and mess around with tools I’d like to add to my toolset.\nThis is also a place to start paying forward the knowledge sharing I benefited from at NMR Group, where I cut my teeth as an analyst, data scientist, and eventually as a mentor to folks starting their professional journeys in R and/or in data science."
+  },
+  {
+    "objectID": "consulting.html",
+    "href": "consulting.html",
+    "title": "Consulting",
+    "section": "",
+    "text": "consult_julian@f-m.fm\nI provide specialized consulting services in data science, visualization, web development, and technical education. Whether you’re looking to transform your data into actionable insights, create compelling visualizations, build a modern web presence, or enhance your technical skills, I’m here to help.\nJump to what you need:"
+  },
+  {
+    "objectID": "consulting.html#data-analytics-services",
+    "href": "consulting.html#data-analytics-services",
+    "title": "Consulting",
+    "section": "Data Analytics Services",
+    "text": "Data Analytics Services\nI help organizations and individuals leverage their data for better decision-making through:\n\nPython & R Programming\nData Pipeline Development\nETL Process Optimization\nPredictive Analytics & A/B Testing\nDatabase Design & Optimization\nSample Development\nSurvey Design & Analysis\n\n\n\n\nClient Type\nRate\n\n\n\n\nStartup/SME\n$150/hr\n\n\nAcademic\n$120/hr\n\n\nStudent\n$90/hr"
+  },
+  {
+    "objectID": "consulting.html#data-visualization-services",
+    "href": "consulting.html#data-visualization-services",
+    "title": "Consulting",
+    "section": "Data Visualization Services",
+    "text": "Data Visualization Services\nI create clear, compelling, and interactive data visualizations that help communicate your insights effectively:\n\nPublication-ready Figures\nR/ggplot2 & Python/seaborn Solutions\nInteractive Dashboards\nStatistical Graphics\nInfographics\n\n\n\n\nClient Type\nRate\n\n\n\n\nStartup/SME\n$130/visual\n\n\nAcademic\n$100/visual\n\n\nStudent\n$80/visual"
+  },
+  {
+    "objectID": "consulting.html#quarto-website-development",
+    "href": "consulting.html#quarto-website-development",
+    "title": "Consulting",
+    "section": "Quarto Website Development",
+    "text": "Quarto Website Development\nI specialize in creating modern, responsive academic and professional websites using Quarto:\n\nBase Packages\n\n\n\nFeatures\nRate\n\n\n\n\nProfessional Site (Home + Blog + Portfolio + Contact)\n$1,200\n\n\nAcademic Site (Home + CV + Publications + Blog)\n$1,000\n\n\nBasic Site (Home + About + Blog)\n$700\n\n\n\nAll packages include:\n\nCustom styling\nMobile responsiveness\nBasic content migration"
+  },
+  {
+    "objectID": "consulting.html#front-end-development",
+    "href": "consulting.html#front-end-development",
+    "title": "Consulting",
+    "section": "Front-end Development",
+    "text": "Front-end Development\nI offer custom front-end development services focusing on modern web technologies:\n\nInteractive Web Applications for Data Projects\nResponsive Design\nUI/UX Implementation\nCSS/SCSS Styling\n\n\n\n\nClient Type\nRate\n\n\n\n\nStartup/SME\n$140/hr\n\n\nAcademic\n$110/hr\n\n\nStudent\n$85/hr"
+  },
+  {
+    "objectID": "consulting.html#technical-tutoring",
+    "href": "consulting.html#technical-tutoring",
+    "title": "Consulting",
+    "section": "Technical Tutoring",
+    "text": "Technical Tutoring\nI provide personalized technical tutoring in:\n\nData Collection\nData Manipulation\nData Science & Analytics\nPython Programming\nR Programming\nWeb Development\nSQL & Database Design\nMathematics\nWriting Skills\n\n\n\n\nSession Type\nRate\n\n\n\n\nOne-on-One (1hr)\n$80\n\n\nGroup (2-4, 1hr)\n$120\n\n\nWorkshop (2hrs)\n$200\n\n\nCourse (10hrs)\n$700"
+  },
+  {
+    "objectID": "consulting.html#data-collection-services",
+    "href": "consulting.html#data-collection-services",
+    "title": "Consulting",
+    "section": "Data Collection Services",
+    "text": "Data Collection Services\nI offer services to collect and manage data from various sources:\n\nWeb Scraping\nAPI Integration\nData Entry & Validation\n\n\n\n\nService Type\nRate\n\n\n\n\nWeb Scraping\n$100/hr\n\n\nAPI Integration\n$120/hr\n\n\nData Entry & Validation\n$40/hr"
+  },
+  {
+    "objectID": "consulting.html#project-based-pricing",
+    "href": "consulting.html#project-based-pricing",
+    "title": "Consulting",
+    "section": "Project-Based Pricing",
+    "text": "Project-Based Pricing\nFor larger projects (20+ hours), I offer custom project-based pricing. This includes:\n\nDetailed project scope\nMilestone-based deliverables\nRegular progress updates\nCode documentation\nKnowledge transfer sessions\n\n\nStill here? Well, thank you for deeply considering my consulting services.\nLet’s chat! consult_julian@f-m.fm"
+  },
+  {
+    "objectID": "consulting.html#getting-started",
+    "href": "consulting.html#getting-started",
+    "title": "Consulting",
+    "section": "Getting Started",
+    "text": "Getting Started\nTo begin working together:\n\nSend me an email describing your project or learning goals\nSchedule a free 30-minute consultation\nReceive a detailed proposal with timeline and pricing\nBegin your project with clear deliverables and milestones\n\nI look forward to helping you achieve your goals! To that end, I offer a free 30-minute consultation to discuss your needs and determine the best approach for your project. Contact me to set up a time!"
   }
 ]
