@@ -1,6 +1,8 @@
 ---
 title: "Consulting"
-format: html
+format: 
+  html:
+    style: /styles/styles.scss
 ---
 
 <p>
@@ -9,19 +11,13 @@ format: html
 <a href="mailto:consult_julian@f-m.fm" style="display: inline-block;">consult_julian@f-m.fm</a>
 </p>
 
-Jump to what you need:
+I provide specialized consulting services in data science, visualization, web development, and technical education. Whether you're looking to transform your data into actionable insights, create compelling visualizations, build a modern web presence, or enhance your technical skills, I'm here to help.
 
 * [Data Analytics Services](#data-analytics-services)
 * [Data Visualization Services](#data-visualization-services)
 * [Quarto Website Development](#quarto-website-development)
 * [Software Development](#software-development)
 * [Technical Tutoring](#technical-tutoring)
-
-----------
-
-## Getting Started
-
-I provide specialized consulting services in data science, visualization, web development, and technical education. Whether you're looking to transform your data into actionable insights, create compelling visualizations, build a modern web presence, or enhance your technical skills, I'm here to help.
 
 To begin working together:
 
@@ -147,12 +143,4 @@ For larger projects (20+ hours), I offer custom project-based pricing. This incl
 
 --------------------------------
 
-Still here? Well, thank you for deeply considering my consulting services.
-
-Let's chat! <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style="margin-right: 4px; vertical-align: middle;"><rect x="2" y="4" width="20" height="16" rx="2" fill="#eb6864"/><path d="M22 4l-10 8L2 4" stroke="white" stroke-width="2" fill="none"/></svg>consult_julian@f-m.fm
-
-<a href="#" class="back-to-top" id="back-to-top" aria-label="Back to top">
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M18 15l-6-6-6 6"/>
-  </svg>
-</a>
+Still here? Well, thank you for deeply considering my [consulting servies](https://calendly.com/jdnricardo/)!

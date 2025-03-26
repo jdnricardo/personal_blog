@@ -12,7 +12,7 @@ website:
       - text: Consulting
         href: consulting.qmd
       - text: CV
-        href: https://jdnricardo.github.io
+        href: /assets/cv-julian-ricardo.pdf
     right:
       - icon: linkedin
         href: https://linkedin.com/in/julian-ricardo-388908a1
@@ -27,6 +27,9 @@ cookie-consent: true
 format:
   html:
     theme: [journal, /styles/styles.scss]
+    include-in-header:
+      - text: |
+          <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     scripts: 
       - /scripts/back-to-top.js
 
