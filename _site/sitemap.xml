@@ -1,27 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://jdnricardo.com/posts/internal-pkg-r-universe/index.html</loc>
-    <lastmod>2025-03-14T16:51:21.125Z</lastmod>
+    <loc>https://jdnricardo.com/index.html</loc>
+    <lastmod>2025-03-26T16:28:08.491Z</lastmod>
   </url>
   <url>
-    <loc>https://jdnricardo.com/posts/eaglei/viz_sketches/index.html</loc>
-    <lastmod>2025-03-14T16:51:21.125Z</lastmod>
+    <loc>https://jdnricardo.com/posts/welcome/index.html</loc>
+    <lastmod>2025-03-14T16:51:21.135Z</lastmod>
   </url>
   <url>
     <loc>https://jdnricardo.com/posts/eaglei/eia_metrics/index.html</loc>
     <lastmod>2025-03-14T16:51:21.125Z</lastmod>
   </url>
   <url>
-    <loc>https://jdnricardo.com/index.html</loc>
-    <lastmod>2025-03-14T16:51:21.125Z</lastmod>
-  </url>
-  <url>
-    <loc>https://jdnricardo.com/blog.html</loc>
-    <lastmod>2025-03-14T17:11:31.490Z</lastmod>
-  </url>
-  <url>
-    <loc>https://jdnricardo.com/archive.html</loc>
+    <loc>https://jdnricardo.com/posts/internal-pkg-r-universe/index.html</loc>
     <lastmod>2025-03-14T16:51:21.125Z</lastmod>
   </url>
   <url>
@@ -29,23 +21,31 @@
     <lastmod>2025-03-14T16:51:21.125Z</lastmod>
   </url>
   <url>
-    <loc>https://jdnricardo.com/posts/advent-of-code-2024/day1/index.html</loc>
+    <loc>https://jdnricardo.com/consulting.html</loc>
+    <lastmod>2025-03-26T16:15:03.236Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jdnricardo.com/archive.html</loc>
     <lastmod>2025-03-14T16:51:21.125Z</lastmod>
   </url>
   <url>
-    <loc>https://jdnricardo.com/posts/eaglei/intro/index.html</loc>
-    <lastmod>2025-03-14T16:51:21.125Z</lastmod>
+    <loc>https://jdnricardo.com/blog.html</loc>
+    <lastmod>2025-03-14T17:11:31.490Z</lastmod>
   </url>
   <url>
     <loc>https://jdnricardo.com/posts/making-an-avatar/index.html</loc>
     <lastmod>2025-03-14T16:51:21.135Z</lastmod>
   </url>
   <url>
-    <loc>https://jdnricardo.com/posts/welcome/index.html</loc>
-    <lastmod>2025-03-14T16:51:21.135Z</lastmod>
+    <loc>https://jdnricardo.com/posts/eaglei/intro/index.html</loc>
+    <lastmod>2025-03-14T16:51:21.125Z</lastmod>
   </url>
   <url>
-    <loc>https://jdnricardo.com/consulting.html</loc>
-    <lastmod>2025-03-14T19:49:38.401Z</lastmod>
+    <loc>https://jdnricardo.com/posts/eaglei/viz_sketches/index.html</loc>
+    <lastmod>2025-03-14T16:51:21.125Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jdnricardo.com/posts/advent-of-code-2024/day1/index.html</loc>
+    <lastmod>2025-03-14T16:51:21.125Z</lastmod>
   </url>
 </urlset>

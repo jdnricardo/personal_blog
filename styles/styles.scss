@@ -35,33 +35,29 @@ $coral: #eb6864;
 // Back to top button
 .back-to-top {
     position: fixed;
-    bottom: 2rem;
-    right: 2rem;
-    background: rgba($coral, 0.9);
-    color: white;
+    bottom: 20px;
+    right: 20px;
+    background: rgba(235, 104, 100, 0.8);
     width: 40px;
     height: 40px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    text-decoration: none;
-    transition: all 0.3s ease;
     opacity: 0;
-    pointer-events: none;
+    transition: opacity 0.3s ease-in-out;
 
     &.visible {
         opacity: 1;
-        pointer-events: auto;
-    }
-
-    &:hover {
-        background: $coral;
-        transform: translateY(-3px);
     }
 
     svg {
         width: 20px;
         height: 20px;
+        stroke: white;
+    }
+
+    &:hover {
+        background: rgba(235, 104, 100, 1);
     }
 }

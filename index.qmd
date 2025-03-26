@@ -8,11 +8,14 @@ about:
       text: LinkedIn
       href: https://linkedin.com/in/julian-ricardo-388908a1
     - icon: github
-      text: Github
+      text: Github (personal)
       href: https://github.com/jdnricardo
-format: 
-  html: 
-    include-in-header: ./header.html
+    - icon: github
+      text: Github (work)
+      href: https://github.com/julianCFS
+    - icon: orcid
+      text: ORCID
+      href: https://orcid.org/0000-0002-2760-6577
 ---
 
 I'm many things: data scientist, environmental engineer, son, brother, Brooklynite, runner, and trivia enthusiast. My specialties are understanding complex systems, especially involving energy & material flows, then developing reproducible models of them and turning results into actionable findings. I'm also motivated to mentor data scientists and grow organizations' analytic abilities.

@@ -1,25 +1,27 @@
 ---
 title: "Consulting"
-format:
-  html:
-    theme:
-      - default
-      - styles/styles.scss
+format: html
 ---
 
-<p style="display: inline-block;"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style="margin-right: 4px; vertical-align: middle;"><rect x="2" y="4" width="20" height="16" rx="2" fill="#eb6864"/><path d="M22 4l-10 8L2 4" stroke="white" stroke-width="2" fill="none"/></svg>consult_julian@f-m.fm</p>
-
-I provide specialized consulting services in data science, visualization, web development, and technical education. Whether you're looking to transform your data into actionable insights, create compelling visualizations, build a modern web presence, or enhance your technical skills, I'm here to help.
+<p>
+<strong>tl;dr</strong> Book a <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style="display: inline-block; margin-right: 4px; vertical-align: middle;"><path d="M20 2H4C2.9 2 2 2.9 2 4V22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2Z" fill="#eb6864"/></svg>
+[free 30-minute consultation](https://calendly.com/jdnricardo/new-meeting), or drop me a message at 
+<a href="mailto:consult_julian@f-m.fm" style="display: inline-block;">consult_julian@f-m.fm</a>
+</p>
 
 Jump to what you need:
 
 * [Data Analytics Services](#data-analytics-services)
 * [Data Visualization Services](#data-visualization-services)
 * [Quarto Website Development](#quarto-website-development)
-* [Front-end Development](#front-end-development)
+* [Software Development](#software-development)
 * [Technical Tutoring](#technical-tutoring)
 
+----------
+
 ## Getting Started
+
+I provide specialized consulting services in data science, visualization, web development, and technical education. Whether you're looking to transform your data into actionable insights, create compelling visualizations, build a modern web presence, or enhance your technical skills, I'm here to help.
 
 To begin working together:
 
@@ -83,14 +85,14 @@ All packages include:
 * Mobile responsiveness
 * Basic content migration
 
-## Front-end Development
+## Software Development
 
-I offer custom front-end development services focusing on modern web technologies:
+I offer custom software development services focusing on modern, accessible, and responsive web technologies:
 
-* Interactive Data Projects
-* Responsive Design
-* UI/UX Implementation
-* CSS/SCSS Styling
+* Interactive Data Projects (React, Shiny, Dash, etc.)
+* UI/UX Implementation and Styling (Tailwind, shadcn, etc.)
+* API Integration
+* Deployment (I prefer Railway, but can deploy to other platforms)
 
 | Client Type | Rate    |
 |-------------|---------|

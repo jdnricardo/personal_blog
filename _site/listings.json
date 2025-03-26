@@ -1,14 +1,10 @@
 [
   {
-    "listing": "/blog.html",
+    "listing": "/eaglei.html",
     "items": [
-      "/posts/advent-of-code-2024/day1/index.html",
       "/posts/eaglei/viz_sketches/index.html",
       "/posts/eaglei/eia_metrics/index.html",
-      "/posts/making-an-avatar/index.html",
-      "/posts/eaglei/intro/index.html",
-      "/posts/internal-pkg-r-universe/index.html",
-      "/posts/welcome/index.html"
+      "/posts/eaglei/intro/index.html"
     ]
   },
   {
@@ -24,11 +20,15 @@
     ]
   },
   {
-    "listing": "/eaglei.html",
+    "listing": "/blog.html",
     "items": [
+      "/posts/advent-of-code-2024/day1/index.html",
       "/posts/eaglei/viz_sketches/index.html",
       "/posts/eaglei/eia_metrics/index.html",
-      "/posts/eaglei/intro/index.html"
+      "/posts/making-an-avatar/index.html",
+      "/posts/eaglei/intro/index.html",
+      "/posts/internal-pkg-r-universe/index.html",
+      "/posts/welcome/index.html"
     ]
   }
 ]

@@ -1,10 +1,171 @@
 [
   {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Who am I?",
+    "section": "",
+    "text": "I’m many things: data scientist, environmental engineer, son, brother, Brooklynite, runner, and trivia enthusiast. My specialties are understanding complex systems, especially involving energy & material flows, then developing reproducible models of them and turning results into actionable findings. I’m also motivated to mentor data scientists and grow organizations’ analytic abilities.\nProfessionally, I’m a multi-lingual analyst with domain expertise in energy efficiency, data science, and program evaluation. I have consulted for energy & utilities clients, written peer-reviewed papers, and helped to grow analysis teams using R & Python.\nMy academic background is in physics, environmental engineering, and Spanish. Outside of coursework, I have also learned how to be a skilled educator, mostly by listening and being attentive to how others learn."
+  },
+  {
+    "objectID": "posts/welcome/index.html",
+    "href": "posts/welcome/index.html",
+    "title": "So you’re probably wondering how I got to this post…",
+    "section": "",
+    "text": "First of all, welcome! This is my big break into the blogosphere, so you’re getting in on the ground floor. How exciting!\nThis is my place to get thoughts on the page, primarily in the realms of energy systems and data science. It’s also a place to showcase the skills I’ve sharpened as a professional, and mess around with tools I’d like to add to my toolset.\nThis is also a place to start paying forward the knowledge sharing I benefited from at NMR Group, where I cut my teeth as an analyst, data scientist, and eventually as a mentor to folks starting their professional journeys in R and/or in data science."
+  },
+  {
+    "objectID": "posts/eaglei/eia_metrics/index.html",
+    "href": "posts/eaglei/eia_metrics/index.html",
+    "title": "Aligning with EIA’s metrics",
+    "section": "",
+    "text": "This post is the second in a series exploring the DOE’s Eagle-I dataset on energy grid outages. See previous posts here: first\nFirst, I want to pause and discuss differences in the data available from Eagle-I and the Energy Information Administration (EIA), the latter appearing in this article.\nThe main EIA metrics of interest include multiple “duration” indices, and one “frequency” index:\n\nSystem Average Interruption Duration Index (SAIDI),\nSystem Average Interruption Frequency Index (SAIFI), and\nCustomer Average Interruption Duration Index (CAIDI).\n\nIn the article’s second figure (copied below), SAIDI and SAIFI show up on the horizontal and vertical axes, respectively.\n\n\nFor a quick-hit understanding, check the EIA’s video guide\n\nAll this background to say that SAIDI divides the number of customers affected by an outage by the number of customers in the system. We do not have the latter available to us in Eagle-I, so for the sake of this exercise, I will pull in county-level population data from the tidycensus package, and see how closely we can replicate the EIA’s published values.\n\n\nAs always, there are important assumptions embedded in our assumptions. Here, we’re assuming everyone in every county in the US is connected to the grid, or “in the system”, to use the EIA’s language. Not sure I like the sound of “in the system”, but alas, we’re stuck with the term."
+  },
+  {
+    "objectID": "posts/eaglei/eia_metrics/index.html#assembling-the-tools",
+    "href": "posts/eaglei/eia_metrics/index.html#assembling-the-tools",
+    "title": "Aligning with EIA’s metrics",
+    "section": "",
+    "text": "This post is the second in a series exploring the DOE’s Eagle-I dataset on energy grid outages. See previous posts here: first\nFirst, I want to pause and discuss differences in the data available from Eagle-I and the Energy Information Administration (EIA), the latter appearing in this article.\nThe main EIA metrics of interest include multiple “duration” indices, and one “frequency” index:\n\nSystem Average Interruption Duration Index (SAIDI),\nSystem Average Interruption Frequency Index (SAIFI), and\nCustomer Average Interruption Duration Index (CAIDI).\n\nIn the article’s second figure (copied below), SAIDI and SAIFI show up on the horizontal and vertical axes, respectively.\n\n\nFor a quick-hit understanding, check the EIA’s video guide\n\nAll this background to say that SAIDI divides the number of customers affected by an outage by the number of customers in the system. We do not have the latter available to us in Eagle-I, so for the sake of this exercise, I will pull in county-level population data from the tidycensus package, and see how closely we can replicate the EIA’s published values.\n\n\nAs always, there are important assumptions embedded in our assumptions. Here, we’re assuming everyone in every county in the US is connected to the grid, or “in the system”, to use the EIA’s language. Not sure I like the sound of “in the system”, but alas, we’re stuck with the term."
+  },
+  {
+    "objectID": "posts/eaglei/eia_metrics/index.html#calculating-saidi",
+    "href": "posts/eaglei/eia_metrics/index.html#calculating-saidi",
+    "title": "Aligning with EIA’s metrics",
+    "section": "Calculating SAIDI",
+    "text": "Calculating SAIDI\nHere’s an example of a function (calc_saidi) that takes our 15min-interval Eagle-I data and calculates a SAIDI metric. Along the way, it creates a variable for the numerator in the SAIDI formula (total number of customer hours without power), joins the necessary census data for the denominator, then converts time intervals into the proper units for SAIDI in the concluding mutate call. Giving the function a meaningful name will make it easier to understand what the targets pipeline is doing.\n\ncalc_saidi &lt;- function(eaglei_df,\n                       census_df,\n                       # Time intervals are 15min per documentation, or 0.25h\n                       data_interval = as.numeric(0.25, units = \"hours\"),\n                       summ_by) {\n  \n  eaglei_df %&gt;%\n    summarise(\n      # Within each outage interval, how many customers were affected\n      tot_cust_hrs = sum(customers_out),\n      # whether grouped by state, state+county, etc.\n      .by = all_of(summ_by)\n    ) %&gt;% \n    # Join the relevant population data (may need to add year to possible vars)\n    join_eaglei_census(census_df,\n                       join_spec = intersect(summ_by,\n                                             c(\"state\", \"county\"))) %&gt;% \n    # Turn number of intervals into units of time (hours by default)\n    mutate(\n      across(c(tot_cust_hrs), \\(x) { x * data_interval}),\n      # Then calculate SAIDI\n      saidi = tot_cust_hrs / pop\n    )\n}\n\nIn _targets.R, we call calc_saidi in whichever targets require it, using the feature-enhanced Eagle-I dataset in the preceding target, named add_features, and specifying different variables to summarize by. See the screengrab below for example function output from the county_saidi target.\n\n\nlist(\n  # Targets before...,\n  tar_target(\n    name = add_features,\n    command = add_outage_id(states_eaglei)\n  ),\n  tar_target(\n    name = county_saidi,\n    command = calc_saidi(add_features,\n                         states_census,\n                         summ_by = c(\"state\", \"county\"))\n  ),\n  tar_target(\n    name = state_saidi,\n    command = calc_saidi(add_features,\n                         states_census,\n                         summ_by = c(\"state\"))\n  )\n  # Targets after...\n)\n\nThe state SAIDI target produces similar results, but fewer rows (one per state). They don’t exactly line up with the EIA chart, but states’ relative performances are close enough to justify further investigation (read: next post).\n."
+  },
+  {
+    "objectID": "posts/eaglei/eia_metrics/index.html#saifi-caidi",
+    "href": "posts/eaglei/eia_metrics/index.html#saifi-caidi",
+    "title": "Aligning with EIA’s metrics",
+    "section": "SAIFI & CAIDI",
+    "text": "SAIFI & CAIDI\nI discussed metrics which I have not yet quantified. To recap, SAIFI is the number of interruptions the average customer experienced, and CAIDI (Customer Average Interruption Duration Index), the average length of each interruption.\nAt first I hoped to tackle multiple metrics with one function, but for now I’m opting to keep them separate. Calculating SAIFI (or CAIDI) may not end up looking too different from the SAIDI function, but I am leaving that (and potential consolidation of the functions) to future posts. Gotta stretch out the material ;)\nI will continue to document my work here, but superfans (lol) or future contributors can follow commits to the underlying repo as well!"
+  },
+  {
     "objectID": "posts/internal-pkg-r-universe/index.html",
     "href": "posts/internal-pkg-r-universe/index.html",
     "title": "Hosting internal R packages on r-universe",
     "section": "",
     "text": "This post attempts to replicate stock analysis with the coreStatsNMR package, available via the NMR Group r-universe. Specifically, using the statsTable function outlined in this post.\nFirst, downloading the library using the custom repos argument to point to the r-universe: install.packages(\"coreStatsNMR\", repos = c(\"https://nmrgroup.r-universe.dev\", \"https://cloud.r-project.org\"))\n\nlibrary(coreStatsNMR)\n\n\nAttaching package: 'coreStatsNMR'\n\n\nThe following object is masked from 'package:base':\n\n    mode\n\nlibrary(dplyr)\n\n\nAttaching package: 'dplyr'\n\n\nThe following objects are masked from 'package:stats':\n\n    filter, lag\n\n\nThe following objects are masked from 'package:base':\n\n    intersect, setdiff, setequal, union\n\nstatsTable(data = iris,\n           summVar = \"Sepal.Length\",\n           groupVar = \"Species\",\n           stats = c(\"n\", \"min\", \"max\", \"mean\", \"weighted.mean\", \"median\", \"sd\", \"iqr\", \"cv\"),\n           accuracy = 0.01,\n           drop0trailing = TRUE) %&gt;% \n  knitr::kable()\n\nWarning in statsTable.data.frame(data = iris, summVar = \"Sepal.Length\", : Using placeholder weights of 1 for all data\n\n\n\n\n\nstat\nsetosa\nversicolor\nvirginica\nTotal\n\n\n\n\nn\n50\n50\n50\n150\n\n\nmin\n4.30\n4.90\n4.90\n4.30\n\n\nmax\n5.80\n7.00\n7.90\n7.90\n\n\nmean\n5.01\n5.94\n6.59\n5.84\n\n\nweighted.mean\n5.01\n5.94\n6.59\n5.84\n\n\nmedian\n5.00\n5.90\n6.50\n5.80\n\n\nsd\n0.35\n0.52\n0.64\n0.83\n\n\niqr\n0.40\n0.70\n0.67\n1.30\n\n\ncv\n0.07\n0.09\n0.10\n0.14\n\n\n\n\n\n\nSo what?\nYay! We can run summary statistics on stock R data with our own package. Why do this? We already can write expressive pipelines with various packages: dplyr, data.table, collapse, or polars. The added value of a DIY function is not apparent, especially if it’s using those packages underneath.\nHowever, for a consulting firm, such as my previous employer, there is value in creating wrapped versions of the stock coreStats functions which incorporate project/client constraints and documentation. That way, the core functions’ focus can be on being very good in a narrow scope (for each function), but they can be combined and/or extended via wrappers for projects and/or specific, repetitive applications. This does assume time is invested in designing them to play nicely with one another, and maintaining these conditions as the codebase evolves. Having shareable “core” functions separate from “project code” allows the firm to tap into additional marketing value as well, i.e. more-visibly participating in open-source software (OSS) development.\nInternal and/or public packages are also ways to embed invaluable organizational knowledge, e.g. in a package’s testing suite, warnings, errors, and documentation. Of course, embedding this knowledge requires caution so that only the sources/methods/etc appropriate for public use are exposed in public repos like the r-universe."
+  },
+  {
+    "objectID": "eaglei.html",
+    "href": "eaglei.html",
+    "title": "Series: Eagle-Itm",
+    "section": "",
+    "text": "Visualizing outage data\n\n\n\n\n\n\n\n\n\n\n\nOct 23, 2024\n\n\n9 min\n\n\n\n\n\n\n\nAligning with EIA’s metrics\n\n\n\n\n\n\n\n\n\n\n\nOct 10, 2024\n\n\n6 min\n\n\n\n\n\n\n\nWorking with power outage data\n\n\n\n\n\n\n\n\n\n\n\nAug 21, 2024\n\n\n6 min\n\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "consulting.html",
+    "href": "consulting.html",
+    "title": "Consulting",
+    "section": "",
+    "text": "tl;dr Book a  free 30-minute consultation, or drop me a message at consult_julian@f-m.fm\nJump to what you need:"
+  },
+  {
+    "objectID": "consulting.html#getting-started",
+    "href": "consulting.html#getting-started",
+    "title": "Consulting",
+    "section": "Getting Started",
+    "text": "Getting Started\nI provide specialized consulting services in data science, visualization, web development, and technical education. Whether you’re looking to transform your data into actionable insights, create compelling visualizations, build a modern web presence, or enhance your technical skills, I’m here to help.\nTo begin working together:\n\nSend me an email describing your project or learning goals\nSchedule a free 30-minute consultation\nReceive a detailed proposal with timeline and pricing\nBegin your project with clear deliverables and milestones\n\nI look forward to helping you achieve your goals! To that end, I offer a free 30-minute consultation to discuss your needs and determine the best approach for your project. Contact me to set up a time!"
+  },
+  {
+    "objectID": "consulting.html#data-analytics-services",
+    "href": "consulting.html#data-analytics-services",
+    "title": "Consulting",
+    "section": "Data Analytics Services",
+    "text": "Data Analytics Services\nI help organizations and individuals leverage their data for better decision-making through:\n\nPython & R Programming\nData Pipeline Development\nETL Process Optimization\nPredictive Analytics & A/B Testing\nDatabase Design & Optimization\nSample Development\nSurvey Design & Analysis\n\n\n\n\nClient Type\nRate\n\n\n\n\nStartup/SME\n$150/hr\n\n\nAcademic\n$120/hr\n\n\nStudent\n$90/hr"
+  },
+  {
+    "objectID": "consulting.html#data-visualization-services",
+    "href": "consulting.html#data-visualization-services",
+    "title": "Consulting",
+    "section": "Data Visualization Services",
+    "text": "Data Visualization Services\nI create clear, compelling, and interactive data visualizations that help communicate your insights effectively:\n\nPublication-ready Figures\nR/ggplot2 & Python/seaborn Solutions\nInteractive Dashboards\nStatistical Graphics\nInfographics\n\n\n\n\nClient Type\nRate\n\n\n\n\nStartup/SME\n$130/visual\n\n\nAcademic\n$100/visual\n\n\nStudent\n$80/visual"
+  },
+  {
+    "objectID": "consulting.html#quarto-website-development",
+    "href": "consulting.html#quarto-website-development",
+    "title": "Consulting",
+    "section": "Quarto Website Development",
+    "text": "Quarto Website Development\nI specialize in creating modern, responsive academic and professional websites using Quarto:\n\nBase Packages\n\n\n\nFeatures\nRate\n\n\n\n\nPortfolio+ (Portfolio pkg + Favicon/Logo)\n$1,200\n\n\nPortfolio (Blog pkg + Publications)\n$1,000\n\n\nBlog (CV pkg + Blog)\n$700\n\n\nCV (Home + CV)\n$550\n\n\n\nAll packages include:\n\nCustom styling\nMobile responsiveness\nBasic content migration"
+  },
+  {
+    "objectID": "consulting.html#software-development",
+    "href": "consulting.html#software-development",
+    "title": "Consulting",
+    "section": "Software Development",
+    "text": "Software Development\nI offer custom software development services focusing on modern, accessible, and responsive web technologies:\n\nInteractive Data Projects (React, Shiny, Dash, etc.)\nUI/UX Implementation and Styling (Tailwind, shadcn, etc.)\nAPI Integration\nDeployment (I prefer Railway, but can deploy to other platforms)\n\n\n\n\nClient Type\nRate\n\n\n\n\nStartup/SME\n$140/hr\n\n\nAcademic\n$110/hr\n\n\nStudent\n$85/hr"
+  },
+  {
+    "objectID": "consulting.html#technical-tutoring",
+    "href": "consulting.html#technical-tutoring",
+    "title": "Consulting",
+    "section": "Technical Tutoring",
+    "text": "Technical Tutoring\nI provide personalized technical tutoring in:\n\nData Collection\nData Manipulation\nData Science & Analytics\nPython Programming\nR Programming\nWeb Development\nSQL & Database Design\nMathematics\nWriting Skills\n\n\n\n\nSession Type\nRate\n\n\n\n\nOne-on-One (1hr)\n$80\n\n\nGroup (2-4, 1hr)\n$120\n\n\nWorkshop (2hrs)\n$200\n\n\nCourse (10hrs)\n$700"
+  },
+  {
+    "objectID": "consulting.html#data-collection-services",
+    "href": "consulting.html#data-collection-services",
+    "title": "Consulting",
+    "section": "Data Collection Services",
+    "text": "Data Collection Services\nI offer services to collect and manage data from various sources:\n\nWeb Scraping\nAPI Integration\nData Entry & Validation\n\n\n\n\nService Type\nRate\n\n\n\n\nWeb Scraping\n$100/hr\n\n\nAPI Integration\n$120/hr\n\n\nData Entry & Validation\n$40/hr"
+  },
+  {
+    "objectID": "consulting.html#project-based-pricing",
+    "href": "consulting.html#project-based-pricing",
+    "title": "Consulting",
+    "section": "Project-Based Pricing",
+    "text": "Project-Based Pricing\nFor larger projects (20+ hours), I offer custom project-based pricing. This includes:\n\nDetailed project scope\nMilestone-based deliverables\nRegular progress updates\nCode documentation\nKnowledge transfer sessions\n\n\nStill here? Well, thank you for deeply considering my consulting services.\nLet’s chat! consult_julian@f-m.fm"
+  },
+  {
+    "objectID": "archive.html",
+    "href": "archive.html",
+    "title": "Archive",
+    "section": "",
+    "text": "Advent of Code: Day 1\n\n\n\n\n\n\n\n\nDec 2, 2024\n\n\n\n\n\n\n\nVisualizing outage data\n\n\n\n\n\n\n\n\nOct 23, 2024\n\n\n\n\n\n\n\nAligning with EIA’s metrics\n\n\n\n\n\n\n\n\nOct 10, 2024\n\n\n\n\n\n\n\nCreating a personal avatar\n\n\n\n\n\n\n\n\nSep 2, 2024\n\n\n\n\n\n\n\nWorking with power outage data\n\n\n\n\n\n\n\n\nAug 21, 2024\n\n\n\n\n\n\n\nHosting internal R packages on r-universe\n\n\n\n\n\n\n\n\nAug 15, 2024\n\n\n\n\n\n\n\nSo you’re probably wondering how I got to this post…\n\n\n\n\n\n\n\n\nAug 15, 2024\n\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "blog.html",
+    "href": "blog.html",
+    "title": "Posts",
+    "section": "",
+    "text": "These posts run through ETL of Eagle-ITM data from the Department of Energy and comparison with other data sources."
+  },
+  {
+    "objectID": "blog.html#series",
+    "href": "blog.html#series",
+    "title": "Posts",
+    "section": "",
+    "text": "These posts run through ETL of Eagle-ITM data from the Department of Energy and comparison with other data sources."
+  },
+  {
+    "objectID": "posts/making-an-avatar/index.html",
+    "href": "posts/making-an-avatar/index.html",
+    "title": "Creating a personal avatar",
+    "section": "",
+    "text": "A really quick post to shoutout the open-source libraries I used to create what I find to be gorgeous icons, e.g. the favicon I use for my website, reproduced above in a larger size.\n\nboringavatars\ncoolors\n\nAnybody who worked with me previously will now know my secret to creating cute, company-themed user icons 😋\nimport Avatar from 'boring-avatars';\n\n&lt;Avatar \n        name='Julian do Nascimento Ricardo'\n        size='180'\n        variant='sunset'\n        colors={['#FB6107', '#F3DE2C', '#7CB518', '#5C8001', '#FBB02D']}\n/&gt;"
+  },
+  {
+    "objectID": "posts/eaglei/intro/index.html#pilot-episode-updated-829",
+    "href": "posts/eaglei/intro/index.html#pilot-episode-updated-829",
+    "title": "Working with power outage data",
+    "section": "Pilot episode (updated 8/29)",
+    "text": "Pilot episode (updated 8/29)\nThis post is the first in a series where I will explore the DOE’s Eagle-I dataset on energy grid outages.\nIt’s a quick one, focusing on mise en place. I’ll share some snippets of code for setting up a pipeline with the targets package to save compute time further downstream in the analysis, given the size of the data (available via figshare below). On my local machine, I will definitely save meaningful time by not loading the same csv multiple times. And especially during more exploratory phases of analysis, I enjoy fewer breaks for computation because I’ll stay in a flow-ier state.\n\n\n\nFor setup preceding the steps I’ll show, I recommend the targets walkthrough which runs through a minimally viable project.\nBefore showing snippets for tasks within the Eagle-I workflow, here’s the _targets.R script that connects the tasks together. On good days, and ideally always, I’ll sketch out this script before coming up with code for the component tasks. In short, I want to load one year of Eagle-I data, then create monthly summaries of outage time & affected customers in every state and county. I’ve chosen 2021 for reasons we’ll get into on a future post.\n\nlist(\n  tar_target(\n    name = load_one_year,\n    command = load_eaglei_year(2021)\n  ),\n  tar_target(\n    name = state_month_hour,\n    command = summarise_mo_hr(load_one_year,\n                              c(\"state\", \"month\", \"hr\"))\n  ),\n  tar_target(\n    name = county_month_hour,\n    command = summarise_mo_hr(load_one_year,\n                              c(\"county\", \"state\", \"month\", \"hr\"))\n  )#,\n  ## IGNORE below for now\n  # tar_target(\n  #   name = ny_ecdf,\n  #   command = state_county_ecdf(county_month_hour,\n  #                               c(\"New York\"),\n  #                               c(\"Kings\", \"Erie\"))\n  # ),\n  # tar_target(\n  #   name = eia_ecdf,\n  #   command = state_ecdf(state_month_hour,\n  #                        c(\"Maine\",\n  #                          \"Texas\",\n  #                          \"West Virginia\",\n  #                          \"Mississippi\",\n  #                          \"Louisiana\",\n  #                          \"Michigan\",\n  #                          \"Kentucky\",\n  #                          \"Oregon\",\n  #                          # Least\n  #                          \"District of Columbia\",\n  #                          \"Delaware\",\n  #                          \"Florida\",\n  #                          \"North Dakota\",\n  #                          \"Nevada\"))\n  # )\n)\n\nFor the first few targets, I’ll be using the here and tidytable packages to get my work done. The load_eaglei_year function will do little more than load the right subset of outage data, and the summarise_mo_hr function will do the heavy lifting for the two other targets we’ll look at in the next installment.\n\n\nShoutout to Mark Fairbanks and the tidytable package!"
+  },
+  {
+    "objectID": "posts/eaglei/intro/index.html#next-steps",
+    "href": "posts/eaglei/intro/index.html#next-steps",
+    "title": "Working with power outage data",
+    "section": "Next steps",
+    "text": "Next steps\nIn future posts, I’ll cover individual targets in use here, then compare Eagle-I data with what the Energy Information Administration (EIA) visualized in this article. For now I’ve copied the charts here for reference. The first shows how long the average customer deal with power interruptions from 2013 through 2021, split by whether a “major event” triggered the interruption.\n\nThe second disaggregates the data further into points for each state, plotted by total interruption time (horizontal axis) and number of discrete interruptions (vertical)."
+  },
+  {
+    "objectID": "posts/eaglei/intro/index.html#there-be-dragons",
+    "href": "posts/eaglei/intro/index.html#there-be-dragons",
+    "title": "Working with power outage data",
+    "section": "There be dragons…",
+    "text": "There be dragons…\nWith yet more installments, I’m debating whether to create a golem-based Shiny application or build a package for easier access to EAGLE-I data within the R universe.\n\nStick around to find out 😸"
   },
   {
     "objectID": "posts/eaglei/viz_sketches/index.html",
@@ -49,69 +210,6 @@
     "text": "Next steps\nSetting aside whether or how much I can mitigate uncertainty due to using census population figures (and not utility customer figures), I feel confident there is room to tighten up my SAIDI and SAIFI calculations with a closer review of them. Along the way, I plan to develop additional charts to quantify the discrepancies I find.\nIdeally, I would also show the above charts alongside the actual EIA values for each state / county, and not just the overall median value as derived from visually interpreting their published chart. It’s not exactly a sturdy foundation for comparative analysis…\nFirming this up will require reading in & manipulating data the EIA publishes on utility reliability (in spreadsheets named “Reliability.xlsx” for each calendar year). From a quick glance, the reliability files allow for taking a weighted average SAIDI / SAIFI for each state, using the “Number of Customers” column as the weight. Stay tuned for this update as well!\nTo cap things off, I would like to conjure up interactive visualizations of my Eagle-I analysis (and comparisons to the EIA figures), maybe with the ggiraph package."
   },
   {
-    "objectID": "posts/eaglei/eia_metrics/index.html",
-    "href": "posts/eaglei/eia_metrics/index.html",
-    "title": "Aligning with EIA’s metrics",
-    "section": "",
-    "text": "This post is the second in a series exploring the DOE’s Eagle-I dataset on energy grid outages. See previous posts here: first\nFirst, I want to pause and discuss differences in the data available from Eagle-I and the Energy Information Administration (EIA), the latter appearing in this article.\nThe main EIA metrics of interest include multiple “duration” indices, and one “frequency” index:\n\nSystem Average Interruption Duration Index (SAIDI),\nSystem Average Interruption Frequency Index (SAIFI), and\nCustomer Average Interruption Duration Index (CAIDI).\n\nIn the article’s second figure (copied below), SAIDI and SAIFI show up on the horizontal and vertical axes, respectively.\n\n\nFor a quick-hit understanding, check the EIA’s video guide\n\nAll this background to say that SAIDI divides the number of customers affected by an outage by the number of customers in the system. We do not have the latter available to us in Eagle-I, so for the sake of this exercise, I will pull in county-level population data from the tidycensus package, and see how closely we can replicate the EIA’s published values.\n\n\nAs always, there are important assumptions embedded in our assumptions. Here, we’re assuming everyone in every county in the US is connected to the grid, or “in the system”, to use the EIA’s language. Not sure I like the sound of “in the system”, but alas, we’re stuck with the term."
-  },
-  {
-    "objectID": "posts/eaglei/eia_metrics/index.html#assembling-the-tools",
-    "href": "posts/eaglei/eia_metrics/index.html#assembling-the-tools",
-    "title": "Aligning with EIA’s metrics",
-    "section": "",
-    "text": "This post is the second in a series exploring the DOE’s Eagle-I dataset on energy grid outages. See previous posts here: first\nFirst, I want to pause and discuss differences in the data available from Eagle-I and the Energy Information Administration (EIA), the latter appearing in this article.\nThe main EIA metrics of interest include multiple “duration” indices, and one “frequency” index:\n\nSystem Average Interruption Duration Index (SAIDI),\nSystem Average Interruption Frequency Index (SAIFI), and\nCustomer Average Interruption Duration Index (CAIDI).\n\nIn the article’s second figure (copied below), SAIDI and SAIFI show up on the horizontal and vertical axes, respectively.\n\n\nFor a quick-hit understanding, check the EIA’s video guide\n\nAll this background to say that SAIDI divides the number of customers affected by an outage by the number of customers in the system. We do not have the latter available to us in Eagle-I, so for the sake of this exercise, I will pull in county-level population data from the tidycensus package, and see how closely we can replicate the EIA’s published values.\n\n\nAs always, there are important assumptions embedded in our assumptions. Here, we’re assuming everyone in every county in the US is connected to the grid, or “in the system”, to use the EIA’s language. Not sure I like the sound of “in the system”, but alas, we’re stuck with the term."
-  },
-  {
-    "objectID": "posts/eaglei/eia_metrics/index.html#calculating-saidi",
-    "href": "posts/eaglei/eia_metrics/index.html#calculating-saidi",
-    "title": "Aligning with EIA’s metrics",
-    "section": "Calculating SAIDI",
-    "text": "Calculating SAIDI\nHere’s an example of a function (calc_saidi) that takes our 15min-interval Eagle-I data and calculates a SAIDI metric. Along the way, it creates a variable for the numerator in the SAIDI formula (total number of customer hours without power), joins the necessary census data for the denominator, then converts time intervals into the proper units for SAIDI in the concluding mutate call. Giving the function a meaningful name will make it easier to understand what the targets pipeline is doing.\n\ncalc_saidi &lt;- function(eaglei_df,\n                       census_df,\n                       # Time intervals are 15min per documentation, or 0.25h\n                       data_interval = as.numeric(0.25, units = \"hours\"),\n                       summ_by) {\n  \n  eaglei_df %&gt;%\n    summarise(\n      # Within each outage interval, how many customers were affected\n      tot_cust_hrs = sum(customers_out),\n      # whether grouped by state, state+county, etc.\n      .by = all_of(summ_by)\n    ) %&gt;% \n    # Join the relevant population data (may need to add year to possible vars)\n    join_eaglei_census(census_df,\n                       join_spec = intersect(summ_by,\n                                             c(\"state\", \"county\"))) %&gt;% \n    # Turn number of intervals into units of time (hours by default)\n    mutate(\n      across(c(tot_cust_hrs), \\(x) { x * data_interval}),\n      # Then calculate SAIDI\n      saidi = tot_cust_hrs / pop\n    )\n}\n\nIn _targets.R, we call calc_saidi in whichever targets require it, using the feature-enhanced Eagle-I dataset in the preceding target, named add_features, and specifying different variables to summarize by. See the screengrab below for example function output from the county_saidi target.\n\n\nlist(\n  # Targets before...,\n  tar_target(\n    name = add_features,\n    command = add_outage_id(states_eaglei)\n  ),\n  tar_target(\n    name = county_saidi,\n    command = calc_saidi(add_features,\n                         states_census,\n                         summ_by = c(\"state\", \"county\"))\n  ),\n  tar_target(\n    name = state_saidi,\n    command = calc_saidi(add_features,\n                         states_census,\n                         summ_by = c(\"state\"))\n  )\n  # Targets after...\n)\n\nThe state SAIDI target produces similar results, but fewer rows (one per state). They don’t exactly line up with the EIA chart, but states’ relative performances are close enough to justify further investigation (read: next post).\n."
-  },
-  {
-    "objectID": "posts/eaglei/eia_metrics/index.html#saifi-caidi",
-    "href": "posts/eaglei/eia_metrics/index.html#saifi-caidi",
-    "title": "Aligning with EIA’s metrics",
-    "section": "SAIFI & CAIDI",
-    "text": "SAIFI & CAIDI\nI discussed metrics which I have not yet quantified. To recap, SAIFI is the number of interruptions the average customer experienced, and CAIDI (Customer Average Interruption Duration Index), the average length of each interruption.\nAt first I hoped to tackle multiple metrics with one function, but for now I’m opting to keep them separate. Calculating SAIFI (or CAIDI) may not end up looking too different from the SAIDI function, but I am leaving that (and potential consolidation of the functions) to future posts. Gotta stretch out the material ;)\nI will continue to document my work here, but superfans (lol) or future contributors can follow commits to the underlying repo as well!"
-  },
-  {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Who am I?",
-    "section": "",
-    "text": "I’m many things: data scientist, environmental engineer, son, brother, Brooklynite, runner, and trivia enthusiast. My specialties are understanding complex systems, especially involving energy & material flows, then developing reproducible models of them and turning results into actionable findings. I’m also motivated to mentor data scientists and grow organizations’ analytic abilities.\nProfessionally, I’m a multi-lingual analyst with domain expertise in energy efficiency, data science, and program evaluation. I have consulted for energy & utilities clients, written peer-reviewed papers, and helped to grow analysis teams using R & Python.\nMy academic background is in physics, environmental engineering, and Spanish. Outside of coursework, I have also learned how to be a skilled educator, mostly by listening and being attentive to how others learn."
-  },
-  {
-    "objectID": "blog.html",
-    "href": "blog.html",
-    "title": "Posts",
-    "section": "",
-    "text": "These posts run through ETL of Eagle-ITM data from the Department of Energy and comparison with other data sources."
-  },
-  {
-    "objectID": "blog.html#series",
-    "href": "blog.html#series",
-    "title": "Posts",
-    "section": "",
-    "text": "These posts run through ETL of Eagle-ITM data from the Department of Energy and comparison with other data sources."
-  },
-  {
-    "objectID": "archive.html",
-    "href": "archive.html",
-    "title": "Archive",
-    "section": "",
-    "text": "Advent of Code: Day 1\n\n\n\n\n\n\n\n\nDec 2, 2024\n\n\n\n\n\n\n\nVisualizing outage data\n\n\n\n\n\n\n\n\nOct 23, 2024\n\n\n\n\n\n\n\nAligning with EIA’s metrics\n\n\n\n\n\n\n\n\nOct 10, 2024\n\n\n\n\n\n\n\nCreating a personal avatar\n\n\n\n\n\n\n\n\nSep 2, 2024\n\n\n\n\n\n\n\nWorking with power outage data\n\n\n\n\n\n\n\n\nAug 21, 2024\n\n\n\n\n\n\n\nHosting internal R packages on r-universe\n\n\n\n\n\n\n\n\nAug 15, 2024\n\n\n\n\n\n\n\nSo you’re probably wondering how I got to this post…\n\n\n\n\n\n\n\n\nAug 15, 2024\n\n\n\n\n\n\nNo matching items"
-  },
-  {
-    "objectID": "eaglei.html",
-    "href": "eaglei.html",
-    "title": "Series: Eagle-Itm",
-    "section": "",
-    "text": "Visualizing outage data\n\n\n\n\n\n\n\n\n\n\n\nOct 23, 2024\n\n\n9 min\n\n\n\n\n\n\n\nAligning with EIA’s metrics\n\n\n\n\n\n\n\n\n\n\n\nOct 10, 2024\n\n\n6 min\n\n\n\n\n\n\n\nWorking with power outage data\n\n\n\n\n\n\n\n\n\n\n\nAug 21, 2024\n\n\n6 min\n\n\n\n\n\n\nNo matching items"
-  },
-  {
     "objectID": "posts/advent-of-code-2024/day1/index.html",
     "href": "posts/advent-of-code-2024/day1/index.html",
     "title": "Advent of Code: Day 1",
@@ -131,103 +229,5 @@
     "title": "Advent of Code: Day 1",
     "section": "Part 2",
     "text": "Part 2\nThe second part requires calculating a total similarity score between the lists, where the only elements that score points are present in both lists. The score is taken as the product of each said number and the number of appearances in the second list\n\ntidytable_day1_p2 &lt;- function() {\n  get_day1_input() %&gt;%\n  filter(list_2 %in% list_1) %&gt;%\n  count(list_2) %&gt;%\n  summarise(\n    sim_score = sum(n*list_2),\n  ) %&gt;%\n  as.integer()\n}\n\ncollapse_day1_p2 &lt;- function() {\n  get_day1_input() %&gt;%\n  fsubset(list_2 %in% list_1) %&gt;%\n  fcount(list_2) %&gt;%\n  fmutate(\n    sim_score = N*list_2, .keep = \"none\"\n  ) %&gt;%\n  fsum() %&gt;%\n  as.integer()\n}\n\nAgain, comparing performance\n\nStick around for day 2!! Which will technically happen on day 3. My money is on me catching up by the weekend :)"
-  },
-  {
-    "objectID": "posts/eaglei/intro/index.html#pilot-episode-updated-829",
-    "href": "posts/eaglei/intro/index.html#pilot-episode-updated-829",
-    "title": "Working with power outage data",
-    "section": "Pilot episode (updated 8/29)",
-    "text": "Pilot episode (updated 8/29)\nThis post is the first in a series where I will explore the DOE’s Eagle-I dataset on energy grid outages.\nIt’s a quick one, focusing on mise en place. I’ll share some snippets of code for setting up a pipeline with the targets package to save compute time further downstream in the analysis, given the size of the data (available via figshare below). On my local machine, I will definitely save meaningful time by not loading the same csv multiple times. And especially during more exploratory phases of analysis, I enjoy fewer breaks for computation because I’ll stay in a flow-ier state.\n\n\n\nFor setup preceding the steps I’ll show, I recommend the targets walkthrough which runs through a minimally viable project.\nBefore showing snippets for tasks within the Eagle-I workflow, here’s the _targets.R script that connects the tasks together. On good days, and ideally always, I’ll sketch out this script before coming up with code for the component tasks. In short, I want to load one year of Eagle-I data, then create monthly summaries of outage time & affected customers in every state and county. I’ve chosen 2021 for reasons we’ll get into on a future post.\n\nlist(\n  tar_target(\n    name = load_one_year,\n    command = load_eaglei_year(2021)\n  ),\n  tar_target(\n    name = state_month_hour,\n    command = summarise_mo_hr(load_one_year,\n                              c(\"state\", \"month\", \"hr\"))\n  ),\n  tar_target(\n    name = county_month_hour,\n    command = summarise_mo_hr(load_one_year,\n                              c(\"county\", \"state\", \"month\", \"hr\"))\n  )#,\n  ## IGNORE below for now\n  # tar_target(\n  #   name = ny_ecdf,\n  #   command = state_county_ecdf(county_month_hour,\n  #                               c(\"New York\"),\n  #                               c(\"Kings\", \"Erie\"))\n  # ),\n  # tar_target(\n  #   name = eia_ecdf,\n  #   command = state_ecdf(state_month_hour,\n  #                        c(\"Maine\",\n  #                          \"Texas\",\n  #                          \"West Virginia\",\n  #                          \"Mississippi\",\n  #                          \"Louisiana\",\n  #                          \"Michigan\",\n  #                          \"Kentucky\",\n  #                          \"Oregon\",\n  #                          # Least\n  #                          \"District of Columbia\",\n  #                          \"Delaware\",\n  #                          \"Florida\",\n  #                          \"North Dakota\",\n  #                          \"Nevada\"))\n  # )\n)\n\nFor the first few targets, I’ll be using the here and tidytable packages to get my work done. The load_eaglei_year function will do little more than load the right subset of outage data, and the summarise_mo_hr function will do the heavy lifting for the two other targets we’ll look at in the next installment.\n\n\nShoutout to Mark Fairbanks and the tidytable package!"
-  },
-  {
-    "objectID": "posts/eaglei/intro/index.html#next-steps",
-    "href": "posts/eaglei/intro/index.html#next-steps",
-    "title": "Working with power outage data",
-    "section": "Next steps",
-    "text": "Next steps\nIn future posts, I’ll cover individual targets in use here, then compare Eagle-I data with what the Energy Information Administration (EIA) visualized in this article. For now I’ve copied the charts here for reference. The first shows how long the average customer deal with power interruptions from 2013 through 2021, split by whether a “major event” triggered the interruption.\n\nThe second disaggregates the data further into points for each state, plotted by total interruption time (horizontal axis) and number of discrete interruptions (vertical)."
-  },
-  {
-    "objectID": "posts/eaglei/intro/index.html#there-be-dragons",
-    "href": "posts/eaglei/intro/index.html#there-be-dragons",
-    "title": "Working with power outage data",
-    "section": "There be dragons…",
-    "text": "There be dragons…\nWith yet more installments, I’m debating whether to create a golem-based Shiny application or build a package for easier access to EAGLE-I data within the R universe.\n\nStick around to find out 😸"
-  },
-  {
-    "objectID": "posts/making-an-avatar/index.html",
-    "href": "posts/making-an-avatar/index.html",
-    "title": "Creating a personal avatar",
-    "section": "",
-    "text": "A really quick post to shoutout the open-source libraries I used to create what I find to be gorgeous icons, e.g. the favicon I use for my website, reproduced above in a larger size.\n\nboringavatars\ncoolors\n\nAnybody who worked with me previously will now know my secret to creating cute, company-themed user icons 😋\nimport Avatar from 'boring-avatars';\n\n&lt;Avatar \n        name='Julian do Nascimento Ricardo'\n        size='180'\n        variant='sunset'\n        colors={['#FB6107', '#F3DE2C', '#7CB518', '#5C8001', '#FBB02D']}\n/&gt;"
-  },
-  {
-    "objectID": "posts/welcome/index.html",
-    "href": "posts/welcome/index.html",
-    "title": "So you’re probably wondering how I got to this post…",
-    "section": "",
-    "text": "First of all, welcome! This is my big break into the blogosphere, so you’re getting in on the ground floor. How exciting!\nThis is my place to get thoughts on the page, primarily in the realms of energy systems and data science. It’s also a place to showcase the skills I’ve sharpened as a professional, and mess around with tools I’d like to add to my toolset.\nThis is also a place to start paying forward the knowledge sharing I benefited from at NMR Group, where I cut my teeth as an analyst, data scientist, and eventually as a mentor to folks starting their professional journeys in R and/or in data science."
-  },
-  {
-    "objectID": "consulting.html",
-    "href": "consulting.html",
-    "title": "Consulting",
-    "section": "",
-    "text": "consult_julian@f-m.fm\nI provide specialized consulting services in data science, visualization, web development, and technical education. Whether you’re looking to transform your data into actionable insights, create compelling visualizations, build a modern web presence, or enhance your technical skills, I’m here to help.\nJump to what you need:"
-  },
-  {
-    "objectID": "consulting.html#data-analytics-services",
-    "href": "consulting.html#data-analytics-services",
-    "title": "Consulting",
-    "section": "Data Analytics Services",
-    "text": "Data Analytics Services\nI help organizations and individuals leverage their data for better decision-making through:\n\nPython & R Programming\nData Pipeline Development\nETL Process Optimization\nPredictive Analytics & A/B Testing\nDatabase Design & Optimization\nSample Development\nSurvey Design & Analysis\n\n\n\n\nClient Type\nRate\n\n\n\n\nStartup/SME\n$150/hr\n\n\nAcademic\n$120/hr\n\n\nStudent\n$90/hr"
-  },
-  {
-    "objectID": "consulting.html#data-visualization-services",
-    "href": "consulting.html#data-visualization-services",
-    "title": "Consulting",
-    "section": "Data Visualization Services",
-    "text": "Data Visualization Services\nI create clear, compelling, and interactive data visualizations that help communicate your insights effectively:\n\nPublication-ready Figures\nR/ggplot2 & Python/seaborn Solutions\nInteractive Dashboards\nStatistical Graphics\nInfographics\n\n\n\n\nClient Type\nRate\n\n\n\n\nStartup/SME\n$130/visual\n\n\nAcademic\n$100/visual\n\n\nStudent\n$80/visual"
-  },
-  {
-    "objectID": "consulting.html#quarto-website-development",
-    "href": "consulting.html#quarto-website-development",
-    "title": "Consulting",
-    "section": "Quarto Website Development",
-    "text": "Quarto Website Development\nI specialize in creating modern, responsive academic and professional websites using Quarto:\n\nBase Packages\n\n\n\nFeatures\nRate\n\n\n\n\nProfessional Site (Home + Blog + Portfolio + Contact)\n$1,200\n\n\nAcademic Site (Home + CV + Publications + Blog)\n$1,000\n\n\nBasic Site (Home + About + Blog)\n$700\n\n\n\nAll packages include:\n\nCustom styling\nMobile responsiveness\nBasic content migration"
-  },
-  {
-    "objectID": "consulting.html#front-end-development",
-    "href": "consulting.html#front-end-development",
-    "title": "Consulting",
-    "section": "Front-end Development",
-    "text": "Front-end Development\nI offer custom front-end development services focusing on modern web technologies:\n\nInteractive Web Applications for Data Projects\nResponsive Design\nUI/UX Implementation\nCSS/SCSS Styling\n\n\n\n\nClient Type\nRate\n\n\n\n\nStartup/SME\n$140/hr\n\n\nAcademic\n$110/hr\n\n\nStudent\n$85/hr"
-  },
-  {
-    "objectID": "consulting.html#technical-tutoring",
-    "href": "consulting.html#technical-tutoring",
-    "title": "Consulting",
-    "section": "Technical Tutoring",
-    "text": "Technical Tutoring\nI provide personalized technical tutoring in:\n\nData Collection\nData Manipulation\nData Science & Analytics\nPython Programming\nR Programming\nWeb Development\nSQL & Database Design\nMathematics\nWriting Skills\n\n\n\n\nSession Type\nRate\n\n\n\n\nOne-on-One (1hr)\n$80\n\n\nGroup (2-4, 1hr)\n$120\n\n\nWorkshop (2hrs)\n$200\n\n\nCourse (10hrs)\n$700"
-  },
-  {
-    "objectID": "consulting.html#data-collection-services",
-    "href": "consulting.html#data-collection-services",
-    "title": "Consulting",
-    "section": "Data Collection Services",
-    "text": "Data Collection Services\nI offer services to collect and manage data from various sources:\n\nWeb Scraping\nAPI Integration\nData Entry & Validation\n\n\n\n\nService Type\nRate\n\n\n\n\nWeb Scraping\n$100/hr\n\n\nAPI Integration\n$120/hr\n\n\nData Entry & Validation\n$40/hr"
-  },
-  {
-    "objectID": "consulting.html#project-based-pricing",
-    "href": "consulting.html#project-based-pricing",
-    "title": "Consulting",
-    "section": "Project-Based Pricing",
-    "text": "Project-Based Pricing\nFor larger projects (20+ hours), I offer custom project-based pricing. This includes:\n\nDetailed project scope\nMilestone-based deliverables\nRegular progress updates\nCode documentation\nKnowledge transfer sessions\n\n\nStill here? Well, thank you for deeply considering my consulting services.\nLet’s chat! consult_julian@f-m.fm"
-  },
-  {
-    "objectID": "consulting.html#getting-started",
-    "href": "consulting.html#getting-started",
-    "title": "Consulting",
-    "section": "Getting Started",
-    "text": "Getting Started\nTo begin working together:\n\nSend me an email describing your project or learning goals\nSchedule a free 30-minute consultation\nReceive a detailed proposal with timeline and pricing\nBegin your project with clear deliverables and milestones\n\nI look forward to helping you achieve your goals! To that end, I offer a free 30-minute consultation to discuss your needs and determine the best approach for your project. Contact me to set up a time!"
   }
 ]
