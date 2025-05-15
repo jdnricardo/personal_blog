@@ -1,8 +1,8 @@
 ---
-title: "Who am I?"
+title: "Julian Ricardo"
 image: headshot_24.jpg
 about:
-  template: jolla
+  template: solana
   links:
     - icon: linkedin
       text: LinkedIn
@@ -18,8 +18,12 @@ about:
       href: https://orcid.org/0000-0002-2760-6577
 ---
 
-I'm many things: data scientist, environmental engineer, son, brother, Brooklynite, runner, and trivia enthusiast. My specialties are understanding complex systems, especially involving energy & material flows, then developing reproducible models of them and turning results into actionable findings. I'm also motivated to mentor data scientists and grow organizations' analytic abilities.
+::: {.bio-content}
+I'm many things: a data analyst and full-stack software developer, an environmental engineer with a passion for climate and energy, a Brooklynite, runner, and trivia enthusiast. Seeking the deep satisfaction of building and maintaining things that last, while simultaneously empowering others to learn and grow.
 
-Professionally, I'm a multi-lingual analyst with domain expertise in energy efficiency, data science, and program evaluation. I have consulted for energy & utilities clients, written peer-reviewed papers, and helped to grow analysis teams using R & Python.
+Growing up with a patternmaker and architect for roommates, I have a strong appreciation for craftsmanship, durable design, and the meticulous process of creating well-structured, resilient solutions. This perspective naturally resonates with my work in energy and material flows, where understanding and modeling complex systems for lasting impact is paramount.
 
-My academic background is in physics, environmental engineering, and Spanish. Outside of coursework, I have also learned how to be a skilled educator, mostly by listening and being attentive to how others learn.
+Professionally, I specialize in translating complex data and systems into actionable insights and robust applications. I am a multi-lingual technologist proficient in production Python, TypeScript, React, and modern front-end tooling (Tailwind, shadcn), built upon a foundation in data science (R & Python). I have experience consulting for energy & utility clients, contributing to peer-reviewed research, and have a proven track record in mentoring technologists and growing organizations' capabilities – a drive fueled by my core identity as an educator and a belief that spreading best practices builds stronger teams and more sustainable products.
+
+My academic journey in physics, environmental engineering, and Spanish has provided a unique lens through which I approach problem-solving. Outside of formal coursework, I've honed my skills as an educator by being attentive to how others learn, always seeking to foster shared understanding and empower those around me.
+:::

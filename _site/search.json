@@ -2,9 +2,9 @@
   {
     "objectID": "index.html",
     "href": "index.html",
-    "title": "Who am I?",
+    "title": "Julian Ricardo",
     "section": "",
-    "text": "I’m many things: data scientist, environmental engineer, son, brother, Brooklynite, runner, and trivia enthusiast. My specialties are understanding complex systems, especially involving energy & material flows, then developing reproducible models of them and turning results into actionable findings. I’m also motivated to mentor data scientists and grow organizations’ analytic abilities.\nProfessionally, I’m a multi-lingual analyst with domain expertise in energy efficiency, data science, and program evaluation. I have consulted for energy & utilities clients, written peer-reviewed papers, and helped to grow analysis teams using R & Python.\nMy academic background is in physics, environmental engineering, and Spanish. Outside of coursework, I have also learned how to be a skilled educator, mostly by listening and being attentive to how others learn."
+    "text": "I’m many things: a data analyst and full-stack software developer, an environmental engineer with a passion for climate and energy, a Brooklynite, runner, and trivia enthusiast. Seeking the deep satisfaction of building and maintaining things that last, while simultaneously empowering others to learn and grow.\nGrowing up with a patternmaker and architect for roommates, I have a strong appreciation for craftsmanship, durable design, and the meticulous process of creating well-structured, resilient solutions. This perspective naturally resonates with my work in energy and material flows, where understanding and modeling complex systems for lasting impact is paramount.\nProfessionally, I specialize in translating complex data and systems into actionable insights and robust applications. I am a multi-lingual technologist proficient in production Python, TypeScript, React, and modern front-end tooling (Tailwind, shadcn), built upon a foundation in data science (R & Python). I have experience consulting for energy & utility clients, contributing to peer-reviewed research, and have a proven track record in mentoring technologists and growing organizations’ capabilities – a drive fueled by my core identity as an educator and a belief that spreading best practices builds stronger teams and more sustainable products.\nMy academic journey in physics, environmental engineering, and Spanish has provided a unique lens through which I approach problem-solving. Outside of formal coursework, I’ve honed my skills as an educator by being attentive to how others learn, always seeking to foster shared understanding and empower those around me."
   },
   {
     "objectID": "posts/welcome/index.html",
@@ -60,14 +60,7 @@
     "href": "consulting.html",
     "title": "Consulting",
     "section": "",
-    "text": "tl;dr Book a  free 30-minute consultation, or drop me a message at consult_julian@f-m.fm\nJump to what you need:"
-  },
-  {
-    "objectID": "consulting.html#getting-started",
-    "href": "consulting.html#getting-started",
-    "title": "Consulting",
-    "section": "Getting Started",
-    "text": "Getting Started\nI provide specialized consulting services in data science, visualization, web development, and technical education. Whether you’re looking to transform your data into actionable insights, create compelling visualizations, build a modern web presence, or enhance your technical skills, I’m here to help.\nTo begin working together:\n\nSend me an email describing your project or learning goals\nSchedule a free 30-minute consultation\nReceive a detailed proposal with timeline and pricing\nBegin your project with clear deliverables and milestones\n\nI look forward to helping you achieve your goals! To that end, I offer a free 30-minute consultation to discuss your needs and determine the best approach for your project. Contact me to set up a time!"
+    "text": "tl;dr Book a  free 30-minute consultation, or drop me a message at consult_julian@f-m.fm\nI provide specialized consulting services in data science, visualization, web development, and technical education. Whether you’re looking to transform your data into actionable insights, create compelling visualizations, build a modern web presence, or enhance your technical skills, I’m here to help.\nTo begin working together:\nI look forward to helping you achieve your goals! To that end, I offer a free 30-minute consultation to discuss your needs and determine the best approach for your project. Contact me to set up a time!"
   },
   {
     "objectID": "consulting.html#data-analytics-services",
@@ -116,7 +109,7 @@
     "href": "consulting.html#project-based-pricing",
     "title": "Consulting",
     "section": "Project-Based Pricing",
-    "text": "Project-Based Pricing\nFor larger projects (20+ hours), I offer custom project-based pricing. This includes:\n\nDetailed project scope\nMilestone-based deliverables\nRegular progress updates\nCode documentation\nKnowledge transfer sessions\n\n\nStill here? Well, thank you for deeply considering my consulting services.\nLet’s chat! consult_julian@f-m.fm"
+    "text": "Project-Based Pricing\nFor larger projects (20+ hours), I offer custom project-based pricing. This includes:\n\nDetailed project scope\nMilestone-based deliverables\nRegular progress updates\nCode documentation\nKnowledge transfer sessions\n\n\nStill here? Well, thank you for deeply considering my consulting servies!"
   },
   {
     "objectID": "archive.html",
