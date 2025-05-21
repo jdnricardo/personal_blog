@@ -12,7 +12,7 @@ website:
       - text: Consulting
         href: consulting.qmd
       - text: CV
-        href: /assets/cv-julian-ricardo.pdf
+        href: https://rxresu.me/jdnricardo/cv
     right:
       - icon: linkedin
         href: https://linkedin.com/in/julian-ricardo-388908a1
