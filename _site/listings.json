@@ -10,6 +10,7 @@
   {
     "listing": "/archive.html",
     "items": [
+      "/posts/wasm/index.html",
       "/posts/advent-of-code-2024/day1/index.html",
       "/posts/eaglei/viz_sketches/index.html",
       "/posts/eaglei/eia_metrics/index.html",
@@ -22,6 +23,7 @@
   {
     "listing": "/blog.html",
     "items": [
+      "/posts/wasm/index.html",
       "/posts/advent-of-code-2024/day1/index.html",
       "/posts/eaglei/viz_sketches/index.html",
       "/posts/eaglei/eia_metrics/index.html",

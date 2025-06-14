@@ -10,7 +10,34 @@
 <atom:link href="https://jdnricardo.com/blog.xml" rel="self" type="application/rss+xml"/>
 <description></description>
 <generator>quarto-1.5.57</generator>
-<lastBuildDate>Mon, 02 Dec 2024 05:00:00 GMT</lastBuildDate>
+<lastBuildDate>Sat, 14 Jun 2025 04:00:00 GMT</lastBuildDate>
+<item>
+  <title>WASM Fanboy Learns About Browser Fingerprints</title>
+  <dc:creator>Julian Ricardo</dc:creator>
+  <link>https://jdnricardo.com/posts/wasm/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<p>It was inevitable that WebAssembly would lose the untarnished reputation I had created for it in my mind. Until now I haven’t needed it much, but (or maybe because of that?) I placed it on the highest pedestal for reproducibility and performance, should a client or a project at $WORK require it.</p>
+<p>If that hypothetical client/project ever appeared. In the meantime, “lesser” tools were sufficient. “Oh, we just need this all in an Excel file”. Or, “pdf if fine.” So I’d stick to interactive notebooks, or if I got lucky some Shiny or plotly or Streamlit, and dutifully export charts and tables to pdf, or paste them into a MS Office product.</p>
+<p>Meanwhile, I kept seeing more ways I could use WASM, if only a project I was on called for it. And so its reputation grew. The tipping point for my uncritical fanboydom was when, without me lifting a finger, the R packages I developed for a previous employer became available in WASM via the <a href="https://nmrgroup.r-universe.dev/coreStatsNMR">R-Universe</a>.</p>
+<p>Did I or any of my analyst colleages need WASM? No.&nbsp;But it made WASM all that much more alluring. I could almost take credit for developing something in WASM. Almost. As long as whoever I told the exciting news knew nothing about R-Universe and their WASM rollout.</p>
+<p>This isn’t a story about how my overly rosy view of WASM comes crashing down in a heap of over-budget, over-cooked spaghetti code. I honestly still haven’t used it all too much, so it still sits on one of the higher shelves in my software/data carpentry workshop, ready to be dusted off. This is more a story of how a tool’s reputation begins to lose its sheen.</p>
+<p>Like when a favorite restaurant gets too popular, expands too fast to multiple locations, and fizzles out. Or gets acquired by “new management” who thoroughly financialize the joint, rewiring staffs’ and patrons’ POV to maximize time spent in restaurant over enjoyment of the food or the vibe.</p>
+<p>In WASM’s case, honestly, don’t trust me to forecast anything. I haven’t used it enough to be a trustworthy narrator. I’m keeping it in my rotation, because I still don’t know anything else that matches its speed and wide support across browsers. But my ears perked up when I read that a team of cybersecurity researchers saw a “false-positive rate of less than 1%”[1], using subtle differences in browsers’ WASM implementations to fingerprint users, even those with otherwise spoofed identifiers. And yes, the same research team also proposes mitigation techniques to protect user privacy from WASM fingerprinting, so all is not lost. Other than the untarnished reputation I had built up for WASM. But as with most tools I’ve come to adopt, I suspect I’ll be better off as a slightly more-critical user than a total fanboy.</p>
+<p>[1] <a href="https://arxiv.org/abs/2506.06500">arXiv:2506.00719 [cs.CR]</a></p>
+
+
+
+ ]]></description>
+  <category>wasm</category>
+  <category>security</category>
+  <guid>https://jdnricardo.com/posts/wasm/</guid>
+  <pubDate>Sat, 14 Jun 2025 04:00:00 GMT</pubDate>
+</item>
 <item>
   <title>Advent of Code: Day 1</title>
   <dc:creator>Julian Ricardo</dc:creator>
