@@ -49,11 +49,32 @@
     "text": "This post attempts to replicate stock analysis with the coreStatsNMR package, available via the NMR Group r-universe. Specifically, using the statsTable function outlined in this post.\nFirst, downloading the library using the custom repos argument to point to the r-universe: install.packages(\"coreStatsNMR\", repos = c(\"https://nmrgroup.r-universe.dev\", \"https://cloud.r-project.org\"))\n\nlibrary(coreStatsNMR)\n\n\nAttaching package: 'coreStatsNMR'\n\n\nThe following object is masked from 'package:base':\n\n    mode\n\nlibrary(dplyr)\n\n\nAttaching package: 'dplyr'\n\n\nThe following objects are masked from 'package:stats':\n\n    filter, lag\n\n\nThe following objects are masked from 'package:base':\n\n    intersect, setdiff, setequal, union\n\nstatsTable(data = iris,\n           summVar = \"Sepal.Length\",\n           groupVar = \"Species\",\n           stats = c(\"n\", \"min\", \"max\", \"mean\", \"weighted.mean\", \"median\", \"sd\", \"iqr\", \"cv\"),\n           accuracy = 0.01,\n           drop0trailing = TRUE) %&gt;% \n  knitr::kable()\n\nWarning in statsTable.data.frame(data = iris, summVar = \"Sepal.Length\", : Using placeholder weights of 1 for all data\n\n\n\n\n\nstat\nsetosa\nversicolor\nvirginica\nTotal\n\n\n\n\nn\n50\n50\n50\n150\n\n\nmin\n4.30\n4.90\n4.90\n4.30\n\n\nmax\n5.80\n7.00\n7.90\n7.90\n\n\nmean\n5.01\n5.94\n6.59\n5.84\n\n\nweighted.mean\n5.01\n5.94\n6.59\n5.84\n\n\nmedian\n5.00\n5.90\n6.50\n5.80\n\n\nsd\n0.35\n0.52\n0.64\n0.83\n\n\niqr\n0.40\n0.70\n0.67\n1.30\n\n\ncv\n0.07\n0.09\n0.10\n0.14\n\n\n\n\n\n\nSo what?\nYay! We can run summary statistics on stock R data with our own package. Why do this? We already can write expressive pipelines with various packages: dplyr, data.table, collapse, or polars. The added value of a DIY function is not apparent, especially if it’s using those packages underneath.\nHowever, for a consulting firm, such as my previous employer, there is value in creating wrapped versions of the stock coreStats functions which incorporate project/client constraints and documentation. That way, the core functions’ focus can be on being very good in a narrow scope (for each function), but they can be combined and/or extended via wrappers for projects and/or specific, repetitive applications. This does assume time is invested in designing them to play nicely with one another, and maintaining these conditions as the codebase evolves. Having shareable “core” functions separate from “project code” allows the firm to tap into additional marketing value as well, i.e. more-visibly participating in open-source software (OSS) development.\nInternal and/or public packages are also ways to embed invaluable organizational knowledge, e.g. in a package’s testing suite, warnings, errors, and documentation. Of course, embedding this knowledge requires caution so that only the sources/methods/etc appropriate for public use are exposed in public repos like the r-universe."
   },
   {
-    "objectID": "eaglei.html",
-    "href": "eaglei.html",
-    "title": "Series: Eagle-Itm",
+    "objectID": "posts/making-an-avatar/index.html",
+    "href": "posts/making-an-avatar/index.html",
+    "title": "Creating a personal avatar",
     "section": "",
-    "text": "Visualizing outage data\n\n\n\n\n\n\n\n\n\n\n\nOct 23, 2024\n\n\n9 min\n\n\n\n\n\n\n\nAligning with EIA’s metrics\n\n\n\n\n\n\n\n\n\n\n\nOct 10, 2024\n\n\n6 min\n\n\n\n\n\n\n\nWorking with power outage data\n\n\n\n\n\n\n\n\n\n\n\nAug 21, 2024\n\n\n6 min\n\n\n\n\n\n\nNo matching items"
+    "text": "A really quick post to shoutout the open-source libraries I used to create what I find to be gorgeous icons, e.g. the favicon I use for my website, reproduced above in a larger size.\n\nboringavatars\ncoolors\n\nAnybody who worked with me previously will now know my secret to creating cute, company-themed user icons 😋\nimport Avatar from 'boring-avatars';\n\n&lt;Avatar \n        name='Julian do Nascimento Ricardo'\n        size='180'\n        variant='sunset'\n        colors={['#FB6107', '#F3DE2C', '#7CB518', '#5C8001', '#FBB02D']}\n/&gt;"
+  },
+  {
+    "objectID": "blog.html",
+    "href": "blog.html",
+    "title": "Posts",
+    "section": "",
+    "text": "These posts run through ETL of Eagle-ITM data from the Department of Energy and comparison with other data sources."
+  },
+  {
+    "objectID": "blog.html#series",
+    "href": "blog.html#series",
+    "title": "Posts",
+    "section": "",
+    "text": "These posts run through ETL of Eagle-ITM data from the Department of Energy and comparison with other data sources."
+  },
+  {
+    "objectID": "archive.html",
+    "href": "archive.html",
+    "title": "Archive",
+    "section": "",
+    "text": "WASM Fanboy Learns About Browser Fingerprints\n\n\n\n\n\n\n\n\nJun 14, 2025\n\n\n\n\n\n\n\nAdvent of Code: Day 1\n\n\n\n\n\n\n\n\nDec 2, 2024\n\n\n\n\n\n\n\nVisualizing outage data\n\n\n\n\n\n\n\n\nOct 23, 2024\n\n\n\n\n\n\n\nAligning with EIA’s metrics\n\n\n\n\n\n\n\n\nOct 10, 2024\n\n\n\n\n\n\n\nCreating a personal avatar\n\n\n\n\n\n\n\n\nSep 2, 2024\n\n\n\n\n\n\n\nWorking with power outage data\n\n\n\n\n\n\n\n\nAug 21, 2024\n\n\n\n\n\n\n\nHosting internal R packages on r-universe\n\n\n\n\n\n\n\n\nAug 15, 2024\n\n\n\n\n\n\n\nSo you’re probably wondering how I got to this post…\n\n\n\n\n\n\n\n\nAug 15, 2024\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "consulting.html",
@@ -112,32 +133,18 @@
     "text": "Project-Based Pricing\nFor larger projects (20+ hours), I offer custom project-based pricing. This includes:\n\nDetailed project scope\nMilestone-based deliverables\nRegular progress updates\nCode documentation\nKnowledge transfer sessions\n\n\nStill here? Well, thank you for deeply considering my consulting servies!"
   },
   {
-    "objectID": "archive.html",
-    "href": "archive.html",
-    "title": "Archive",
+    "objectID": "eaglei.html",
+    "href": "eaglei.html",
+    "title": "Series: Eagle-Itm",
     "section": "",
-    "text": "WASM Fanboy Learns About Browser Fingerprints\n\n\n\n\n\n\n\n\nJun 14, 2025\n\n\n\n\n\n\n\nAdvent of Code: Day 1\n\n\n\n\n\n\n\n\nDec 2, 2024\n\n\n\n\n\n\n\nVisualizing outage data\n\n\n\n\n\n\n\n\nOct 23, 2024\n\n\n\n\n\n\n\nAligning with EIA’s metrics\n\n\n\n\n\n\n\n\nOct 10, 2024\n\n\n\n\n\n\n\nCreating a personal avatar\n\n\n\n\n\n\n\n\nSep 2, 2024\n\n\n\n\n\n\n\nWorking with power outage data\n\n\n\n\n\n\n\n\nAug 21, 2024\n\n\n\n\n\n\n\nHosting internal R packages on r-universe\n\n\n\n\n\n\n\n\nAug 15, 2024\n\n\n\n\n\n\n\nSo you’re probably wondering how I got to this post…\n\n\n\n\n\n\n\n\nAug 15, 2024\n\n\n\n\n\n\nNo matching items"
+    "text": "Visualizing outage data\n\n\n\n\n\n\n\n\n\n\n\nOct 23, 2024\n\n\n9 min\n\n\n\n\n\n\n\nAligning with EIA’s metrics\n\n\n\n\n\n\n\n\n\n\n\nOct 10, 2024\n\n\n6 min\n\n\n\n\n\n\n\nWorking with power outage data\n\n\n\n\n\n\n\n\n\n\n\nAug 21, 2024\n\n\n6 min\n\n\n\n\n\n\nNo matching items"
   },
   {
-    "objectID": "blog.html",
-    "href": "blog.html",
-    "title": "Posts",
+    "objectID": "posts/wasm-fingerpints/index.html",
+    "href": "posts/wasm-fingerpints/index.html",
+    "title": "WASM Fanboy Learns About Browser Fingerprints",
     "section": "",
-    "text": "These posts run through ETL of Eagle-ITM data from the Department of Energy and comparison with other data sources."
-  },
-  {
-    "objectID": "blog.html#series",
-    "href": "blog.html#series",
-    "title": "Posts",
-    "section": "",
-    "text": "These posts run through ETL of Eagle-ITM data from the Department of Energy and comparison with other data sources."
-  },
-  {
-    "objectID": "posts/making-an-avatar/index.html",
-    "href": "posts/making-an-avatar/index.html",
-    "title": "Creating a personal avatar",
-    "section": "",
-    "text": "A really quick post to shoutout the open-source libraries I used to create what I find to be gorgeous icons, e.g. the favicon I use for my website, reproduced above in a larger size.\n\nboringavatars\ncoolors\n\nAnybody who worked with me previously will now know my secret to creating cute, company-themed user icons 😋\nimport Avatar from 'boring-avatars';\n\n&lt;Avatar \n        name='Julian do Nascimento Ricardo'\n        size='180'\n        variant='sunset'\n        colors={['#FB6107', '#F3DE2C', '#7CB518', '#5C8001', '#FBB02D']}\n/&gt;"
+    "text": "It was inevitable that WebAssembly would lose the untarnished reputation I had created for it in my mind. Until now I haven’t needed it much, but (or maybe because of that?) I placed it on the highest pedestal for reproducibility and performance, should a client or a project at $WORK require it.\nIf that hypothetical client/project ever appeared. In the meantime, “lesser” tools were sufficient. “Oh, we just need this all in an Excel file”. Or, “pdf if fine.” So I’d stick to interactive notebooks, or if I got lucky some Shiny or plotly or Streamlit, and dutifully export charts and tables to pdf, or paste them into a MS Office product.\nMeanwhile, I kept seeing more ways I could use WASM, if only a project I was on called for it. And so its reputation grew. The tipping point for my uncritical fanboydom was when, without me lifting a finger, the R packages I developed for a previous employer became available in WASM via the R-Universe.\nDid I or any of my analyst colleages need WASM? No. But it made WASM all that much more alluring. I could almost take credit for developing something in WASM. Almost. As long as whoever I told the exciting news knew nothing about R-Universe and their WASM rollout.\nThis isn’t a story about how my overly rosy view of WASM comes crashing down in a heap of over-budget, over-cooked spaghetti code. I honestly still haven’t used it all too much, so it still sits on one of the higher shelves in my software/data carpentry workshop, ready to be dusted off. This is more a story of how a tool’s reputation begins to lose its sheen.\nLike when a favorite restaurant gets too popular, expands too fast to multiple locations, and fizzles out. Or gets acquired by “new management” who thoroughly financialize the joint, rewiring staffs’ and patrons’ POV to maximize time spent in restaurant over enjoyment of the food or the vibe.\nIn WASM’s case, honestly, don’t trust me to forecast anything. I haven’t used it enough to be a trustworthy narrator. I’m keeping it in my rotation, because I still don’t know anything else that matches its speed and wide support across browsers. But my ears perked up when I read that a team of cybersecurity researchers saw a “false-positive rate of less than 1%”[1], using subtle differences in browsers’ WASM implementations to fingerprint users, even those with otherwise spoofed identifiers. And yes, the same research team also proposes mitigation techniques to protect user privacy from WASM fingerprinting, so all is not lost. Other than the untarnished reputation I had built up for WASM. But as with most tools I’ve come to adopt, I suspect I’ll be better off as a slightly more-critical user than a total fanboy.\n[1] arXiv:2506.00719 [cs.CR]"
   },
   {
     "objectID": "posts/eaglei/intro/index.html#pilot-episode-updated-829",
@@ -222,12 +229,5 @@
     "title": "Advent of Code: Day 1",
     "section": "Part 2",
     "text": "Part 2\nThe second part requires calculating a total similarity score between the lists, where the only elements that score points are present in both lists. The score is taken as the product of each said number and the number of appearances in the second list\n\ntidytable_day1_p2 &lt;- function() {\n  get_day1_input() %&gt;%\n  filter(list_2 %in% list_1) %&gt;%\n  count(list_2) %&gt;%\n  summarise(\n    sim_score = sum(n*list_2),\n  ) %&gt;%\n  as.integer()\n}\n\ncollapse_day1_p2 &lt;- function() {\n  get_day1_input() %&gt;%\n  fsubset(list_2 %in% list_1) %&gt;%\n  fcount(list_2) %&gt;%\n  fmutate(\n    sim_score = N*list_2, .keep = \"none\"\n  ) %&gt;%\n  fsum() %&gt;%\n  as.integer()\n}\n\nAgain, comparing performance\n\nStick around for day 2!! Which will technically happen on day 3. My money is on me catching up by the weekend :)"
-  },
-  {
-    "objectID": "posts/wasm/index.html",
-    "href": "posts/wasm/index.html",
-    "title": "WASM Fanboy Learns About Browser Fingerprints",
-    "section": "",
-    "text": "It was inevitable that WebAssembly would lose the untarnished reputation I had created for it in my mind. Until now I haven’t needed it much, but (or maybe because of that?) I placed it on the highest pedestal for reproducibility and performance, should a client or a project at $WORK require it.\nIf that hypothetical client/project ever appeared. In the meantime, “lesser” tools were sufficient. “Oh, we just need this all in an Excel file”. Or, “pdf if fine.” So I’d stick to interactive notebooks, or if I got lucky some Shiny or plotly or Streamlit, and dutifully export charts and tables to pdf, or paste them into a MS Office product.\nMeanwhile, I kept seeing more ways I could use WASM, if only a project I was on called for it. And so its reputation grew. The tipping point for my uncritical fanboydom was when, without me lifting a finger, the R packages I developed for a previous employer became available in WASM via the R-Universe.\nDid I or any of my analyst colleages need WASM? No. But it made WASM all that much more alluring. I could almost take credit for developing something in WASM. Almost. As long as whoever I told the exciting news knew nothing about R-Universe and their WASM rollout.\nThis isn’t a story about how my overly rosy view of WASM comes crashing down in a heap of over-budget, over-cooked spaghetti code. I honestly still haven’t used it all too much, so it still sits on one of the higher shelves in my software/data carpentry workshop, ready to be dusted off. This is more a story of how a tool’s reputation begins to lose its sheen.\nLike when a favorite restaurant gets too popular, expands too fast to multiple locations, and fizzles out. Or gets acquired by “new management” who thoroughly financialize the joint, rewiring staffs’ and patrons’ POV to maximize time spent in restaurant over enjoyment of the food or the vibe.\nIn WASM’s case, honestly, don’t trust me to forecast anything. I haven’t used it enough to be a trustworthy narrator. I’m keeping it in my rotation, because I still don’t know anything else that matches its speed and wide support across browsers. But my ears perked up when I read that a team of cybersecurity researchers saw a “false-positive rate of less than 1%”[1], using subtle differences in browsers’ WASM implementations to fingerprint users, even those with otherwise spoofed identifiers. And yes, the same research team also proposes mitigation techniques to protect user privacy from WASM fingerprinting, so all is not lost. Other than the untarnished reputation I had built up for WASM. But as with most tools I’ve come to adopt, I suspect I’ll be better off as a slightly more-critical user than a total fanboy.\n[1] arXiv:2506.00719 [cs.CR]"
   }
 ]

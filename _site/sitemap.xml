@@ -17,7 +17,15 @@
     <lastmod>2025-03-14T16:51:21.125Z</lastmod>
   </url>
   <url>
-    <loc>https://jdnricardo.com/eaglei.html</loc>
+    <loc>https://jdnricardo.com/posts/making-an-avatar/index.html</loc>
+    <lastmod>2025-03-14T16:51:21.135Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jdnricardo.com/blog.html</loc>
+    <lastmod>2025-03-14T17:11:31.490Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jdnricardo.com/archive.html</loc>
     <lastmod>2025-03-14T16:51:21.125Z</lastmod>
   </url>
   <url>
@@ -25,16 +33,12 @@
     <lastmod>2025-03-26T16:40:48.937Z</lastmod>
   </url>
   <url>
-    <loc>https://jdnricardo.com/archive.html</loc>
+    <loc>https://jdnricardo.com/eaglei.html</loc>
     <lastmod>2025-03-14T16:51:21.125Z</lastmod>
   </url>
   <url>
-    <loc>https://jdnricardo.com/blog.html</loc>
-    <lastmod>2025-03-14T17:11:31.490Z</lastmod>
-  </url>
-  <url>
-    <loc>https://jdnricardo.com/posts/making-an-avatar/index.html</loc>
-    <lastmod>2025-03-14T16:51:21.135Z</lastmod>
+    <loc>https://jdnricardo.com/posts/wasm-fingerpints/index.html</loc>
+    <lastmod>2025-06-14T14:26:19.129Z</lastmod>
   </url>
   <url>
     <loc>https://jdnricardo.com/posts/eaglei/intro/index.html</loc>
@@ -47,9 +51,5 @@
   <url>
     <loc>https://jdnricardo.com/posts/advent-of-code-2024/day1/index.html</loc>
     <lastmod>2025-03-14T16:51:21.125Z</lastmod>
-  </url>
-  <url>
-    <loc>https://jdnricardo.com/posts/wasm/index.html</loc>
-    <lastmod>2025-06-14T13:46:32.323Z</lastmod>
   </url>
 </urlset>
